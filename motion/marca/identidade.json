@@ -1,0 +1,39 @@
+{
+  "marca": "Vistra",
+  "slug": "vistra",
+  "idioma": "pt-BR",
+  "cores": {
+    "escuro": "#000000",
+    "claro": "#FFFFFF",
+    "profundo": "#111827",
+    "acento": "#39FF14",
+    "apoio": "#1B7A00"
+  },
+  "fontes": {
+    "manchete": {
+      "familia": "Inter",
+      "arquivo": "Inter-Black.woff2",
+      "peso": 900
+    },
+    "corpo": {
+      "familia": "Inter",
+      "arquivo": null,
+      "peso": 700
+    },
+    "dado": {
+      "familia": "IBM Plex Mono",
+      "arquivo": null,
+      "peso": 500
+    }
+  },
+  "logo": {
+    "sobre_claro": "logo-escura.png",
+    "sobre_escuro": "logo-clara.png"
+  },
+  "voz": {
+    "plataforma": "elevenlabs",
+    "nome": null,
+    "modelo": "v4"
+  },
+  "exemplo": false
+}

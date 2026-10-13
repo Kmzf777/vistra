@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Guia do Vendedor Vistra</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+@page { size:A4; margin:0; }
+:root{
+  --verde:#39FF14; --verde-esc:#1B7A00; --verde-fundo:#EEFFE9;
+  --preto:#000; --grafite:#111827; --grafite2:#1F2937;
+  --tinta:#111; --fraco:#555B66; --linha:#E6E7EA; --cinza:#F5F6F7;
+  --chat:#EAE6DF; --bolha-eu:#D9FDD3; --vermelho:#C62828; --vermelho-fundo:#FDF0F0;
+}
+*{ box-sizing:border-box; }
+body{ margin:0; font-family:Inter,"Segoe UI",Arial,sans-serif; color:var(--tinta); font-size:10.3pt; line-height:1.5;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+a{ color:inherit; text-decoration:none; }
+.pg{ width:210mm; height:297mm; padding:17mm 17mm 14mm; position:relative; overflow:hidden; page-break-after:always; display:flex; flex-direction:column; }
+.pg:last-child{ page-break-after:auto; }
+.rodape{ margin-top:auto; border-top:1px solid var(--linha); padding-top:3mm; display:flex; justify-content:space-between; font-size:8pt; color:#9AA0A8; }
+.rodape b{ color:var(--tinta); font-weight:700; }
+.eyebrow{ font-size:8.6pt; font-weight:800; letter-spacing:.17em; text-transform:uppercase; color:var(--verde-esc); }
+h1{ font-size:25pt; line-height:1.08; letter-spacing:-.025em; margin:2mm 0 3mm; font-weight:800; }
+h1 .m{ background:linear-gradient(transparent 58%, var(--verde) 58%); padding:0 1mm; }
+.sub{ font-size:11pt; color:var(--fraco); max-width:165mm; margin:0 0 5mm; }
+h3{ font-size:11.5pt; margin:0 0 1.5mm; letter-spacing:-.01em; }
+p{ margin:0 0 2mm; }
+
+/* blocos */
+.cards{ display:grid; gap:3.5mm; }
+.c2{ grid-template-columns:1fr 1fr; } .c3{ grid-template-columns:1fr 1fr 1fr; }
+.card{ border:1px solid var(--linha); border-radius:3.5mm; padding:4mm 4.5mm; background:#fff; }
+.card .ic{ font-size:15pt; line-height:1; margin-bottom:2mm; }
+.card h4{ margin:0 0 1mm; font-size:10.3pt; }
+.card p{ margin:0; font-size:9pt; color:var(--fraco); line-height:1.45; }
+.card.dark{ background:var(--grafite); border-color:var(--grafite); color:#fff; }
+.card.dark p{ color:#C9CED6; }
+.box{ border-radius:3.5mm; padding:4.5mm 5.5mm; font-size:9.8pt; }
+.box.verde{ background:var(--verde-fundo); border-left:1.6mm solid var(--verde); }
+.box.preto{ background:var(--preto); color:#fff; }
+.box.preto .hl{ color:var(--verde); }
+.box.cinza{ background:var(--cinza); }
+.box.verm{ background:var(--vermelho-fundo); border-left:1.6mm solid var(--vermelho); }
+.box b.t{ display:block; font-size:10.5pt; margin-bottom:1mm; }
+.labia{ background:var(--preto); color:#fff; border-radius:3.5mm; padding:4mm 5mm; display:flex; gap:3.5mm; align-items:flex-start; }
+.labia .k{ flex:none; background:var(--verde); color:#000; font-weight:900; font-size:7.6pt; letter-spacing:.12em; border-radius:1.5mm; padding:1mm 2mm; margin-top:.6mm; }
+.labia .f{ font-size:10.8pt; font-weight:600; line-height:1.4; }
+.tag{ display:inline-block; font-size:7.6pt; font-weight:800; letter-spacing:.12em; text-transform:uppercase; border-radius:1.3mm; padding:.6mm 2mm; }
+.tag.v{ background:var(--verde); color:#000; } .tag.r{ background:var(--vermelho); color:#fff; } .tag.p{ background:#000; color:#fff; }
+
+/* celular */
+.fone{ width:64mm; flex:none; background:#0B0B0B; border-radius:8mm; padding:2.6mm; box-shadow:0 4mm 10mm rgba(0,0,0,.18); }
+.tela{ border-radius:6mm; overflow:hidden; background:var(--chat); display:flex; flex-direction:column; }
+.bar{ background:#0F1A14; color:#fff; padding:2.6mm 3.4mm 2.4mm; display:flex; align-items:center; gap:2.2mm; }
+.bar .av{ width:7mm; height:7mm; border-radius:50%; background:var(--verde); display:flex; align-items:center; justify-content:center; font-size:10pt; }
+.bar .nm{ font-size:8.6pt; font-weight:700; line-height:1.15; }
+.bar .nm span{ display:block; font-size:6.6pt; font-weight:500; color:#A7F3A0; }
+.bar .ok{ color:var(--verde); font-size:8pt; }
+.bar .nm span.ok{ display:inline; font-size:8pt; color:var(--verde); }
+.pg > *:not(.rodape):not(.glow):not(.glow2){ zoom:1.07; }
+.ad{ display:grid; grid-template-columns:1fr 1fr; gap:4mm; margin-top:6mm; }
+.ad > div{ border-radius:3.5mm; padding:4mm 5mm; }
+.ad .x{ background:var(--vermelho-fundo); } .ad .ok2{ background:#000; color:#fff; }
+.ad h4{ margin:0 0 2mm; font-size:10pt; } .ad .ok2 h4{ color:var(--verde); } .ad .x h4{ color:var(--vermelho); }
+.ad ul{ margin:0; padding-left:4.5mm; font-size:9pt; line-height:1.5; } .ad li{ margin-bottom:1mm; }
+.msgs{ padding:3mm 2.6mm 3.4mm; display:flex; flex-direction:column; gap:1.6mm; }
+.dia{ align-self:center; background:#fff; font-size:6.4pt; color:#666; border-radius:1.5mm; padding:.4mm 2mm; margin-bottom:.6mm; }
+.b{ max-width:84%; font-size:7.7pt; line-height:1.35; padding:1.6mm 2.4mm; border-radius:2.4mm; background:#fff; position:relative; box-shadow:0 .3mm .4mm rgba(0,0,0,.08); }
+.b.eu{ align-self:flex-end; background:var(--bolha-eu); }
+.b.ia{ align-self:flex-start; }
+.b small{ display:block; text-align:right; font-size:5.8pt; color:#8A8F95; margin-top:.4mm; }
+.btn{ align-self:flex-start; width:84%; background:#fff; color:#0A7C5A; font-size:7.3pt; font-weight:600; text-align:center; padding:1.3mm; border-radius:2mm; margin-top:-.6mm; box-shadow:0 .3mm .4mm rgba(0,0,0,.08); }
+.sys{ align-self:center; font-size:6.4pt; font-weight:700; background:#000; color:var(--verde); border-radius:1.5mm; padding:.6mm 2.2mm; }
+.lado{ display:flex; gap:7mm; align-items:flex-start; }
+.lado .txt{ flex:1; }
+
+/* passos */
+.passos{ display:flex; flex-direction:column; gap:2.6mm; }
+.passo{ display:flex; gap:3.5mm; align-items:flex-start; }
+.passo .n{ flex:none; width:7.5mm; height:7.5mm; border-radius:50%; background:#000; color:var(--verde); font-weight:800; font-size:9.5pt; display:flex; align-items:center; justify-content:center; }
+.passo h4{ margin:.6mm 0 .4mm; font-size:10.2pt; }
+.passo p{ margin:0; font-size:9pt; color:var(--fraco); }
+
+/* comparação */
+.vs{ display:grid; grid-template-columns:1fr 1fr; gap:4mm; }
+.vs .col{ border-radius:3.5mm; padding:4.5mm 5mm; }
+.vs .ruim{ background:var(--vermelho-fundo); } .vs .bom{ background:var(--grafite); color:#fff; }
+.vs ul{ margin:2mm 0 0; padding:0; list-style:none; font-size:9.2pt; }
+.vs li{ padding:1.1mm 0 1.1mm 5mm; position:relative; }
+.vs .ruim li::before{ content:"✕"; position:absolute; left:0; color:var(--vermelho); font-weight:800; }
+.vs .bom li::before{ content:"✓"; position:absolute; left:0; color:var(--verde); font-weight:800; }
+
+/* automações */
+.auto{ display:grid; grid-template-columns:1fr 1fr; gap:3mm; }
+.auto .a{ display:flex; gap:3mm; border:1px solid var(--linha); border-radius:3mm; padding:3.2mm 3.8mm; }
+.auto .a .ic{ font-size:13pt; line-height:1.2; }
+.auto .a h4{ margin:0 0 .6mm; font-size:9.8pt; }
+.auto .a p{ margin:0; font-size:8.6pt; color:var(--fraco); line-height:1.4; }
+.auto .a p i{ color:var(--tinta); }
+
+/* nicho */
+.nicho-top{ display:flex; align-items:center; gap:4mm; margin-bottom:4mm; }
+.nicho-top .emo{ width:16mm; height:16mm; border-radius:4mm; background:#000; display:flex; align-items:center; justify-content:center; font-size:22pt; flex:none; }
+.lista{ margin:0; padding:0; list-style:none; }
+.lista li{ padding:2mm 0 2mm 7mm; border-bottom:1px solid var(--linha); position:relative; font-size:9.3pt; }
+.lista li::before{ content:""; position:absolute; left:0; top:3.3mm; width:3mm; height:3mm; border-radius:50%; background:var(--verde); box-shadow:0 0 0 .5mm #000; }
+.lista li b{ display:block; font-size:9.8pt; }
+.lista li span{ color:var(--fraco); }
+
+/* capa */
+.capa{ background:#000; color:#fff; padding:22mm 20mm 16mm; }
+.capa .glow{ position:absolute; right:-70mm; top:-50mm; width:190mm; height:190mm; border-radius:50%; background:radial-gradient(circle, rgba(57,255,20,.30), rgba(57,255,20,0) 64%); }
+.capa .glow2{ position:absolute; left:-60mm; bottom:-80mm; width:170mm; height:170mm; border-radius:50%; background:radial-gradient(circle, rgba(57,255,20,.12), rgba(57,255,20,0) 64%); }
+.capa .logo{ display:flex; align-items:center; gap:4mm; position:relative; }
+.capa .logo img{ width:15mm; } .capa .logo span{ font-size:17pt; font-weight:800; } .capa .logo b{ color:var(--verde); }
+.capa .pill{ position:relative; display:inline-block; margin-top:30mm; border:1px solid #2E3A2B; color:var(--verde); font-size:8.4pt; font-weight:800; letter-spacing:.16em; text-transform:uppercase; border-radius:10mm; padding:1.6mm 4mm; }
+.capa h1{ position:relative; font-size:38pt; line-height:1.03; margin:6mm 0 5mm; }
+.capa h1 em{ font-style:normal; color:var(--verde); }
+.capa .sub{ position:relative; color:#C9CED6; font-size:12pt; max-width:150mm; }
+.capa .indice{ position:relative; margin-top:9mm; display:flex; flex-direction:column; gap:2.4mm; }
+.capa .indice div{ display:flex; align-items:center; gap:3.5mm; font-size:10.5pt; font-weight:600; }
+.capa .indice i{ font-style:normal; width:8mm; height:8mm; border-radius:2mm; background:#151A14; border:1px solid #263022; display:flex; align-items:center; justify-content:center; font-size:10pt; }
+.insta{ display:flex; align-items:center; gap:4mm; background:var(--verde); color:#000; border-radius:4mm; padding:4mm 5mm; }
+.insta .ig{ width:11mm; height:11mm; border-radius:3mm; background:#000; display:flex; align-items:center; justify-content:center; flex:none; }
+.insta .t{ font-size:8pt; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+.insta .h{ font-size:14pt; font-weight:900; letter-spacing:-.01em; line-height:1.1; }
+.insta .u{ font-size:8.4pt; }
+.insta .seta{ margin-left:auto; font-size:16pt; font-weight:900; }
+.capa .insta{ position:relative; margin-top:auto; }
+
+/* mini site */
+.site{ background:#fff; }
+.site .hero{ background:#111827; color:#fff; padding:5mm 3.4mm 4mm; }
+.site .hero b{ display:block; font-size:10pt; } .site .hero span{ font-size:7pt; color:#C9CED6; }
+.site .linha{ padding:2mm 3.4mm; border-bottom:1px solid #EEE; font-size:7.3pt; display:flex; gap:2mm; }
+.site .zap{ margin:3mm 3.4mm 2mm; background:#25D366; color:#fff; font-weight:800; font-size:8pt; text-align:center; border-radius:2mm; padding:2.2mm; }
+.site .fotos{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.4mm; padding:2mm 3.4mm 4mm; }
+.site .fotos div{ height:11mm; border-radius:1.5mm; background:linear-gradient(135deg,#D9F7D0,#9BE38A); }
+</style>
+</head>
+<body>
+
+<!-- 1 · CAPA -->
+<section class="pg capa">
+  <div class="glow"></div><div class="glow2"></div>
+  <div class="logo"><img src="../marca/vistra-logo.svg" alt=""><span>vistra<b>.ia</b></span></div>
+  <div class="pill">Guia do vendedor · sem termos técnicos</div>
+  <h1>O que você<br>vai <em>vender</em><br>por aí.</h1>
+  <p class="sub">Os dois produtos da Vistra, explicados do jeito que você vai explicar para o dono do negócio. Inclui exemplos de conversa e frases prontas.</p>
+  <div class="indice">
+    <div><i>🌐</i>Produto 1 · Site com botão de WhatsApp</div>
+    <div><i>💬</i>Produto 2 · CRM de WhatsApp na API oficial</div>
+    <div><i>⚙️</i>Automações que dá para fazer</div>
+    <div><i>🐶</i>Exemplos: pet shop, imobiliária, barbearia, comércio</div>
+    <div><i>🎯</i>Frases para usar na conversa</div>
+  </div>
+  <a class="insta" href="https://www.instagram.com/vistra.ia/">
+    <div class="ig"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#39FF14" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="#39FF14" stroke="none"/></svg></div>
+    <div><div class="t">Mostre para o cliente</div><div class="h">@vistra.ia</div><div class="u">instagram.com/vistra.ia · toque para abrir</div></div>
+    <div class="seta">→</div>
+  </a>
+</section>
+
+<!-- 2 · VISÃO GERAL -->
+<section class="pg">
+  <div class="eyebrow">Para começar</div>
+  <h1>A Vistra em <span class="m">um minuto</span></h1>
+  <p class="sub">A Vistra é uma startup de inteligência artificial de Uberlândia. Não somos agência: a gente instala um <b>vendedor que nunca dorme</b> no WhatsApp do comércio.</p>
+
+  <div class="cards c2" style="margin-bottom:5mm">
+    <div class="card dark"><div class="ic">🌐</div><h4>Produto 1 · Site</h4><p>Uma página do negócio com endereço, horário, serviços e um botão que abre o WhatsApp. Serve para o cliente <b style="color:#fff">achar</b> a loja.</p></div>
+    <div class="card dark"><div class="ic">💬</div><h4>Produto 2 · CRM de WhatsApp oficial</h4><p>O WhatsApp da empresa com robô de IA, equipe e automações, conectado do jeito oficial da Meta. Serve para <b style="color:#fff">atender e vender</b>.</p></div>
+  </div>
+
+  <h3>Como os dois se encaixam</h3>
+  <div class="passos" style="margin:3mm 0 5mm">
+    <div class="passo"><div class="n">1</div><div><h4>A pessoa procura no Google</h4><p>"Pet shop perto de mim". Ela encontra o <b>site</b> da loja com fotos, endereço e horário.</p></div></div>
+    <div class="passo"><div class="n">2</div><div><h4>Ela toca no botão de WhatsApp</h4><p>Cai direto na conversa com a loja, sem precisar salvar o número.</p></div></div>
+    <div class="passo"><div class="n">3</div><div><h4>O robô da Vistra responde na hora</h4><p>Mesmo às 23h. Tira dúvidas, mostra preço e agenda o horário.</p></div></div>
+    <div class="passo"><div class="n">4</div><div><h4>O dono só aparece para fechar</h4><p>Vê tudo no painel: quem chegou, quem agendou e quem comprou.</p></div></div>
+  </div>
+
+  <div class="box preto"><b class="t">Em uma frase</b>O site <span class="hl">traz</span> o cliente e o WhatsApp oficial <span class="hl">atende e vende</span>. A Vistra entrega os dois prontos e o dono não precisa entender nada de tecnologia.</div>
+  <div class="rodape"><span>Guia do vendedor · <b>vistra.ia</b></span><span>02</span></div>
+</section>
+
+<!-- 3 · SITE -->
+<section class="pg">
+  <div class="eyebrow">Produto 1</div>
+  <h1>O <span class="m">site</span>: a vitrine que leva ao WhatsApp</h1>
+  <p class="sub">Uma página só, simples de propósito. O cliente abre no celular, vê o que precisa e toca no botão para falar com a loja.</p>
+
+  <div class="lado">
+    <div class="fone"><div class="tela site">
+      <div class="hero"><b>Pet Shop Amigo Fiel</b><span>Banho, tosa e veterinário · Uberlândia</span></div>
+      <div class="linha">📍 Av. Rondon Pacheco, 1200</div>
+      <div class="linha">🕘 Seg a sáb · 8h às 18h</div>
+      <div class="linha">✂️ Banho e tosa · 💉 Vacinas · 🦴 Ração</div>
+      <div class="fotos"><div></div><div></div><div></div></div>
+      <div class="zap">💬 Chamar no WhatsApp</div>
+      <div class="linha" style="border:0; justify-content:center; color:#999">⭐ 4,8 no Google · 📷 @amigofiel</div>
+    </div></div>
+    <div class="txt">
+      <h3>O que tem na página</h3>
+      <ul class="lista" style="margin-bottom:4mm">
+        <li><b>Nome, endereço e mapa</b><span>Quem procura acha tudo num lugar só.</span></li>
+        <li><b>Horário e serviços</b><span>E a tabela de preços, se o dono quiser mostrar.</span></li>
+        <li><b>Fotos do negócio</b><span>As que ele já tem no celular servem.</span></li>
+        <li><b>Botão de WhatsApp</b><span>Um toque e o cliente cai na conversa.</span></li>
+      </ul>
+      <h3>Como funciona</h3>
+      <div class="passos">
+        <div class="passo"><div class="n">1</div><div><p><b>O dono manda o material</b>: nome, endereço, horário, serviços e fotos.</p></div></div>
+        <div class="passo"><div class="n">2</div><div><p><b>A Vistra monta a página</b>, que fica pronta em 24h depois de chegar o material.</p></div></div>
+        <div class="passo"><div class="n">3</div><div><p><b>A página vai ao ar</b> com endereço na internet e os arquivos ficam com ele.</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:6mm" class="labia"><div class="k">FALE</div><div class="f">"Eu faço uma página só do seu negócio: o que você faz, onde fica, o horário e um botão que abre o WhatsApp direto."</div></div>
+  <div class="box verm" style="margin-top:3.5mm"><b class="t">Não prometa</b>Não diga que ele vai aparecer em 1º lugar no Google. A página faz quem procura <b>achar tudo junto</b>, e só isso.</div>
+  <div class="rodape"><span>Guia do vendedor · <b>vistra.ia</b></span><span>03</span></div>
+</section>
+
+<!-- 4 · API OFICIAL -->
+<section class="pg">
+  <div class="eyebrow">Produto 2 · o que é a API oficial</div>
+  <h1>Existem dois jeitos de colocar um <span class="m">robô no WhatsApp</span></h1>
+  <p class="sub">"API" é só o nome técnico da <b>porta de entrada oficial</b> que a Meta (a dona do WhatsApp) abre para empresas. Para o cliente da loja, nada muda: é o mesmo WhatsApp de sempre.</p>
+
+  <div class="vs" style="margin-bottom:5mm">
+    <div class="col ruim"><span class="tag r">Jeito pirata · QR Code</span><h3 style="margin-top:2.5mm">Conecta lendo o QR Code no celular</h3><p style="font-size:9pt;color:var(--fraco)">É o que a maioria dos "robôs baratos" faz: o sistema finge ser o celular.</p>
+      <ul><li>A Meta não autoriza robô por esse caminho</li><li>Desconecta sozinho e o celular precisa ficar ligado</li><li>O número pode ser <b>banido</b> e não tem volta</li><li>Disparo em massa é a causa nº 1 de banimento</li></ul></div>
+    <div class="col bom"><span class="tag v">Jeito Vistra · API oficial</span><h3 style="margin-top:2.5mm">O número é cadastrado na própria Meta</h3><p style="font-size:9pt;color:#C9CED6">A Meta libera o robô, a equipe e os disparos.</p>
+      <ul><li>Robô e automação <b>autorizados</b></li><li>Não depende de celular ligado</li><li>Sem risco de banir por usar robô</li><li>Nome, foto e endereço da empresa no perfil</li></ul></div>
+  </div>
+
+  <div class="cards c2" style="margin-bottom:5mm">
+    <div class="card"><div class="ic">🚗</div><h4>A comparação que todo mundo entende</h4><p>O QR Code é como <b>dirigir sem placa</b>: anda, até a primeira blitz, e aí o carro fica apreendido. A API oficial é o <b>carro emplacado e com documento em dia</b>: pode rodar tranquilo.</p></div>
+    <div class="card"><div class="ic">📵</div><h4>O que o dono perde se o número cair</h4><p>O número que os clientes têm salvo, todo o histórico de conversas, os pedidos em andamento e semanas avisando todo mundo do número novo.</p></div>
+  </div>
+
+  <div class="labia"><div class="k">FALE</div><div class="f">"A gente usa a conexão oficial do WhatsApp, a mesma das grandes empresas. Seu número não corre risco de ser bloqueado por usar robô."</div></div>
+  <div class="box cinza" style="margin-top:3.5mm; font-size:9pt"><b>E custa?</b> A Meta cobra <b>centavos</b> pelas mensagens que a empresa envia (um aviso sai por volta de R$ 0,035 e uma promoção por volta de R$ 0,32, na tabela de 01/10/2026). O que o cliente manda é sempre grátis. Uma venda a mais no mês já paga a conta.</div>
+  <div class="rodape"><span>Guia do vendedor · <b>vistra.ia</b></span><span>04</span></div>
+</section>
+
+<!-- 5 · CRM -->
+<section class="pg">
+  <div class="eyebrow">Produto 2 · o CRM de WhatsApp</div>
+  <h1>Um WhatsApp <span class="m">que trabalha sozinho</span></h1>
+  <p class="sub">A Vistra monta o sistema sob medida para cada negócio: um robô de IA que conhece os produtos da loja, a equipe toda num número só e um painel para o dono acompanhar.</p>
+
+  <div class="lado" style="margin-bottom:5mm">
+    <div class="fone"><div class="tela">
+      <div class="bar"><div class="av">🏪</div><div class="nm">Sua Loja <span class="ok">✔</span><span>Conta comercial oficial</span></div></div>
+      <div class="msgs">
+        <div class="dia">HOJE · 22:47</div>
+        <div class="b eu">Oi, vocês ainda tão abertos?<small>22:47 ✓✓</small></div>
+        <div class="b ia">Oi! 👋 A loja já fechou, mas eu posso te ajudar agora mesmo. O que você procura?<small>22:47</small></div>
+        <div class="btn">🛒 Fazer um pedido</div>
+        <div class="btn">📅 Agendar horário</div>
+        <div class="btn">🙋 Falar com atendente</div>
+        <div class="b eu">📅 Agendar horário<small>22:48 ✓✓</small></div>
+        <div class="b ia">Fechado! Tenho amanhã às 9h ou às 14h. Qual fica melhor?<small>22:48</small></div>
+        <div class="sys">✓ Agendado pelo robô · 22:49</div>
+      </div>
+    </div></div>
+    <div class="txt">
+      <div class="cards" style="grid-template-columns:1fr 1fr">
+        <div class="card"><div class="ic">🤖</div><h4>Robô com IA</h4><p>Responde como gente, 24 horas, com o preço e o jeito da loja.</p></div>
+        <div class="card"><div class="ic">🔘</div><h4>Botões no chat</h4><p>O cliente responde com um toque, sem digitar.</p></div>
+        <div class="card"><div class="ic">👥</div><h4>Equipe junta</h4><p>Vários atendentes no mesmo número, cada um no seu computador.</p></div>
+        <div class="card"><div class="ic">🗂️</div><h4>Nada se perde</h4><p>O celular quebrou ou o funcionário saiu? A conversa continua no sistema.</p></div>
+        <div class="card"><div class="ic">📊</div><h4>Painel do dono</h4><p>Quem chegou, quem agendou e quem comprou, tudo numa tela.</p></div>
+        <div class="card"><div class="ic">📣</div><h4>Disparo em massa</h4><p>Promoções e avisos para a lista toda, sem risco de bloqueio.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>As vantagens, em frases de vendedor</h3>
+  <div class="cards c2">
+    <div class="labia"><div class="k">1</div><div class="f" style="font-size:9.6pt">"Cliente que manda mensagem e não recebe resposta compra do vizinho. O robô responde na hora."</div></div>
+    <div class="labia"><div class="k">2</div><div class="f" style="font-size:9.6pt">"Seu atendente para de responder 'qual o preço?' o dia inteiro e só pega quem quer fechar."</div></div>
+    <div class="labia"><div class="k">3</div><div class="f" style="font-size:9.6pt">"Você dorme e a loja continua agendando. Amanhã cedo está tudo no painel."</div></div>
+    <div class="labia"><div class="k">4</div><div class="f" style="font-size:9.6pt">"É o mesmo WhatsApp para o seu cliente. Ele não precisa baixar nada."</div></div>
+  </div>
+  <div class="rodape"><span>Guia do vendedor · <b>vistra.ia</b></span><span>05</span></div>
+</section>
+
+<!-- 6 · AUTOMAÇÕES -->
+<section class="pg">
+  <div class="eyebrow">O que dá para automatizar</div>
+  <h1>Dez automações que <span class="m">vendem por ele</span></h1>
+  <p class="sub">Cada negócio escolhe as suas. A Vistra escreve as mensagens, aprova na Meta e deixa tudo funcionando.</p>
+
+  <div class="auto">
+    <div class="a"><div class="ic">💬</div><div><h4>Atendimento 24h</h4><p>Responde dúvida, preço e horário a qualquer hora. <i>"Sim, abrimos sábado até as 14h."</i></p></div></div>
+    <div class="a"><div class="ic">📅</div><div><h4>Agendamento</h4><p>Mostra os horários livres e marca sozinho. <i>"Tenho 9h ou 14h, qual prefere?"</i></p></div></div>
+    <div class="a"><div class="ic">⏰</div><div><h4>Lembrete</h4><p>Avisa um dia antes e diminui a falta. <i>"Lembrete: seu horário é amanhã às 10h."</i></p></div></div>
+    <div class="a"><div class="ic">🎯</div><div><h4>Qualificação</h4><p>Faz as perguntas certas e separa curioso de comprador. <i>"É para comprar ou alugar?"</i></p></div></div>
+    <div class="a"><div class="ic">🙋</div><div><h4>Passar para humano</h4><p>Quando o cliente quer fechar, chama o atendente na hora, com o resumo da conversa.</p></div></div>
+    <div class="a"><div class="ic">💸</div><div><h4>Recuperação de Pix</h4><p>Gerou o Pix e não pagou? O robô cobra com educação. <i>"Seu pedido está reservado até as 18h."</i></p></div></div>
+    <div class="a"><div class="ic">🔁</div><div><h4>Retorno do cliente</h4><p>Chama de volta quem sumiu. <i>"Faz 30 dias do último banho do Thor, vamos agendar?"</i></p></div></div>
+    <div class="a"><div class="ic">📣</div><div><h4>Promoção para a lista</h4><p>Disparo oficial com foto e botão. <i>"Semana do cliente: 20% em toda a loja."</i></p></div></div>
+    <div class="a"><div class="ic">📦</div><div><h4>Aviso de pedido</h4><p>Avisa o andamento sem ninguém digitar. <i>"Seu pedido saiu para entrega 🚚"</i></p></div></div>
+    <div class="a"><div class="ic">⭐</div><div><h4>Pesquisa e avaliação</h4><p>Pede nota depois do atendimento e manda o link do Google. <i>"De 1 a 5, como foi?"</i></p></div></div>
+  </div>
+
+  <div class="box verde" style="margin-top:5mm"><b class="t">Plug and play</b>O dono não precisa configurar nada. A Vistra entrega o número oficial pronto, as mensagens escritas e aprovadas, o robô treinado e o painel funcionando. É só usar.</div>
+  <div class="rodape"><span>Guia do vendedor · <b>vistra.ia</b></span><span>06</span></div>
+</section>
+
+<!-- 7 · PET SHOP -->
+<section class="pg">
+  <div class="eyebrow">Exemplo na prática · 1 de 4</div>
+  <div class="nicho-top"><div class="emo">🐶</div><div><h1 style="margin:0">Pet shop</h1><p class="sub" style="margin:0">Agenda de banho e tosa cheia, sem ninguém preso no celular.</p></div></div>
+
+  <div class="lado">
+    <div class="fone"><div class="tela">
+      <div class="bar"><div class="av">🐾</div><div class="nm">Pet Shop Amigo Fiel <span class="ok">✔</span><span>Conta comercial oficial</span></div></div>
+      <div class="msgs">
+        <div class="dia">SÁBADO · 21:10</div>
+        <div class="b eu">Oi! Quanto tá o banho pra um shih-tzu?<small>21:10 ✓✓</small></div>
+        <div class="b ia">Oi! 🐶 Banho para porte pequeno sai R$ 55, e banho e tosa R$ 80. Quer agendar?<small>21:10</small></div>
+        <div class="btn">🛁 Só banho</div>
+        <div class="btn">✂️ Banho e tosa</div>
+        <div class="b eu">✂️ Banho e tosa<small>21:11 ✓✓</small></div>
+        <div class="b ia">Tenho terça às 9h ou às 15h. E qual o nome do pet?<small>21:11</small></div>
+        <div class="b eu">Terça 9h, é o Thor<small>21:12 ✓✓</small></div>
+        <div class="b ia">Prontinho! Thor agendado para terça às 9h. Te lembro na segunda 😊<small>21:12</small></div>
+        <div class="sys">✓ Agenda atualizada</div>
+      </div>
+    </div></div>
+    <div class="txt">
+      <h3>Automações para o pet shop</h3>
+      <ul class="lista">
+        <li><b>Agenda de banho e tosa pelo WhatsApp</b><span>O robô mostra os horários livres e marca.</span></li>
+        <li><b>Lembrete na véspera</b><span>Menos cachorro faltando e menos horário vazio.</span></li>
+        <li><b>"Seu pet está pronto para buscar"</b><span>Aviso automático quando o banho termina.</span></li>
+        <li><b>Retorno a cada 30 dias</b><span>"Faz um mês do último banho do Thor, vamos agendar?"</span></li>
+        <li><b>Lembrete de vacina e vermífugo</b><span>Traz o cliente de volta para a loja.</span></li>
+        <li><b>Promoção de ração</b><span>Disparo para a lista de quem já comprou.</span></li>
+      </ul>
+      <div class="labia" style="margin-top:5mm"><div class="k">FALE</div><div class="f" style="font-size:10pt">"Sábado à noite alguém quer marcar banho e ninguém responde. Com isso, o robô marca e você só vê na agenda."</div></div>
+    </div>
+  </div>
+  <div class="ad"><div class="x"><h4>Sem a Vistra</h4><ul><li>Mensagem de sábado à noite só é respondida na segunda</li><li>Cachorro falta e o horário fica vazio</li><li>Cliente some depois do primeiro banho</li></ul></div><div class="ok2"><h4>Com a Vistra</h4><ul><li>Banho agendado às 21h12, sem ninguém no celular</li><li>Lembrete na véspera e a agenda cheia</li><li>Volta sozinho a cada 30 dias</li></ul></div></div>
+  <div class="rodape"><span>Guia do vendedor · <b>vistra.ia</b></span><span>07</span></div>
+</section>
+
+<!-- 8 · IMOBILIÁRIA -->
+<section class="pg">
+  <div class="eyebrow">Exemplo na prática · 2 de 4</div>
+  <div class="nicho-top"><div class="emo">🏠</div><div><h1 style="margin:0">Imobiliária</h1><p class="sub" style="margin:0">O corretor só fala com quem já está pronto para visitar.</p></div></div>
+
+  <div class="lado">
+    <div class="fone"><div class="tela">
+      <div class="bar"><div class="av">🏢</div><div class="nm">Imobiliária Central <span class="ok">✔</span><span>Conta comercial oficial</span></div></div>
+      <div class="msgs">
+        <div class="dia">HOJE · 19:32</div>
+        <div class="b eu">Vi o apartamento do Santa Mônica no Instagram, ainda tá disponível?<small>19:32 ✓✓</small></div>
+        <div class="b ia">Está sim! 🏠 2 quartos, R$ 1.800 de aluguel. Pra eu te ajudar melhor: é pra você morar?<small>19:32</small></div>
+        <div class="btn">🔑 Quero alugar</div>
+        <div class="btn">💰 Quero comprar</div>
+        <div class="b eu">🔑 Quero alugar<small>19:33 ✓✓</small></div>
+        <div class="b ia">Ótimo! Você tem fiador ou prefere seguro-fiança? E quer visitar quando?<small>19:33</small></div>
+        <div class="b eu">Seguro-fiança. Pode ser sábado de manhã<small>19:34 ✓✓</small></div>
+        <div class="b ia">Visita marcada para sábado às 10h com o corretor Rodrigo. Mando a localização 📍<small>19:34</small></div>
+        <div class="sys">✓ Lead quente enviado ao corretor</div>
+      </div>
+    </div></div>
+    <div class="txt">
+      <h3>Automações para a imobiliária</h3>
+      <ul class="lista">
+        <li><b>Resposta na hora para cada anúncio</b><span>Quem pergunta às 22h recebe a resposta às 22h.</span></li>
+        <li><b>Qualificação automática</b><span>Comprar ou alugar, bairro, faixa de preço e forma de garantia.</span></li>
+        <li><b>Agendamento de visita</b><span>Marca na agenda do corretor certo.</span></li>
+        <li><b>Envio de fotos e ficha do imóvel</b><span>O robô manda o material sem ninguém procurar.</span></li>
+        <li><b>Imóveis parecidos</b><span>"Esse alugou, mas tenho 2 parecidos no mesmo bairro."</span></li>
+        <li><b>Lembrete de visita e de documentos</b><span>Menos visita perdida e menos contrato parado.</span></li>
+      </ul>
+      <div class="labia" style="margin-top:5mm"><div class="k">FALE</div><div class="f" style="font-size:10pt">"Seu corretor perde metade do dia com curioso. O robô filtra e entrega só quem tem fiador e quer visitar."</div></div>
+    </div>
+  </div>
+  <div class="ad"><div class="x"><h4>Sem a Vistra</h4><ul><li>O lead do anúncio espera horas pela resposta</li><li>O corretor perde a tarde com curioso</li><li>O imóvel alugou e o interessado vai embora</li></ul></div><div class="ok2"><h4>Com a Vistra</h4><ul><li>Resposta em segundos, a qualquer hora</li><li>O corretor recebe só quem tem garantia e quer visitar</li><li>O robô oferece imóveis parecidos na hora</li></ul></div></div>
+  <div class="rodape"><span>Guia do vendedor · <b>vistra.ia</b></span><span>08</span></div>
+</section>
+
+<!-- 9 · BARBEARIA -->
+<section class="pg">
+  <div class="eyebrow">Exemplo na prática · 3 de 4</div>
+  <div class="nicho-top"><div class="emo">💈</div><div><h1 style="margin:0">Barbearia</h1><p class="sub" style="margin:0">O barbeiro corta cabelo, e o robô cuida da agenda.</p></div></div>
+
+  <div class="lado">
+    <div class="fone"><div class="tela">
+      <div class="bar"><div class="av">💈</div><div class="nm">Barbearia do Zé <span class="ok">✔</span><span>Conta comercial oficial</span></div></div>
+      <div class="msgs">
+        <div class="dia">QUINTA · 07:05</div>
+        <div class="b ia">Fala, Lucas! 👊 Já faz 20 dias do seu último corte. Bora deixar na régua?<small>07:05</small></div>
+        <div class="btn">✂️ Agendar corte</div>
+        <div class="btn">🧔 Corte + barba</div>
+        <div class="b eu">🧔 Corte + barba<small>08:20 ✓✓</small></div>
+        <div class="b ia">Com o Zé, tenho hoje 18h ou amanhã 11h. Qual?<small>08:20</small></div>
+        <div class="b eu">Hoje 18h<small>08:21 ✓✓</small></div>
+        <div class="b ia">Fechado: hoje às 18h com o Zé, corte + barba por R$ 60. Te aviso 1h antes ⏰<small>08:21</small></div>
+        <div class="sys">✓ Horário preenchido</div>
+      </div>
+    </div></div>
+    <div class="txt">
+      <h3>Automações para a barbearia</h3>
+      <ul class="lista">
+        <li><b>Agenda por barbeiro</b><span>O cliente escolhe o profissional e o horário.</span></li>
+        <li><b>Lembrete 1 hora antes</b><span>Menos cadeira vazia por esquecimento.</span></li>
+        <li><b>Chamada de retorno em 20 dias</b><span>O robô puxa o cliente antes de ele ir em outra barbearia.</span></li>
+        <li><b>Encaixe de última hora</b><span>Alguém desmarcou? O robô oferece o horário para a lista de espera.</span></li>
+        <li><b>Plano mensal e aniversário</b><span>"Feliz aniversário! Hoje o corte é por nossa conta."</span></li>
+        <li><b>Pedido de avaliação no Google</b><span>Mais estrelas, mais cliente novo.</span></li>
+      </ul>
+      <div class="labia" style="margin-top:5mm"><div class="k">FALE</div><div class="f" style="font-size:10pt">"Você não precisa largar a máquina para responder o WhatsApp. O robô marca e ainda chama de volta quem sumiu."</div></div>
+    </div>
+  </div>
+  <div class="ad"><div class="x"><h4>Sem a Vistra</h4><ul><li>O barbeiro para o corte para responder o WhatsApp</li><li>A cadeira fica vazia por esquecimento</li><li>O cliente vai cortar na barbearia do lado</li></ul></div><div class="ok2"><h4>Com a Vistra</h4><ul><li>A agenda se preenche sozinha, por barbeiro</li><li>Lembrete 1 hora antes</li><li>O robô chama de volta em 20 dias</li></ul></div></div>
+  <div class="rodape"><span>Guia do vendedor · <b>vistra.ia</b></span><span>09</span></div>
+</section>
+
+<!-- 10 · COMÉRCIO -->
+<section class="pg">
+  <div class="eyebrow">Exemplo na prática · 4 de 4</div>
+  <div class="nicho-top"><div class="emo">🛍️</div><div><h1 style="margin:0">Comércio em geral</h1><p class="sub" style="margin:0">Loja, restaurante, distribuidora: todo negócio que vende pelo WhatsApp.</p></div></div>
+
+  <div class="lado">
+    <div class="fone"><div class="tela">
+      <div class="bar"><div class="av">🛍️</div><div class="nm">Loja Bella Moda <span class="ok">✔</span><span>Conta comercial oficial</span></div></div>
+      <div class="msgs">
+        <div class="dia">SEXTA · 10:00</div>
+        <div class="b ia">🎉 SEMANA DO CLIENTE<br>Oi, Ana! Até sábado tem 20% em toda a loja. Quer ver as novidades?<small>10:00</small></div>
+        <div class="btn">👗 Ver novidades</div>
+        <div class="btn">🚫 Não tenho interesse</div>
+        <div class="b eu">👗 Ver novidades<small>10:14 ✓✓</small></div>
+        <div class="b ia">Separei 3 peças no seu tamanho 📸 O vestido azul sai por R$ 119 com desconto.<small>10:14</small></div>
+        <div class="b eu">Quero o azul!<small>10:16 ✓✓</small></div>
+        <div class="b ia">Ótimo! Segue o Pix para garantir. Retira na loja ou entrega?<small>10:16</small></div>
+        <div class="sys">⏳ Pix não pago em 2h → robô lembra</div>
+      </div>
+    </div></div>
+    <div class="txt">
+      <h3>Automações para o comércio</h3>
+      <ul class="lista">
+        <li><b>Catálogo e preço no chat</b><span>O cliente vê os produtos sem esperar o atendente.</span></li>
+        <li><b>Pedido e Pix pelo WhatsApp</b><span>Fecha a venda dentro da conversa.</span></li>
+        <li><b>Recuperação de Pix e carrinho</b><span>Lembra quem não pagou e recupera a venda.</span></li>
+        <li><b>Aviso de entrega</b><span>"Seu pedido saiu para entrega 🚚"</span></li>
+        <li><b>Promoção para a lista inteira</b><span>Disparo oficial, até para quem não salvou o número.</span></li>
+        <li><b>Datas especiais</b><span>Dia das Mães, Black Friday e Natal com mensagens prontas e aprovadas.</span></li>
+      </ul>
+      <div class="labia" style="margin-top:5mm"><div class="k">FALE</div><div class="f" style="font-size:10pt">"Quanta gente gera o Pix e esquece de pagar? O robô lembra sozinho e essa venda volta para você."</div></div>
+    </div>
+  </div>
+  <div class="ad"><div class="x"><h4>Sem a Vistra</h4><ul><li>A promoção vai só para quem salvou o número</li><li>O Pix é gerado e esquecido</li><li>O cliente pergunta "chegou?" o dia todo</li></ul></div><div class="ok2"><h4>Com a Vistra</h4><ul><li>Disparo oficial para a lista inteira</li><li>O robô lembra quem não pagou e recupera a venda</li><li>Aviso automático de pedido e de entrega</li></ul></div></div>
+  <div class="rodape"><span>Guia do vendedor · <b>vistra.ia</b></span><span>10</span></div>
+</section>
+
+<!-- 11 · NA CONVERSA -->
+<section class="pg">
+  <div class="eyebrow">Na conversa com o dono</div>
+  <h1>Perguntas que <span class="m">vão aparecer</span></h1>
+  <p class="sub">Respostas curtas. Diga do jeito que está escrito e depois faça uma pergunta de volta.</p>
+
+  <div class="cards c2" style="margin-bottom:4mm">
+    <div class="card"><h4>"Vocês são agência?"</h4><p>"Não, a gente é uma startup de inteligência artificial, a Vistra. Fazemos o site e o atendimento automático no WhatsApp."</p></div>
+    <div class="card"><h4>"Robô no WhatsApp não é bloqueado?"</h4><p>"O pirata é. A gente usa a conexão oficial da Meta, que autoriza o robô. Seu número fica protegido."</p></div>
+    <div class="card"><h4>"Meu cliente vai ter que baixar algo?"</h4><p>"Nada. Para ele é o mesmo WhatsApp de sempre. Quem ganha recurso novo é a sua loja."</p></div>
+    <div class="card"><h4>"E se o cliente quiser falar com gente?"</h4><p>"Ele toca em 'falar com atendente' e o robô passa a conversa, já com o resumo."</p></div>
+    <div class="card"><h4>"Quantos clientes isso me traz?"</h4><p>"Não vou prometer número que eu não medi. O que eu garanto é que ninguém fica sem resposta."</p></div>
+    <div class="card"><h4>Uma pergunta que você não sabe responder</h4><p>"Boa pergunta, não vou chutar. Anotei e te respondo hoje no WhatsApp. Qual o melhor número?"</p></div>
+  </div>
+
+  <div class="vs" style="margin-bottom:4mm">
+    <div class="col bom"><span class="tag v">Sempre</span><ul><li>Falar "página", "botão de WhatsApp" e "cliente novo"</li><li>Perguntar antes de explicar</li><li>Mostrar o @vistra.ia</li></ul></div>
+    <div class="col ruim"><span class="tag r">Nunca</span><ul><li>Prometer 1º lugar no Google</li><li>Dizer "solução", "presença digital" ou "alavancar"</li><li>Inventar número de clientes ou de vendas</li></ul></div>
+  </div>
+
+  <a class="insta" href="https://www.instagram.com/vistra.ia/">
+    <div class="ig"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#39FF14" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="#39FF14" stroke="none"/></svg></div>
+    <div><div class="t">Mande para o cliente conferir</div><div class="h">instagram.com/vistra.ia</div><div class="u">Toque para abrir o perfil da Vistra</div></div>
+    <div class="seta">→</div>
+  </a>
+  <div class="rodape"><span>Guia do vendedor · <b>vistra.ia</b> · uso interno</span><span>11</span></div>
+</section>
+
+</body>
+</html>

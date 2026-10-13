@@ -1,0 +1,43 @@
+# Segredos
+.env
+.env.local
+.env.*.local
+
+# Dependências e builds
+node_modules/
+.next/
+next-env.d.ts
+*.tsbuildinfo
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Saídas do scraper (podem ter dado pessoal)
+*.csv
+results-*.json
+out/
+output/
+gmaps-output/
+ferramentas/maps-scraper/bin/
+ferramentas/maps-scraper/data/
+
+# Leads raspados: dado pessoal (telefone, e-mail). Nunca commitar.
+prospeccao/leads/
+
+# estudio-reels (motion/)
+motion/remotion/node_modules/
+motion/remotion/out/
+motion/.venv/
+motion/biblioteca/**/*.png
+motion/biblioteca/brutos/
+motion/pecas/*/public/*
+!motion/pecas/*/public/fonte/
+motion/pecas/*/public/fonte/*
+!motion/pecas/*/public/fonte/narracao.mp3
+motion/pecas/*/saida/
+motion/concorrencia/videos/
+motion/ferramentas/whisper.cpp/

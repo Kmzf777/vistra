@@ -1,0 +1,26 @@
+{
+  "$comment": "Pre-approves the safe, local commands this kit uses so Claude can scrape on autopilot without a permission prompt each time. All entries are local-only (localhost / this folder's scripts / docker). Nothing here can reach the public internet except the scraper's own outbound calls.",
+  "permissions": {
+    "allow": [
+      "Bash(docker compose up:*)",
+      "Bash(docker compose down:*)",
+      "Bash(docker compose stop:*)",
+      "Bash(docker compose start:*)",
+      "Bash(docker compose ps:*)",
+      "Bash(docker ps:*)",
+      "Bash(curl http://localhost:8080:*)",
+      "Bash(curl -s http://localhost:8080:*)",
+      "Bash(curl http://127.0.0.1:8080:*)",
+      "Bash(./ferramentas/maps-scraper/scripts/scrape.sh:*)",
+      "Bash(bash ferramentas/maps-scraper/scripts/scrape.sh:*)",
+      "Bash(python3 ferramentas/maps-scraper/scripts/scrape.py:*)",
+      "Bash(python ferramentas/maps-scraper/scripts/scrape.py:*)",
+      "Bash(docker compose -f ferramentas/maps-scraper/docker-compose.yml up:*)",
+      "Bash(docker compose -f ferramentas/maps-scraper/docker-compose.yml down:*)",
+      "Bash(docker compose -f ferramentas/maps-scraper/docker-compose.yml stop:*)",
+      "Bash(docker compose -f ferramentas/maps-scraper/docker-compose.yml start:*)",
+      "Bash(docker compose -f ferramentas/maps-scraper/docker-compose.yml ps:*)"
+    ],
+    "deny": []
+  }
+}

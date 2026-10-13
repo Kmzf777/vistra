@@ -1,0 +1,15 @@
+ A Anthropic, a empresa que criou o Cloud, acabou de selecionar a gente.
+ E afinal de contas, o que é o Cloud Startup?
+ É um programa da Anthropic para empresas que construem produtos com IA.
+ Eles escolham algumas dessas empresas que estão usando o Cloud para criar produtos
+ e dão estrutura para a empresa poder crescer mais rápido.
+ Um ano de Cloud Team, créditos e APIs,
+ condições especiais, enfiamentas e conversa direta com quem constrói o Cloud.
+ A Anthropic multiplica a receita de 7 em 7 meses, a céu de 9 bilhões para 65 bilhões anualizados.
+ 47% maior que o ano passado e maior que o PIB inteiro do Brasil.
+ O que isso muda para você que acompanha a gente?
+ Primeira, a gente vai testar primeiras plataformas e as ferramentas para ver o que funciona e o que não funciona.
+ Mais estruturas de agentes de app para os nossos clientes.
+ Também a gente vai abrir alguns bastidores para vocês para entender o que está acontecendo aqui dentro.
+ Num mercado de trilhões, estar perto de quem constrói a tecnologia faz diferença.
+ Então, obrigada Anthropic por essa confiança e segue a gente para estar acompanhando os próximos passos.

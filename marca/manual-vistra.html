@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Manual Vistra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,800;1,900&display=swap" rel="stylesheet">
+<style>
+@page { size: A4; margin: 16mm 17mm 18mm 17mm; }
+@page :first { margin: 0; }
+
+:root{
+  --verde:#39FF14; --verde-fundo:#EDFFE8; --verde-texto:#1B7A00;
+  --preto:#000; --grafite:#111827; --tinta:#18181B; --fraco:#52525B; --fraquinho:#A1A1AA;
+  --linha:#E4E4E7; --papel:#FAFAFA; --pare:#B91C1C; --pare-fundo:#FEF2F2;
+  --pend:#A16207; --pend-fundo:#FEFCE8;
+}
+*{ box-sizing:border-box; }
+body{
+  margin:0; color:var(--tinta); font-family:Inter,"Segoe UI",Arial,sans-serif;
+  font-size:9.8pt; line-height:1.5;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact;
+}
+h1,h2,h3{ letter-spacing:-.02em; line-height:1.15; margin:0; }
+p{ margin:0 0 3mm; }
+strong{ font-weight:700; }
+
+/* ---------- capa ---------- */
+.capa{
+  height:297mm; background:var(--preto); color:#fff; page-break-after:always;
+  padding:30mm 24mm 22mm; display:flex; flex-direction:column; position:relative; overflow:hidden;
+}
+.capa .glow{ position:absolute; right:-60mm; top:-40mm; width:170mm; height:170mm; border-radius:50%;
+  background:radial-gradient(circle, rgba(57,255,20,.28), rgba(57,255,20,0) 65%); }
+.capa .logo{ display:flex; align-items:center; gap:5mm; position:relative; }
+.capa .logo img{ width:22mm; height:22mm; }
+.capa .logo span{ font-size:22pt; font-weight:800; letter-spacing:-.02em; }
+.capa .logo span b{ color:var(--verde); font-weight:800; }
+.capa .tag{ margin-top:46mm; font-size:9.5pt; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--verde); font-weight:700; position:relative; }
+.capa h1{ font-size:40pt; font-weight:900; margin-top:6mm; position:relative; }
+.capa h1 em{ font-style:normal; color:var(--verde); }
+.capa .linha{ font-size:13pt; color:#D4D4D8; margin-top:8mm; max-width:140mm; line-height:1.5; position:relative; }
+.capa .rodape{ margin-top:auto; display:flex; justify-content:space-between; font-size:9pt; color:#A1A1AA;
+  border-top:1px solid #27272A; padding-top:5mm; position:relative; }
+
+/* ---------- miolo ---------- */
+.secao{ margin-top:12mm; padding-top:2mm; }
+.secao.nova{ page-break-before:always; margin-top:0; }
+.rotulo, .secao > h2, h3{ break-after:avoid; page-break-after:avoid; }
+.rotulo{ font-size:8.5pt; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--verde-texto); }
+.secao > h2{ font-size:24pt; font-weight:800; margin:2mm 0 5mm; }
+.secao > h2::after{ content:""; display:block; width:16mm; height:2.2mm; background:var(--verde); margin-top:4mm; }
+h3{ font-size:13pt; font-weight:700; margin:7mm 0 2.5mm; break-after:avoid; }
+.lead{ font-size:12pt; color:var(--tinta); line-height:1.5; }
+.fraco{ color:var(--fraco); }
+.mono{ font-family:Consolas,monospace; font-size:9pt; }
+
+.destaque{ background:var(--preto); color:#fff; border-radius:3mm; padding:6mm 7mm; margin:5mm 0;
+  font-size:13.5pt; font-weight:700; line-height:1.35; break-inside:avoid; }
+.destaque em{ font-style:normal; color:var(--verde); }
+
+.grade{ display:grid; grid-template-columns:1fr 1fr; gap:4mm; margin:4mm 0; }
+.grade.tres{ grid-template-columns:1fr 1fr 1fr; }
+.card{ border:1px solid var(--linha); border-radius:2.5mm; padding:4.5mm 5mm; break-inside:avoid; background:#fff; }
+.card h4{ margin:0 0 1.5mm; font-size:10.8pt; font-weight:700; }
+.card p{ margin:0; font-size:9.5pt; color:var(--fraco); }
+.card .num{ display:inline-block; background:var(--verde); color:#000; font-weight:800; font-size:9pt;
+  border-radius:1.2mm; padding:.3mm 2mm; margin-bottom:2mm; }
+.card.escuro{ background:var(--grafite); border-color:var(--grafite); color:#fff; }
+.card.escuro p{ color:#D1D5DB; }
+
+table{ width:100%; border-collapse:collapse; margin:3mm 0 4mm; font-size:9.4pt; break-inside:avoid; page-break-inside:avoid; }
+th{ text-align:left; font-weight:700; background:var(--preto); color:#fff; padding:2.2mm 3mm; }
+td{ padding:2.2mm 3mm; border-bottom:1px solid var(--linha); vertical-align:top; }
+tr{ break-inside:avoid; }
+td.sim::before{ content:"✓ "; color:var(--verde-texto); font-weight:800; }
+td.nao::before{ content:"✕ "; color:var(--pare); font-weight:800; }
+
+.aviso, .pend, .pare{ border-left:1.6mm solid; border-radius:0 2mm 2mm 0; padding:3.5mm 5mm; margin:4mm 0; break-inside:avoid; font-size:9.6pt; }
+.aviso{ border-color:var(--verde); background:var(--verde-fundo); }
+.pend{ border-color:#EAB308; background:var(--pend-fundo); }
+.pare{ border-color:var(--pare); background:var(--pare-fundo); }
+.aviso b.r, .pend b.r, .pare b.r{ display:block; font-size:8.3pt; letter-spacing:.14em; text-transform:uppercase; margin-bottom:1mm; }
+.pend b.r{ color:var(--pend); } .pare b.r{ color:var(--pare); } .aviso b.r{ color:var(--verde-texto); }
+.aviso p:last-child, .pend p:last-child, .pare p:last-child{ margin:0; }
+
+.fala{ border:1px solid var(--linha); border-radius:2.5mm; padding:3.5mm 5mm; margin:3mm 0; break-inside:avoid; background:#fff; }
+.fala .q{ font-size:8.4pt; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--fraco); }
+.fala .r{ font-size:10.8pt; font-weight:600; margin-top:1mm; }
+.fala .r::before{ content:"“"; } .fala .r::after{ content:"”"; }
+.fala .n{ font-size:9pt; color:var(--fraco); margin-top:1.5mm; }
+
+.vs{ display:grid; grid-template-columns:1fr 1fr; gap:4mm; margin:3mm 0 4mm; break-inside:avoid; }
+.vs div{ border-radius:2.5mm; padding:4mm 5mm; font-size:9.6pt; }
+.vs .x{ background:var(--pare-fundo); } .vs .ok{ background:var(--verde-fundo); }
+.vs b{ display:block; font-size:8.3pt; letter-spacing:.14em; text-transform:uppercase; margin-bottom:1mm; }
+.vs .x b{ color:var(--pare); } .vs .ok b{ color:var(--verde-texto); }
+
+/* marca */
+.logos{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:4mm; margin:4mm 0; }
+.logos div{ border-radius:2.5mm; height:38mm; display:flex; align-items:center; justify-content:center; gap:3mm; border:1px solid var(--linha); }
+.logos img{ width:18mm; height:18mm; }
+.logos .wm{ font-size:17pt; font-weight:800; letter-spacing:-.02em; }
+.logos .p{ background:#000; color:#fff; border-color:#000; }
+.logos .p .wm b{ color:var(--verde); }
+.logos .v{ background:var(--verde); border-color:var(--verde); }
+.legenda{ font-size:8.6pt; color:var(--fraco); text-align:center; margin-top:-2mm; }
+.cores{ display:grid; grid-template-columns:repeat(4,1fr); gap:3mm; margin:4mm 0; }
+.cor{ border:1px solid var(--linha); border-radius:2.5mm; overflow:hidden; break-inside:avoid; }
+.cor .amostra{ height:20mm; }
+.cor .info{ padding:2.5mm 3mm; font-size:8.6pt; }
+.cor .info b{ display:block; font-size:9.6pt; }
+
+/* escada / fluxo */
+.fluxo{ display:flex; gap:2.5mm; align-items:stretch; margin:5mm 0; break-inside:avoid; }
+.fluxo .passo{ flex:1; border:1px solid var(--linha); border-radius:2.5mm; padding:4mm; background:#fff; position:relative; }
+.fluxo .passo.on{ background:#000; color:#fff; border-color:#000; }
+.fluxo .passo.on p{ color:#D4D4D8; }
+.fluxo .passo h4{ margin:0 0 1.5mm; font-size:10.2pt; }
+.fluxo .passo p{ margin:0; font-size:8.8pt; color:var(--fraco); }
+.fluxo .passo .k{ font-size:8pt; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--verde-texto); }
+.fluxo .passo.on .k{ color:var(--verde); }
+.fluxo .seta{ align-self:center; font-weight:800; color:var(--fraquinho); }
+
+ul.limpa{ padding-left:5mm; margin:1mm 0 3mm; }
+ul.limpa li{ margin-bottom:1.2mm; }
+.fim{ margin-top:10mm; padding-top:5mm; border-top:1px solid var(--linha); display:flex; align-items:center; gap:4mm; font-size:9pt; color:var(--fraco); }
+.fim img{ width:10mm; height:10mm; }
+</style>
+</head>
+<body>
+
+<!-- ================= CAPA ================= -->
+<section class="capa">
+  <div class="glow"></div>
+  <div class="logo"><img src="vistra-logo.svg" alt=""><span>vistra<b>.ia</b></span></div>
+  <div class="tag">Manual da marca e da oferta · uso interno</div>
+  <h1>O que você está<br>vendendo <em>de verdade.</em></h1>
+  <p class="linha">Quem é a Vistra, o que ela entrega, como a marca aparece e o que dizer quando perguntarem sobre ela antes, durante e depois da ligação.</p>
+  <div class="rodape"><span>Para os vendedores da Vistra</span><span>Versão 1 · outubro de 2026</span></div>
+</section>
+
+<!-- ================= 1. QUEM É ================= -->
+<section class="secao nova">
+  <div class="rotulo">01 · Quem é a Vistra</div>
+  <h2>Uma startup de IA, não uma agência.</h2>
+
+  <p class="lead">A Vistra é uma startup de inteligência artificial de Uberlândia, fundada por alunos da UFU. Construímos <strong>vendedores que nunca dormem</strong>: sistemas que atendem, qualificam e vendem pelo WhatsApp do cliente, e as páginas que levam o cliente até esse WhatsApp.</p>
+
+  <div class="destaque">Não somos agência. A gente não vende "presença digital".<br>A gente instala <em>uma máquina de vendas</em> na operação do cliente.</div>
+
+  <h3>As três frases que definem a empresa</h3>
+  <div class="grade tres">
+    <div class="card"><span class="num">O quê</span><h4>Engenharia de receita com IA</h4><p>Tecnologia que transforma conversa em venda, e não design pelo design.</p></div>
+    <div class="card"><span class="num">Onde</span><h4>No WhatsApp, pela API oficial</h4><p>É onde o cliente brasileiro compra. Usamos a integração oficial da Meta.</p></div>
+    <div class="card"><span class="num">Para quem</span><h4>O comércio e a empresa local</h4><p>Pet shop, clínica, restaurante, distribuidora: quem perde venda por não responder a tempo.</p></div>
+  </div>
+
+  <h3>Por que isso importa para você, vendedor</h3>
+  <p>Você não está vendendo um site barato de alguém que faz bico. Está representando uma empresa de tecnologia que começou agora, constrói produto de verdade e usa cada venda para crescer. É exatamente essa a história que o gancho de apresentação conta:</p>
+  <div class="fala"><div class="q">O gancho de apresentação</div><div class="r">Eu e mais dois amigos somos alunos da UFU. A gente tá juntando dinheiro pra montar nossa startup de inteligência artificial.</div><div class="n">A startup dessa frase é a Vistra. Tudo o que você diz sobre ela precisa ser verdade. Este manual existe para você saber qual é a verdade.</div></div>
+
+  <h3>Onde a Vistra aparece</h3>
+  <table>
+    <tr><th style="width:32%">Canal</th><th>Endereço</th><th style="width:36%">O que mostra</th></tr>
+    <tr><td>Instagram</td><td class="mono">@vistra.ia</td><td>"Automação B2B · Não somos agência"</td></tr>
+    <tr><td>Site principal</td><td class="mono">vistra-ia.vercel.app</td><td>Máquina de vendas com IA no WhatsApp</td></tr>
+    <tr><td>Links</td><td class="mono">linktr.ee/vistra.ia</td><td>Leva para as duas ofertas</td></tr>
+  </table>
+</section>
+
+<!-- ================= 2. MARCA ================= -->
+<section class="secao">
+  <div class="rotulo">02 · A marca</div>
+  <h2>Como a Vistra se apresenta.</h2>
+
+  <h3>O símbolo</h3>
+  <p>Um círculo verde-neon com um <strong>v</strong> preto, inclinado para a frente, que lembra movimento e velocidade. Ao lado do símbolo vem o nome escrito <strong>vistra.ia</strong>, em minúsculas.</p>
+  <div class="logos">
+    <div class="p"><img src="vistra-logo.svg" alt=""><span class="wm">vistra<b>.ia</b></span></div>
+    <div><img src="vistra-logo.svg" alt=""><span class="wm">vistra.ia</span></div>
+    <div class="v"><svg viewBox="0 0 200 200" width="68" height="68"><path d="M52 56 H82 L94 122 L128 56 H158 L104 150 H76 Z" fill="#000"/></svg></div>
+  </div>
+  <p class="legenda">Fundo preto (preferencial) · fundo claro · símbolo em fundo verde, sem o círculo</p>
+
+  <div class="vs">
+    <div class="ok"><b>Pode</b>Usar o símbolo como foto do seu WhatsApp de trabalho. Escrever "Vistra" ou "vistra.ia". Manter o verde sempre puro, o #39FF14.</div>
+    <div class="x"><b>Não pode</b>Esticar, girar, trocar a cor do símbolo, aplicar sombra ou contorno, ou escrever o nome "VISTRA AGÊNCIA" ou "Vistra Sites".</div>
+  </div>
+
+  <h3>Cores</h3>
+  <div class="cores">
+    <div class="cor"><div class="amostra" style="background:#39FF14"></div><div class="info"><b>Verde Vistra</b>#39FF14 · destaque, botões, o símbolo</div></div>
+    <div class="cor"><div class="amostra" style="background:#000"></div><div class="info"><b>Preto</b>#000000 · fundo principal</div></div>
+    <div class="cor"><div class="amostra" style="background:#111827"></div><div class="info"><b>Grafite</b>#111827 · cartões e áreas sobre o preto</div></div>
+    <div class="cor"><div class="amostra" style="background:#fff"></div><div class="info"><b>Branco</b>#FFFFFF · texto sobre o escuro</div></div>
+  </div>
+  <p class="fraco">A Vistra é uma marca escura: fundo preto, texto branco e o verde só onde é preciso chamar o olho. O verde nunca vira cor de texto corrido sobre fundo branco, porque fica ilegível.</p>
+
+  <h3>Tipografia</h3>
+  <p><strong style="font-size:15pt; font-weight:900">Inter</strong>, em peso forte nos títulos e normal no texto. Os títulos são frases curtas e afirmativas, como "Pare de rasgar dinheiro com leads que ninguém atende".</p>
+
+  <h3>Tom de voz</h3>
+  <table>
+    <tr><th style="width:30%">A Vistra é</th><th>Na prática</th></tr>
+    <tr><td><strong>Direta</strong></td><td>Frases curtas. Diz o que é, quanto custa e quando fica pronto.</td></tr>
+    <tr><td><strong>Concreta</strong></td><td>Fala "botão de WhatsApp", "página", "cliente novo". Nunca "solução", "alavancar", "presença digital" ou "parceria estratégica".</td></tr>
+    <tr><td><strong>Honesta</strong></td><td>Não promete primeiro lugar no Google nem número de vendas que não mediu.</td></tr>
+    <tr><td><strong>Confiante</strong></td><td>Não pede desculpas por ligar. A voz desce no ponto final.</td></tr>
+  </table>
+</section>
+
+<!-- ================= 3. O QUE FAZ ================= -->
+<section class="secao">
+  <div class="rotulo">03 · O que a Vistra faz</div>
+  <h2>Duas frentes. Um objetivo: vender mais.</h2>
+
+  <p class="lead">A Vistra tem dois produtos centrais. Um traz o cliente até o WhatsApp, e o outro atende esse cliente quando ele chega.</p>
+
+  <div class="grade">
+    <div class="card escuro"><span class="num">Frente 1</span><h4>Máquina de vendas no WhatsApp</h4><p>Um agente de IA que atende, qualifica e vende pelo WhatsApp do cliente, 24 horas, usando a API oficial da Meta.</p></div>
+    <div class="card"><span class="num">Frente 2</span><h4>Sites e páginas</h4><p>Uma página do negócio com endereço, horário, serviços e um botão que abre o WhatsApp direto. É a porta de entrada da Vistra.</p></div>
+  </div>
+
+  <h3>Frente 1 · A máquina de vendas no WhatsApp</h3>
+  <p><strong>O problema que ela resolve:</strong> o cliente manda mensagem, ninguém responde a tempo e ele compra do concorrente. Também acontece de o vendedor gastar o dia respondendo curioso, ou de cada atendente falar uma coisa diferente.</p>
+  <table>
+    <tr><th style="width:32%">O que a empresa recebe</th><th>Em palavras simples</th></tr>
+    <tr><td><strong>Implantação completa</strong></td><td>A Vistra configura a IA para o nicho do cliente. Ele não precisa saber nada de tecnologia.</td></tr>
+    <tr><td><strong>Cérebro de vendas</strong></td><td>A IA aprende os produtos, os preços, as objeções e os argumentos daquele negócio.</td></tr>
+    <tr><td><strong>Conexão oficial</strong></td><td>Integração pela API oficial do WhatsApp (Meta), com número verificado e sem risco de bloqueio por uso de ferramenta pirata.</td></tr>
+    <tr><td><strong>Qualificação e passagem para humano</strong></td><td>A IA separa quem quer comprar de quem só está perguntando e chama o vendedor na hora certa.</td></tr>
+    <tr><td><strong>Painel de controle</strong></td><td>O dono vê as conversas, os leads e o que a IA está vendendo.</td></tr>
+    <tr><td><strong>Recuperação de Pix</strong></td><td>A IA identifica quem gerou o Pix e não pagou, e faz a cobrança sozinha.</td></tr>
+  </table>
+
+  <h3>"API oficial": o que é e por que é o nosso diferencial</h3>
+  <p>Existem dois jeitos de colocar um robô no WhatsApp. O jeito "pirata" conecta um celular comum com ferramentas não autorizadas, e o número pode ser <strong>banido</strong> a qualquer momento, levando junto o histórico e os contatos. O jeito oficial usa a plataforma de negócios da própria Meta, dona do WhatsApp.</p>
+  <div class="grade">
+    <div class="card"><h4>Com a API oficial</h4><p>Número verificado, com nome da empresa · sem risco de banimento por automação · mensagens de campanha aprovadas pela Meta · vários atendentes e IA no mesmo número.</p></div>
+    <div class="card"><h4>O que muda para o cliente</h4><p>A Meta cobra à parte pelas mensagens que a empresa inicia, como campanha ou lembrete. Responder quem chamou primeiro, dentro da conversa, não tem essa cobrança.</p></div>
+  </div>
+  <div class="aviso"><b class="r">A frase para explicar</b><p>"A gente usa a conexão oficial do WhatsApp, a mesma das grandes empresas. Seu número não corre risco de ser bloqueado."</p></div>
+</section>
+
+<section class="secao nova">
+  <div class="rotulo">03 · O que a Vistra faz (continuação)</div>
+  <h2>Frente 2 · A página do negócio.</h2>
+
+  <p class="lead">É o produto que você oferece na ligação. Simples de propósito: uma página só, pronta rápido e paga uma vez.</p>
+
+  <div class="destaque">"Eu faço uma página só do seu negócio: o que você faz, onde fica, o horário e <em>um botão que abre o WhatsApp direto.</em>"</div>
+  <p class="fraco">Essa é a primeira frase da apresentação. As outras duas dizem o prazo (24 horas depois que ele mandar o material) e o preço, pago uma vez.</p>
+
+  <table>
+    <tr><th>Vai junto</th><th>Não vai</th></tr>
+    <tr><td class="sim">A página no ar, com endereço na internet</td><td class="nao">Mais de uma página. É uma só, e é de propósito</td></tr>
+    <tr><td class="sim">O botão de WhatsApp apontando para o número que ele usar</td><td class="nao">Loja virtual, carrinho ou pagamento online</td></tr>
+    <tr><td class="sim">Um documento passo a passo explicando como mexer</td><td class="nao">Sistema de agendamento, login ou área de cliente</td></tr>
+    <tr><td class="sim">Os arquivos da página, para ele guardar onde quiser</td><td class="nao">Anúncio pago, Instagram ou postagem</td></tr>
+    <tr><td class="sim">Tabela de preços na página, se ele quiser mostrar</td><td class="nao">Manutenção mensal</td></tr>
+  </table>
+
+  <h3>Por que a Vistra vende página, se ela é uma empresa de IA</h3>
+  <p>Porque a página e o WhatsApp são a mesma máquina, vista de lados diferentes:</p>
+  <div class="fluxo">
+    <div class="passo"><div class="k">1 · Achar</div><h4>A pessoa procura</h4><p>Ela pesquisa "pet shop perto de mim" e encontra a página.</p></div>
+    <div class="seta">→</div>
+    <div class="passo"><div class="k">2 · Clicar</div><h4>Botão de WhatsApp</h4><p>Endereço, horário e serviços, com um toque para chamar a loja.</p></div>
+    <div class="seta">→</div>
+    <div class="passo on"><div class="k">3 · Atender</div><h4>A IA da Vistra</h4><p>Responde na hora, qualifica e agenda, mesmo às 23h.</p></div>
+    <div class="seta">→</div>
+    <div class="passo"><div class="k">4 · Vender</div><h4>Cliente na loja</h4><p>O dono vê no painel de onde veio cada venda.</p></div>
+  </div>
+  <p>A página é a <strong>porta de entrada</strong>: barata, rápida e fácil de dizer sim. Ela coloca a Vistra dentro do negócio. Quando o botão de WhatsApp começa a tocar mais do que o dono consegue responder, a próxima conversa é a máquina de vendas.</p>
+
+  <h3>O que mais a Vistra já construiu (sob consulta)</h3>
+  <p class="fraco">Não é o que você oferece na ligação. Serve para você saber do que o time é capaz quando um dono perguntar "vocês fazem X?".</p>
+  <div class="grade">
+    <div class="card"><h4>IA conectada ao sistema da empresa</h4><p>O dono pergunta "quanto vendi ontem?" e a IA responde com os dados ao vivo do ERP (ex.: Bling).</p></div>
+    <div class="card"><h4>CRM e disparos</h4><p>Funil de leads, campanhas pelo WhatsApp, retomada de cliente parado.</p></div>
+    <div class="card"><h4>Documentos gerados pelo WhatsApp</h4><p>O cliente pede pelo chat e recebe o documento técnico pronto.</p></div>
+    <div class="card"><h4>Lojas, dashboards e sistemas sob medida</h4><p>E-commerce, programas de afiliados, painéis de KPI, conteúdo com IA.</p></div>
+  </div>
+  <div class="pare"><b class="r">Regra</b><p>Nunca cite o nome de um cliente da Vistra como prova sem autorização do Rafael. A apresentação foi pensada sem prova social de propósito.</p></div>
+</section>
+
+<!-- ================= 4. RESPOSTAS ================= -->
+<section class="secao">
+  <div class="rotulo">04 · Respostas rápidas</div>
+  <h2>Quando perguntarem sobre a Vistra.</h2>
+  <p class="fraco">Respostas de até 25 palavras. Diga do jeito que está escrito.</p>
+
+  <div class="fala"><div class="q">"Vocês são o quê? Uma agência?"</div><div class="r">Não, a gente é uma startup de inteligência artificial, a Vistra. Fazemos atendimento automático no WhatsApp e a página que leva o cliente até ele.</div></div>
+  <div class="fala"><div class="q">"Por que tão barato?"</div><div class="r">Porque a gente tá começando a startup e quer comércio daqui usando. O preço é esse, pago uma vez.</div><div class="n">O motivo vem antes do número: o gancho da UFU já explicou o preço no começo da ligação.</div></div>
+  <div class="fala"><div class="q">"Vocês têm Instagram? Site?"</div><div class="r">Tem sim, é @vistra.ia. Te mando o link agora no WhatsApp.</div><div class="n">Isso também serve de ponte: você sai da ligação com o número dele salvo.</div></div>
+  <div class="fala"><div class="q">"O que é esse negócio de IA no WhatsApp?"</div><div class="r">É um atendente que responde seus clientes na hora, até de madrugada, e te chama quando alguém quer fechar.</div></div>
+  <div class="fala"><div class="q">"Meu número pode ser bloqueado?"</div><div class="r">Não. A gente usa a conexão oficial do WhatsApp, a mesma das grandes empresas. Não é robô pirata.</div></div>
+  <div class="fala"><div class="q">"Quantos clientes isso vai me trazer?"</div><div class="r">Não vou prometer número que eu não medi. A página existe pra quem te procurar achar telefone e endereço.</div><div class="n">Honestidade antes de promessa: diga exatamente assim.</div></div>
+  <div class="fala"><div class="q">Qualquer pergunta que você não sabe (hospedagem, contrato, prazo da IA)</div><div class="r">Boa pergunta, não vou chutar. Anotei aqui e te respondo certo hoje no WhatsApp. Qual o melhor número?</div><div class="n">Não corte a última pergunta: ela é a ponte para o WhatsApp.</div></div>
+
+  <div class="pare"><b class="r">Nunca diga</b><p>Que a UFU apoia, que é trabalho da faculdade ou projeto de extensão · que a Vistra é agência · que vocês já atenderam "centenas de empresas" · que a página coloca o negócio em 1º lugar no Google · um número de clientes ou de faturamento que o Rafael não tenha confirmado.</p></div>
+</section>
+
+<!-- ================= 5. PENDÊNCIAS ================= -->
+<section class="secao nova">
+  <div class="rotulo">05 · Antes da primeira ligação</div>
+  <h2>O que ainda está para confirmar.</h2>
+  <p>Este manual não inventa resposta. Os pontos abaixo estão abertos e precisam ser fechados pelo Rafael e pelo Kelwin. Enquanto não forem, use a resposta "não vou chutar, te respondo hoje no WhatsApp".</p>
+
+  <table>
+    <tr><th style="width:32%">Ponto</th><th>Situação hoje</th></tr>
+    <tr><td><strong>Preço da página</strong></td><td>A definir (valores já usados: R$ 300, R$ 1.200, R$ 39,90). Vale o número que o Rafael confirmar.</td></tr>
+    <tr><td><strong>Preço da máquina no WhatsApp</strong></td><td>Ainda não está definido. A taxa de mensagens da Meta é cobrada à parte.</td></tr>
+    <tr><td><strong>Hospedagem da página</strong></td><td>A página é estática e fica em hospedagem gratuita, sem custo para ninguém. <em>Confirmar.</em></td></tr>
+    <tr><td><strong>Prazo de 24 horas</strong></td><td>Conta a partir do último item do material. <em>Confirmar como regra da equipe.</em></td></tr>
+    <tr><td><strong>Tamanho da equipe</strong></td><td>No gancho, diga o número real de pessoas. <em>Confirmar.</em></td></tr>
+    <tr><td><strong>Números do site</strong> ("+11 empresas", "R$ 900 mil em vendas", "4 vagas por semana", "garantia de 24h")</td><td>Não use na ligação até o Rafael confirmar a origem de cada número.</td></tr>
+  </table>
+
+  <div class="destaque">Resumo em uma linha: a Vistra é uma startup de IA que coloca uma <em>máquina de vendas no WhatsApp</em> do comércio local, e a página com botão de WhatsApp é a porta de entrada.</div>
+
+  <div class="fim"><img src="vistra-logo.svg" alt=""><span>vistra.ia · Manual da marca e da oferta · v1 · outubro de 2026 · uso interno, não enviar a clientes</span></div>
+</section>
+
+</body>
+</html>

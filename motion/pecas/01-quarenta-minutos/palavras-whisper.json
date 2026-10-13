@@ -1,0 +1,1136 @@
+[
+ {
+  "i": 0,
+  "texto": "Eu",
+  "inicio": 0.07,
+  "fim": 0.11
+ },
+ {
+  "i": 1,
+  "texto": "literalmente",
+  "inicio": 0.11,
+  "fim": 0.85
+ },
+ {
+  "i": 2,
+  "texto": "perdi",
+  "inicio": 0.85,
+  "fim": 1.06
+ },
+ {
+  "i": 3,
+  "texto": "um",
+  "inicio": 1.06,
+  "fim": 1.17
+ },
+ {
+  "i": 4,
+  "texto": "cliente",
+  "inicio": 1.17,
+  "fim": 1.6
+ },
+ {
+  "i": 5,
+  "texto": "porque",
+  "inicio": 1.6,
+  "fim": 1.94
+ },
+ {
+  "i": 6,
+  "texto": "demorei",
+  "inicio": 1.94,
+  "fim": 2.33
+ },
+ {
+  "i": 7,
+  "texto": "quarenta",
+  "inicio": 2.33,
+  "fim": 2.67
+ },
+ {
+  "i": 8,
+  "texto": "minutos",
+  "inicio": 2.67,
+  "fim": 3.13
+ },
+ {
+  "i": 9,
+  "texto": "pra",
+  "inicio": 3.13,
+  "fim": 3.25
+ },
+ {
+  "i": 10,
+  "texto": "responder",
+  "inicio": 3.25,
+  "fim": 3.65
+ },
+ {
+  "i": 11,
+  "texto": "ele.",
+  "inicio": 3.65,
+  "fim": 3.75
+ },
+ {
+  "i": 12,
+  "texto": "Era",
+  "inicio": 4.33,
+  "fim": 4.44
+ },
+ {
+  "i": 13,
+  "texto": "sábado.",
+  "inicio": 4.44,
+  "fim": 4.82
+ },
+ {
+  "i": 14,
+  "texto": "Ele",
+  "inicio": 5.08,
+  "fim": 5.18
+ },
+ {
+  "i": 15,
+  "texto": "mandou:",
+  "inicio": 5.18,
+  "fim": 5.5
+ },
+ {
+  "i": 16,
+  "texto": "quanto",
+  "inicio": 5.7,
+  "fim": 5.92
+ },
+ {
+  "i": 17,
+  "texto": "tá",
+  "inicio": 5.92,
+  "fim": 6.04
+ },
+ {
+  "i": 18,
+  "texto": "o",
+  "inicio": 6.04,
+  "fim": 6.08
+ },
+ {
+  "i": 19,
+  "texto": "banho",
+  "inicio": 6.08,
+  "fim": 6.12
+ },
+ {
+  "i": 20,
+  "texto": "e",
+  "inicio": 6.12,
+  "fim": 6.16
+ },
+ {
+  "i": 21,
+  "texto": "tosa?",
+  "inicio": 6.16,
+  "fim": 6.44
+ },
+ {
+  "i": 22,
+  "texto": "Eu",
+  "inicio": 6.72,
+  "fim": 6.76
+ },
+ {
+  "i": 23,
+  "texto": "vi.",
+  "inicio": 6.76,
+  "fim": 6.95
+ },
+ {
+  "i": 24,
+  "texto": "Loja",
+  "inicio": 6.95,
+  "fim": 7.04
+ },
+ {
+  "i": 25,
+  "texto": "cheia,",
+  "inicio": 7.21,
+  "fim": 7.62
+ },
+ {
+  "i": 26,
+  "texto": "cachorro",
+  "inicio": 7.62,
+  "fim": 8.1
+ },
+ {
+  "i": 27,
+  "texto": "na",
+  "inicio": 8.1,
+  "fim": 8.22
+ },
+ {
+  "i": 28,
+  "texto": "mesa,",
+  "inicio": 8.22,
+  "fim": 8.58
+ },
+ {
+  "i": 29,
+  "texto": "telefone",
+  "inicio": 8.58,
+  "fim": 9.06
+ },
+ {
+  "i": 30,
+  "texto": "tocando.",
+  "inicio": 9.06,
+  "fim": 9.38
+ },
+ {
+  "i": 31,
+  "texto": "Pensei:",
+  "inicio": 9.66,
+  "fim": 10.04
+ },
+ {
+  "i": 32,
+  "texto": "já",
+  "inicio": 10.04,
+  "fim": 10.25
+ },
+ {
+  "i": 33,
+  "texto": "respondo.",
+  "inicio": 10.25,
+  "fim": 10.66
+ },
+ {
+  "i": 34,
+  "texto": "Quarenta",
+  "inicio": 10.98,
+  "fim": 11.3
+ },
+ {
+  "i": 35,
+  "texto": "minutos",
+  "inicio": 11.3,
+  "fim": 11.77
+ },
+ {
+  "i": 36,
+  "texto": "depois,",
+  "inicio": 11.77,
+  "fim": 12.3
+ },
+ {
+  "i": 37,
+  "texto": "eu",
+  "inicio": 12.41,
+  "fim": 12.45
+ },
+ {
+  "i": 38,
+  "texto": "respondi.",
+  "inicio": 12.45,
+  "fim": 12.94
+ },
+ {
+  "i": 39,
+  "texto": "Ele",
+  "inicio": 13.32,
+  "fim": 13.44
+ },
+ {
+  "i": 40,
+  "texto": "visualizou",
+  "inicio": 13.44,
+  "fim": 14.03
+ },
+ {
+  "i": 41,
+  "texto": "e",
+  "inicio": 14.35,
+  "fim": 14.39
+ },
+ {
+  "i": 42,
+  "texto": "sumiu.",
+  "inicio": 14.39,
+  "fim": 14.7
+ },
+ {
+  "i": 43,
+  "texto": "No",
+  "inicio": 15.11,
+  "fim": 15.15
+ },
+ {
+  "i": 44,
+  "texto": "dia",
+  "inicio": 15.15,
+  "fim": 15.23
+ },
+ {
+  "i": 45,
+  "texto": "seguinte,",
+  "inicio": 15.23,
+  "fim": 15.7
+ },
+ {
+  "i": 46,
+  "texto": "eu",
+  "inicio": 15.7,
+  "fim": 15.79
+ },
+ {
+  "i": 47,
+  "texto": "perguntei",
+  "inicio": 15.79,
+  "fim": 16.23
+ },
+ {
+  "i": 48,
+  "texto": "por",
+  "inicio": 16.23,
+  "fim": 16.37
+ },
+ {
+  "i": 49,
+  "texto": "quê.",
+  "inicio": 16.37,
+  "fim": 16.53
+ },
+ {
+  "i": 50,
+  "texto": "E",
+  "inicio": 16.73,
+  "fim": 16.77
+ },
+ {
+  "i": 51,
+  "texto": "ele",
+  "inicio": 16.77,
+  "fim": 16.81
+ },
+ {
+  "i": 52,
+  "texto": "foi",
+  "inicio": 16.81,
+  "fim": 16.97
+ },
+ {
+  "i": 53,
+  "texto": "sincero:",
+  "inicio": 16.97,
+  "fim": 17.42
+ },
+ {
+  "i": 54,
+  "texto": "mandei",
+  "inicio": 17.59,
+  "fim": 17.83
+ },
+ {
+  "i": 55,
+  "texto": "pra",
+  "inicio": 17.83,
+  "fim": 18.02
+ },
+ {
+  "i": 56,
+  "texto": "três",
+  "inicio": 18.02,
+  "fim": 18.18
+ },
+ {
+  "i": 57,
+  "texto": "pet",
+  "inicio": 18.18,
+  "fim": 18.34
+ },
+ {
+  "i": 58,
+  "texto": "shops.",
+  "inicio": 18.34,
+  "fim": 18.68
+ },
+ {
+  "i": 59,
+  "texto": "Fiquei",
+  "inicio": 18.87,
+  "fim": 18.98
+ },
+ {
+  "i": 60,
+  "texto": "com",
+  "inicio": 18.98,
+  "fim": 19.09
+ },
+ {
+  "i": 61,
+  "texto": "o",
+  "inicio": 19.09,
+  "fim": 19.13
+ },
+ {
+  "i": 62,
+  "texto": "primeiro",
+  "inicio": 19.13,
+  "fim": 19.42
+ },
+ {
+  "i": 63,
+  "texto": "que",
+  "inicio": 19.42,
+  "fim": 19.53
+ },
+ {
+  "i": 64,
+  "texto": "respondeu.",
+  "inicio": 19.53,
+  "fim": 19.95
+ },
+ {
+  "i": 65,
+  "texto": "O",
+  "inicio": 20.14,
+  "fim": 20.18
+ },
+ {
+  "i": 66,
+  "texto": "primeiro.",
+  "inicio": 20.18,
+  "fim": 20.77
+ },
+ {
+  "i": 67,
+  "texto": "Não",
+  "inicio": 21.0,
+  "fim": 21.22
+ },
+ {
+  "i": 68,
+  "texto": "o",
+  "inicio": 21.22,
+  "fim": 21.27
+ },
+ {
+  "i": 69,
+  "texto": "mais",
+  "inicio": 21.27,
+  "fim": 21.49
+ },
+ {
+  "i": 70,
+  "texto": "barato.",
+  "inicio": 21.49,
+  "fim": 21.65
+ },
+ {
+  "i": 71,
+  "texto": "Não",
+  "inicio": 21.95,
+  "fim": 22.15
+ },
+ {
+  "i": 72,
+  "texto": "o",
+  "inicio": 22.15,
+  "fim": 22.2
+ },
+ {
+  "i": 73,
+  "texto": "melhor.",
+  "inicio": 22.2,
+  "fim": 22.49
+ },
+ {
+  "i": 74,
+  "texto": "O",
+  "inicio": 22.82,
+  "fim": 22.86
+ },
+ {
+  "i": 75,
+  "texto": "primeiro.",
+  "inicio": 22.86,
+  "fim": 23.37
+ },
+ {
+  "i": 76,
+  "texto": "Aí",
+  "inicio": 23.72,
+  "fim": 23.76
+ },
+ {
+  "i": 77,
+  "texto": "caiu",
+  "inicio": 23.76,
+  "fim": 23.97
+ },
+ {
+  "i": 78,
+  "texto": "a",
+  "inicio": 23.97,
+  "fim": 24.02
+ },
+ {
+  "i": 79,
+  "texto": "ficha.",
+  "inicio": 24.02,
+  "fim": 24.4
+ },
+ {
+  "i": 80,
+  "texto": "O",
+  "inicio": 24.4,
+  "fim": 24.43
+ },
+ {
+  "i": 81,
+  "texto": "cliente",
+  "inicio": 24.67,
+  "fim": 24.83
+ },
+ {
+  "i": 82,
+  "texto": "não",
+  "inicio": 24.83,
+  "fim": 25.05
+ },
+ {
+  "i": 83,
+  "texto": "fica",
+  "inicio": 25.05,
+  "fim": 25.29
+ },
+ {
+  "i": 84,
+  "texto": "com",
+  "inicio": 25.29,
+  "fim": 25.43
+ },
+ {
+  "i": 85,
+  "texto": "o",
+  "inicio": 25.43,
+  "fim": 25.51
+ },
+ {
+  "i": 86,
+  "texto": "melhor.",
+  "inicio": 25.51,
+  "fim": 25.84
+ },
+ {
+  "i": 87,
+  "texto": "Fica",
+  "inicio": 26.15,
+  "fim": 26.23
+ },
+ {
+  "i": 88,
+  "texto": "com",
+  "inicio": 26.23,
+  "fim": 26.38
+ },
+ {
+  "i": 89,
+  "texto": "o",
+  "inicio": 26.38,
+  "fim": 26.43
+ },
+ {
+  "i": 90,
+  "texto": "primeiro",
+  "inicio": 26.43,
+  "fim": 26.86
+ },
+ {
+  "i": 91,
+  "texto": "que",
+  "inicio": 26.86,
+  "fim": 27.03
+ },
+ {
+  "i": 92,
+  "texto": "responde.",
+  "inicio": 27.03,
+  "fim": 27.43
+ },
+ {
+  "i": 93,
+  "texto": "E",
+  "inicio": 27.62,
+  "fim": 27.66
+ },
+ {
+  "i": 94,
+  "texto": "eu",
+  "inicio": 27.66,
+  "fim": 27.7
+ },
+ {
+  "i": 95,
+  "texto": "não",
+  "inicio": 27.7,
+  "fim": 27.81
+ },
+ {
+  "i": 96,
+  "texto": "ia",
+  "inicio": 27.81,
+  "fim": 27.9
+ },
+ {
+  "i": 97,
+  "texto": "passar",
+  "inicio": 27.9,
+  "fim": 28.17
+ },
+ {
+  "i": 98,
+  "texto": "o",
+  "inicio": 28.17,
+  "fim": 28.21
+ },
+ {
+  "i": 99,
+  "texto": "dia",
+  "inicio": 28.21,
+  "fim": 28.34
+ },
+ {
+  "i": 100,
+  "texto": "grudado",
+  "inicio": 28.34,
+  "fim": 28.69
+ },
+ {
+  "i": 101,
+  "texto": "no",
+  "inicio": 28.69,
+  "fim": 28.78
+ },
+ {
+  "i": 102,
+  "texto": "celular.",
+  "inicio": 28.78,
+  "fim": 29.16
+ },
+ {
+  "i": 103,
+  "texto": "Foi",
+  "inicio": 29.45,
+  "fim": 29.49
+ },
+ {
+  "i": 104,
+  "texto": "assim",
+  "inicio": 29.49,
+  "fim": 29.66
+ },
+ {
+  "i": 105,
+  "texto": "que",
+  "inicio": 29.66,
+  "fim": 29.79
+ },
+ {
+  "i": 106,
+  "texto": "eu",
+  "inicio": 29.79,
+  "fim": 29.88
+ },
+ {
+  "i": 107,
+  "texto": "cheguei",
+  "inicio": 29.88,
+  "fim": 30.18
+ },
+ {
+  "i": 108,
+  "texto": "na",
+  "inicio": 30.18,
+  "fim": 30.31
+ },
+ {
+  "i": 109,
+  "texto": "inteligência",
+  "inicio": 30.31,
+  "fim": 30.89
+ },
+ {
+  "i": 110,
+  "texto": "artificial",
+  "inicio": 30.89,
+  "fim": 31.32
+ },
+ {
+  "i": 111,
+  "texto": "no",
+  "inicio": 31.32,
+  "fim": 31.42
+ },
+ {
+  "i": 112,
+  "texto": "WhatsApp",
+  "inicio": 31.42,
+  "fim": 31.77
+ },
+ {
+  "i": 113,
+  "texto": "oficial.",
+  "inicio": 31.77,
+  "fim": 32.23
+ },
+ {
+  "i": 114,
+  "texto": "Ela",
+  "inicio": 32.5,
+  "fim": 32.54
+ },
+ {
+  "i": 115,
+  "texto": "responde",
+  "inicio": 32.54,
+  "fim": 32.85
+ },
+ {
+  "i": 116,
+  "texto": "na",
+  "inicio": 32.85,
+  "fim": 32.95
+ },
+ {
+  "i": 117,
+  "texto": "hora.",
+  "inicio": 32.95,
+  "fim": 33.25
+ },
+ {
+  "i": 118,
+  "texto": "De",
+  "inicio": 33.25,
+  "fim": 33.34
+ },
+ {
+  "i": 119,
+  "texto": "madrugada,",
+  "inicio": 33.46,
+  "fim": 33.9
+ },
+ {
+  "i": 120,
+  "texto": "no",
+  "inicio": 33.9,
+  "fim": 34.02
+ },
+ {
+  "i": 121,
+  "texto": "domingo,",
+  "inicio": 34.02,
+  "fim": 34.45
+ },
+ {
+  "i": 122,
+  "texto": "com",
+  "inicio": 34.45,
+  "fim": 34.6
+ },
+ {
+  "i": 123,
+  "texto": "a",
+  "inicio": 34.6,
+  "fim": 34.65
+ },
+ {
+  "i": 124,
+  "texto": "loja",
+  "inicio": 34.65,
+  "fim": 34.85
+ },
+ {
+  "i": 125,
+  "texto": "cheia.",
+  "inicio": 34.85,
+  "fim": 35.23
+ },
+ {
+  "i": 126,
+  "texto": "Passa",
+  "inicio": 35.47,
+  "fim": 35.53
+ },
+ {
+  "i": 127,
+  "texto": "o",
+  "inicio": 35.53,
+  "fim": 35.57
+ },
+ {
+  "i": 128,
+  "texto": "preço",
+  "inicio": 35.57,
+  "fim": 35.86
+ },
+ {
+  "i": 129,
+  "texto": "certo,",
+  "inicio": 35.86,
+  "fim": 36.23
+ },
+ {
+  "i": 130,
+  "texto": "agenda",
+  "inicio": 36.23,
+  "fim": 36.47
+ },
+ {
+  "i": 131,
+  "texto": "o",
+  "inicio": 36.47,
+  "fim": 36.51
+ },
+ {
+  "i": 132,
+  "texto": "banho",
+  "inicio": 36.51,
+  "fim": 36.74
+ },
+ {
+  "i": 133,
+  "texto": "e",
+  "inicio": 36.74,
+  "fim": 36.78
+ },
+ {
+  "i": 134,
+  "texto": "me",
+  "inicio": 36.78,
+  "fim": 36.87
+ },
+ {
+  "i": 135,
+  "texto": "chama",
+  "inicio": 36.87,
+  "fim": 37.11
+ },
+ {
+  "i": 136,
+  "texto": "quando",
+  "inicio": 37.11,
+  "fim": 37.4
+ },
+ {
+  "i": 137,
+  "texto": "precisa",
+  "inicio": 37.4,
+  "fim": 37.75
+ },
+ {
+  "i": 138,
+  "texto": "de",
+  "inicio": 37.75,
+  "fim": 37.82
+ },
+ {
+  "i": 139,
+  "texto": "gente.",
+  "inicio": 37.82,
+  "fim": 38.23
+ },
+ {
+  "i": 140,
+  "texto": "E",
+  "inicio": 38.4,
+  "fim": 38.44
+ },
+ {
+  "i": 141,
+  "texto": "como",
+  "inicio": 38.44,
+  "fim": 38.57
+ },
+ {
+  "i": 142,
+  "texto": "é",
+  "inicio": 38.57,
+  "fim": 38.69
+ },
+ {
+  "i": 143,
+  "texto": "pela",
+  "inicio": 38.69,
+  "fim": 38.9
+ },
+ {
+  "i": 144,
+  "texto": "porta",
+  "inicio": 38.9,
+  "fim": 39.17
+ },
+ {
+  "i": 145,
+  "texto": "oficial",
+  "inicio": 39.17,
+  "fim": 39.55
+ },
+ {
+  "i": 146,
+  "texto": "da",
+  "inicio": 39.55,
+  "fim": 39.66
+ },
+ {
+  "i": 147,
+  "texto": "Meta,",
+  "inicio": 39.66,
+  "fim": 39.98
+ },
+ {
+  "i": 148,
+  "texto": "meu",
+  "inicio": 39.98,
+  "fim": 40.1
+ },
+ {
+  "i": 149,
+  "texto": "número",
+  "inicio": 40.1,
+  "fim": 40.39
+ },
+ {
+  "i": 150,
+  "texto": "não",
+  "inicio": 40.39,
+  "fim": 40.55
+ },
+ {
+  "i": 151,
+  "texto": "corre",
+  "inicio": 40.55,
+  "fim": 40.76
+ },
+ {
+  "i": 152,
+  "texto": "o",
+  "inicio": 40.76,
+  "fim": 40.8
+ },
+ {
+  "i": 153,
+  "texto": "risco",
+  "inicio": 40.8,
+  "fim": 41.0
+ },
+ {
+  "i": 154,
+  "texto": "de",
+  "inicio": 41.0,
+  "fim": 41.08
+ },
+ {
+  "i": 155,
+  "texto": "ser",
+  "inicio": 41.08,
+  "fim": 41.2
+ },
+ {
+  "i": 156,
+  "texto": "banido",
+  "inicio": 41.2,
+  "fim": 41.5
+ },
+ {
+  "i": 157,
+  "texto": "só",
+  "inicio": 41.5,
+  "fim": 41.63
+ },
+ {
+  "i": 158,
+  "texto": "por",
+  "inicio": 41.63,
+  "fim": 41.79
+ },
+ {
+  "i": 159,
+  "texto": "usar",
+  "inicio": 41.79,
+  "fim": 41.93
+ },
+ {
+  "i": 160,
+  "texto": "robô.",
+  "inicio": 41.93,
+  "fim": 42.25
+ },
+ {
+  "i": 161,
+  "texto": "Quem",
+  "inicio": 42.47,
+  "fim": 42.51
+ },
+ {
+  "i": 162,
+  "texto": "montou",
+  "inicio": 42.51,
+  "fim": 42.75
+ },
+ {
+  "i": 163,
+  "texto": "o",
+  "inicio": 42.75,
+  "fim": 42.79
+ },
+ {
+  "i": 164,
+  "texto": "meu",
+  "inicio": 42.79,
+  "fim": 42.92
+ },
+ {
+  "i": 165,
+  "texto": "foi",
+  "inicio": 42.92,
+  "fim": 43.09
+ },
+ {
+  "i": 166,
+  "texto": "a",
+  "inicio": 43.09,
+  "fim": 43.13
+ },
+ {
+  "i": 167,
+  "texto": "vistra,",
+  "inicio": 43.13,
+  "fim": 43.44
+ },
+ {
+  "i": 168,
+  "texto": "aqui",
+  "inicio": 43.44,
+  "fim": 43.62
+ },
+ {
+  "i": 169,
+  "texto": "de",
+  "inicio": 43.62,
+  "fim": 43.71
+ },
+ {
+  "i": 170,
+  "texto": "Uberlândia.",
+  "inicio": 43.71,
+  "fim": 44.3
+ },
+ {
+  "i": 171,
+  "texto": "Serve",
+  "inicio": 44.3,
+  "fim": 44.32
+ },
+ {
+  "i": 172,
+  "texto": "pra",
+  "inicio": 44.53,
+  "fim": 44.72
+ },
+ {
+  "i": 173,
+  "texto": "qualquer",
+  "inicio": 44.72,
+  "fim": 44.95
+ },
+ {
+  "i": 174,
+  "texto": "comércio",
+  "inicio": 45.1,
+  "fim": 45.52
+ },
+ {
+  "i": 175,
+  "texto": "que",
+  "inicio": 45.52,
+  "fim": 45.66
+ },
+ {
+  "i": 176,
+  "texto": "vive",
+  "inicio": 45.66,
+  "fim": 45.85
+ },
+ {
+  "i": 177,
+  "texto": "do",
+  "inicio": 45.85,
+  "fim": 45.94
+ },
+ {
+  "i": 178,
+  "texto": "WhatsApp.",
+  "inicio": 45.94,
+  "fim": 46.33
+ },
+ {
+  "i": 179,
+  "texto": "Quarenta",
+  "inicio": 46.72,
+  "fim": 46.91
+ },
+ {
+  "i": 180,
+  "texto": "minutos.",
+  "inicio": 46.91,
+  "fim": 47.42
+ },
+ {
+  "i": 181,
+  "texto": "Quanto",
+  "inicio": 47.79,
+  "fim": 47.84
+ },
+ {
+  "i": 182,
+  "texto": "tempo",
+  "inicio": 47.84,
+  "fim": 48.04
+ },
+ {
+  "i": 183,
+  "texto": "o",
+  "inicio": 48.04,
+  "fim": 48.11
+ },
+ {
+  "i": 184,
+  "texto": "seu",
+  "inicio": 48.11,
+  "fim": 48.2
+ },
+ {
+  "i": 185,
+  "texto": "cliente",
+  "inicio": 48.2,
+  "fim": 48.48
+ },
+ {
+  "i": 186,
+  "texto": "tá",
+  "inicio": 48.48,
+  "fim": 48.6
+ },
+ {
+  "i": 187,
+  "texto": "esperando",
+  "inicio": 48.6,
+  "fim": 48.96
+ },
+ {
+  "i": 188,
+  "texto": "agora?",
+  "inicio": 48.96,
+  "fim": 49.56
+ }
+]
