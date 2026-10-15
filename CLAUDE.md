@@ -4,7 +4,12 @@ Este repositório é a **gestão da Vistra** (startup de IA de Uberlândia: What
 sites): CRM, concorrência, criação de conteúdo, marca, aprendizados e prospecção.
 
 Os **produtos para clientes** (sites e CRMs de petshop: Agrozet, Alva, Mar Azul…) ficam em outro
-repositório, `PetShop-coldcall`, em `clientes/<cliente>/`. Nada de cliente entra aqui.
+repositório, `PetShop-coldcall`, em `clientes/<cliente>/`.
+
+**Exceção (decisão do dono, 15/10/2026):** o código reaproveitável dos sites de clínica fica em `sites/`.
+Dados reais de clientes e leads nunca entram no git: `sites/leads/`, os JSONs de `sites/clientes/` e as fotos
+de `sites/src/assets/clientes/` ficam ignorados, menos o cliente fictício `exemplo`. Regras e decisões do
+negócio de sites em `sites/CLAUDE.md`. Fluxo de prospecção na skill `prospectar` (`.claude/skills/prospectar/`).
 
 ## Mapa
 
@@ -16,6 +21,7 @@ repositório, `PetShop-coldcall`, em `clientes/<cliente>/`. Nada de cliente entr
 | `aprendizados/` | Specs, planos, pesquisas (inclusive `concorrencia/`) e referências (`docs/superpowers/...`). |
 | `ferramentas/maps-scraper/` | Kit local do Google Maps Scraper (Docker). |
 | `prospeccao/` | Leads raspados (`leads/`, fora do git) e os scripts que raspam e montam esses leads. |
+| `sites/` | Sites para clínicas (Astro 7 + Tailwind v4): templates, scripts e textos de venda. Clientes e leads reais ficam fora do git. Leia `sites/CLAUDE.md`. |
 
 ## Google Maps Scraper (kit em `ferramentas/maps-scraper/`)
 

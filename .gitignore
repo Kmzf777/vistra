@@ -41,3 +41,13 @@ motion/pecas/*/public/fonte/*
 motion/pecas/*/saida/
 motion/concorrencia/videos/
 motion/ferramentas/whisper.cpp/
+
+# Sites de clínicas (sites/): o código entra, os dados reais de clientes e leads ficam fora.
+sites/leads/
+sites/clientes/*
+!sites/clientes/exemplo.json
+sites/src/assets/clientes/*
+!sites/src/assets/clientes/exemplo/
+sites/dist/
+sites/.astro/
+sites/.vercel/

@@ -1,0 +1,166 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+  antes: ImageMetadata;
+  depois: ImageMetadata;
+  legenda: string;
+  sizes: string;
+  class?: string;
+}
+const { antes, depois, legenda, sizes, class: classe = '' } = Astro.props;
+const larguras = [480, 800, 1080].filter((w) => w <= depois.width);
+---
+
+<figure class:list={['comparador', classe]}>
+  <div class="comparador-area relative overflow-hidden rounded-[1.25rem] bg-pedra select-none" style="--pos: 50%">
+    <Image src={depois} widths={larguras} quality={70} sizes={sizes} alt={`${legenda}: depois do tratamento`} draggable="false" class="block w-full h-auto" />
+    <div class="comparador-antes absolute inset-0" aria-hidden="true">
+      <Image src={antes} widths={larguras} quality={70} sizes={sizes} alt="" draggable="false" class="block w-full h-full object-cover" />
+    </div>
+    <span class="comparador-rotulo left-3">Antes</span>
+    <span class="comparador-rotulo right-3">Depois</span>
+    <div class="comparador-linha" aria-hidden="true"><span></span></div>
+    <input
+      type="range"
+      min="0"
+      max="100"
+      value="50"
+      class="comparador-input"
+      aria-label={`Comparar antes e depois: ${legenda}`}
+    />
+  </div>
+  <figcaption class="mt-3 text-sm text-tinta-suave">{legenda}</figcaption>
+</figure>
+
+<style>
+  .comparador-antes {
+    clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+  }
+  .comparador-rotulo {
+    position: absolute;
+    top: 0.75rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    background: rgb(37 35 38 / 0.72);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    pointer-events: none;
+  }
+  .comparador-linha {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--pos);
+    width: 2px;
+    margin-left: -1px;
+    background: #fff;
+    pointer-events: none;
+  }
+  .comparador-linha span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2.75rem;
+    height: 2.75rem;
+    transform: translate(-50%, -50%);
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 2px 10px rgb(0 0 0 / 0.25);
+  }
+  .comparador-linha span::before,
+  .comparador-linha span::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    transform: translateY(-50%);
+  }
+  .comparador-linha span::before { left: 6px; border-right-color: var(--color-grafite); }
+  .comparador-linha span::after { right: 6px; border-left-color: var(--color-grafite); }
+  /* Arraste horizontal move o divisor; arraste vertical continua rolando a página. */
+  .comparador-area {
+    cursor: ew-resize;
+    touch-action: pan-y;
+  }
+  /* O range fica só para teclado e leitor de tela; o toque/mouse é tratado no script (funciona em
+     qualquer ponto da foto, inclusive no iOS, onde o range nativo só responde ao "polegar"). */
+  .comparador-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .comparador-area:has(.comparador-input:focus-visible) .comparador-linha span {
+    outline: 3px solid var(--color-acento-texto);
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.comparador-area').forEach((area) => {
+    const input = area.querySelector<HTMLInputElement>('.comparador-input');
+    if (!input) return;
+
+    const aplicar = (valor: number) => {
+      const v = Math.round(Math.min(100, Math.max(0, valor)));
+      input.value = String(v);
+      input.setAttribute('aria-valuetext', `${v}% antes`);
+      area.style.setProperty('--pos', `${v}%`);
+    };
+    const posicao = (x: number) => {
+      const r = area.getBoundingClientRect();
+      return ((x - r.left) / r.width) * 100;
+    };
+
+    input.addEventListener('input', () => aplicar(+input.value));
+
+    // Mouse: clica e arrasta. Toque: só move depois de um gesto claramente horizontal
+    // (o navegador cancela o ponteiro quando o gesto vira rolagem vertical, por causa do touch-action: pan-y).
+    let ativo: number | null = null;
+    let inicioX = 0;
+    let inicioY = 0;
+    let arrastando = false;
+
+    area.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      ativo = e.pointerId;
+      inicioX = e.clientX;
+      inicioY = e.clientY;
+      arrastando = e.pointerType === 'mouse';
+      if (arrastando) {
+        e.preventDefault();
+        area.setPointerCapture(e.pointerId);
+        aplicar(posicao(e.clientX));
+      }
+    });
+    area.addEventListener('pointermove', (e) => {
+      if (e.pointerId !== ativo) return;
+      if (!arrastando) {
+        const dx = Math.abs(e.clientX - inicioX);
+        const dy = Math.abs(e.clientY - inicioY);
+        if (dx < 6 || dx < dy) return;
+        arrastando = true;
+        area.setPointerCapture(e.pointerId);
+      }
+      aplicar(posicao(e.clientX));
+    });
+    const soltar = (e: PointerEvent) => {
+      if (e.pointerId !== ativo) return;
+      // Toque rápido sem arrastar: leva o divisor até o ponto tocado.
+      if (!arrastando && e.type === 'pointerup') aplicar(posicao(e.clientX));
+      ativo = null;
+      arrastando = false;
+    };
+    area.addEventListener('pointerup', soltar);
+    area.addEventListener('pointercancel', soltar);
+  });
+</script>

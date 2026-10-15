@@ -1,0 +1,127 @@
+{
+  "slug": "exemplo",
+  "nicho": "odontologia",
+  "demo": true,
+
+  "nome": "Clínica Exemplo",
+  "complemento": "Odontologia e estética",
+  "descricao": "Clínica odontológica fictícia, usada como modelo do template. Implantes, facetas, ortodontia e clínica geral. Nota 4,9 no Google com 120 avaliações.",
+
+  "contato": {
+    "whatsapp": "5500000000000",
+    "telefone": "+55 00 00000-0000",
+    "mensagemWhatsapp": "Olá! Vi o site da Clínica Exemplo e gostaria de agendar uma avaliação.",
+    "instagram": "clinicaexemplo"
+  },
+
+  "endereco": {
+    "rua": "Rua Exemplo, 123",
+    "bairro": "Centro",
+    "cidade": "Uberlândia",
+    "uf": "MG",
+    "cep": "38400-000",
+    "lat": -18.9186,
+    "lng": -48.2772,
+    "mapsUrl": "https://www.google.com/maps/search/?api=1&query=-18.9186%2C-48.2772"
+  },
+
+  "google": {
+    "nota": 4.9,
+    "avaliacoes": 120,
+    "cincoEstrelas": 112,
+    "placeId": "EXEMPLO-PLACE-ID"
+  },
+
+  "horario": [
+    { "dia": 1, "abre": "08:00", "fecha": "18:00" },
+    { "dia": 2, "abre": "08:00", "fecha": "18:00" },
+    { "dia": 3, "abre": "08:00", "fecha": "18:00" },
+    { "dia": 4, "abre": "08:00", "fecha": "18:00" },
+    { "dia": 5, "abre": "08:00", "fecha": "18:00" },
+    { "dia": 6, "abre": "08:00", "fecha": "12:00" }
+  ],
+
+  "hero": {
+    "titulo": "Odontologia completa no Centro de Uberlândia",
+    "subtitulo": "Implantes, facetas, ortodontia e clínica geral, com planejamento explicado em cada etapa do tratamento.",
+    "imagem": "fachada.jpg",
+    "imagemAlt": "Imagem ilustrativa da fachada da Clínica Exemplo"
+  },
+
+  "antesDepois": {
+    "titulo": "Antes e depois",
+    "texto": "Arraste para comparar. Imagens ilustrativas: num cliente real, só casos publicados e autorizados pela clínica.",
+    "destaque": {
+      "antes": "sorriso-antes.jpg",
+      "depois": "sorriso-depois.jpg",
+      "legenda": "Facetas na arcada superior"
+    },
+    "outros": [
+      { "antes": "caso-2-antes.jpg", "depois": "caso-2-depois.jpg", "legenda": "Clareamento dental" }
+    ]
+  },
+
+  "tratamentos": [
+    {
+      "grupo": "Estética do sorriso",
+      "itens": [
+        { "nome": "Facetas em resina", "texto": "Mudam cor e formato dos dentes em poucas sessões." },
+        { "nome": "Clareamento dental", "texto": "Feito depois de avaliar sensibilidade e restaurações." }
+      ]
+    },
+    {
+      "grupo": "Implantes e reabilitação",
+      "itens": [
+        { "nome": "Implante dentário", "texto": "Repõe um ou mais dentes perdidos com planejamento individual." },
+        { "nome": "Tratamento de canal", "texto": "Endodontia para salvar o dente e acabar com a dor." }
+      ]
+    },
+    {
+      "grupo": "Ortodontia",
+      "itens": [
+        { "nome": "Alinhadores transparentes", "texto": "Corrigem a posição dos dentes de forma discreta." },
+        { "nome": "Aparelho fixo", "texto": "Aparelho tradicional para corrigir a posição dos dentes." }
+      ]
+    },
+    {
+      "grupo": "Cuidado do dia a dia",
+      "itens": [
+        { "nome": "Limpeza e prevenção", "texto": "Profilaxia e revisão periódica." },
+        { "nome": "Odontopediatria", "texto": "Atendimento dedicado para crianças." }
+      ]
+    }
+  ],
+
+  "primeiraConsulta": {
+    "titulo": "Como é a primeira consulta",
+    "passos": [
+      { "titulo": "Você chama no WhatsApp", "texto": "A equipe confirma o melhor horário para a sua avaliação." },
+      { "titulo": "Avaliação completa", "texto": "Exame clínico e conversa sobre o que você quer mudar no sorriso." },
+      { "titulo": "Plano de tratamento", "texto": "Você recebe as etapas, o prazo e o valor antes de começar." }
+    ]
+  },
+
+  "avaliacoes": [
+    { "autor": "Paciente A.", "quando": "agosto de 2026", "texto": "Avaliação fictícia de exemplo. Atendimento pontual e equipe muito atenciosa." },
+    { "autor": "Paciente B.", "quando": "julho de 2026", "texto": "Avaliação fictícia de exemplo. Fiz clareamento e gostei muito do resultado." },
+    { "autor": "Paciente C.", "quando": "junho de 2026", "texto": "Avaliação fictícia de exemplo. Clínica limpa, organizada e com explicação clara de cada etapa." }
+  ],
+
+  "espaco": {
+    "titulo": "Um espaço pensado para você ficar à vontade",
+    "texto": "Recepção confortável e consultórios equipados. Imagens ilustrativas.",
+    "fotos": [
+      { "src": "recepcao.jpg", "alt": "Imagem ilustrativa da recepção" },
+      { "src": "consultorio.jpg", "alt": "Imagem ilustrativa de um consultório" },
+      { "src": "espera.jpg", "alt": "Imagem ilustrativa da sala de espera" },
+      { "src": "consultorio-2.jpg", "alt": "Imagem ilustrativa do segundo consultório" }
+    ],
+    "acessibilidade": ["Entrada acessível para cadeira de rodas"]
+  },
+
+  "tema": {
+    "grafite": "#2B3440",
+    "acento": "#C29A6B",
+    "acentoTexto": "#7A5A36"
+  }
+}

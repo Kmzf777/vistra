@@ -5,6 +5,9 @@ Este repositório é a nossa gestão: CRM, concorrência, criação de conteúdo
 ferramentas e prospecção. Os produtos para clientes (sites e CRMs de petshop) ficam no repositório
 `PetShop-coldcall`, em `clientes/<cliente>/`.
 
+Exceção: o código reaproveitável dos sites de clínica fica em `sites/`. Dados reais de clientes e leads
+nunca entram no git.
+
 | Pasta | O que tem |
 |---|---|
 | `crm/` | Vistra CRM, em Next 16 + Supabase: leads, contatos e funil. Para rodar: `cd crm && npm install && npm run dev`. Precisa de `crm/.env.local` (modelo em `crm/.env.example`). Sem Supabase, roda com dados de demonstração. |
@@ -16,6 +19,7 @@ ferramentas e prospecção. Os produtos para clientes (sites e CRMs de petshop) 
 | `aprendizados/` | Specs, planos, pesquisas e referências (`docs/superpowers/...`), mais quadros e ideias em PDF. |
 | `ferramentas/maps-scraper/` | Kit local do Google Maps Scraper (Docker na porta 8080). Veja `SETUP.md` ali dentro. |
 | `prospeccao/` | `leads/` (raspagens, ex.: Uberlândia) e `scripts/` (`raspar_maps_udi.py`, `montar_leads_udi.py`, `build_sheet.py`). Rode os scripts a partir de `prospeccao/`. |
+| `sites/` | Sites para clínicas (Astro 7 + Tailwind v4). Um JSON por cliente em `clientes/` vira a rota `/<slug>`. Para rodar: `cd sites && npm install && npm run build`. No git só entra o cliente fictício `exemplo`. Clientes reais, `leads/` e fotos ficam só no disco. Regras em `sites/CLAUDE.md`. |
 | `servicos.md` | Levantamento dos serviços a partir dos repositórios. |
 
 Nasceu em 13/10/2026 a partir da pasta `Vistra/` do `PetShop-coldcall` (branch `vistra/reorganizacao`,

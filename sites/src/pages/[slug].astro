@@ -1,0 +1,14 @@
+---
+import { listarClientes, type Cliente } from '../lib/clientes';
+import Odontologia from '../templates/Odontologia.astro';
+
+export function getStaticPaths() {
+  return listarClientes().map((cliente) => ({ params: { slug: cliente.slug }, props: { cliente } }));
+}
+
+const templates = { odontologia: Odontologia };
+const { cliente } = Astro.props as { cliente: Cliente };
+const Template = templates[cliente.nicho];
+---
+
+<Template cliente={cliente} />
