@@ -80,6 +80,6 @@ Veio da pasta local `sites-comercios-locais` em 15/10/2026. Aquela pasta fica co
 
 ## Skills de design
 
-- Instaladas na pasta antiga `sites-comercios-locais` (`.agents/skills`, linkadas em `.claude/skills`). Ainda não vieram para este repositório.
+- Instaladas neste repositório em `.claude/skills/` (arquivos reais, via `npx skills add ... --copy`; fontes em `skills-lock.json`): `frontend-design`, pacote `ui-ux-pro-max` (+ `banner-design`, `brand`, `design`, `design-system`, `slides`, `ui-styling`), `wizard` e `to-questionnaire`.
 - `frontend-design` (anthropics/skills): fugir de visual genérico; identidade a partir do próprio negócio.
 - `ui-ux-pro-max` (nextlevelbuilder): checklist de UX/acessibilidade. A paleta sugerida para dentista (ciano/verde) é clichê; usamos as cores reais da clínica.
