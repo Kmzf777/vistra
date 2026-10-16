@@ -32,6 +32,7 @@ NICHOS = {
     "solar":       ("Energia solar",      "venda consultiva com simulação; site captura conta de luz e CRM acompanha"),
     "idiomas":     ("Escola/Cursos",      "matrícula sazonal e muita dúvida; disparo oficial reativa ex-alunos"),
     "veterinaria": ("Veterinária",        "agenda, vacina e retorno: lembrete automático pelo WhatsApp oficial"),
+    "petshop":     ("Pet shop",           "banho e tosa recorrente e pedido de ração no WhatsApp; agenda e lembrete automáticos"),
     "advocacia":   ("Advocacia",          "triagem de caso pelo WhatsApp e site com autoridade local"),
     "eventos":     ("Buffet/Eventos",     "orçamento por data, alto ticket, muita conversa até fechar"),
 }

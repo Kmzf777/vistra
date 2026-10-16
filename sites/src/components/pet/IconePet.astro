@@ -1,0 +1,62 @@
+---
+// Ícones do nicho pet (traço de 1,6, mesmo desenho do Icone.astro). Sempre decorativos: o texto ao lado dá o sentido.
+export type NomeIconePet =
+  | 'pata' | 'tesoura' | 'seringa' | 'estetoscopio' | 'sacola' | 'casa' | 'carro' | 'plantao' | 'check' | 'exame';
+interface Props {
+  nome: NomeIconePet;
+  class?: string;
+}
+const { nome, class: classe = 'size-5' } = Astro.props;
+---
+
+<svg class={classe} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  {nome === 'pata' && (
+    <Fragment>
+      <path d="M12 12.5c-2.6 0-5 2.6-5 5 0 1.4 1 2.2 2.3 2.2 1 0 1.7-.5 2.7-.5s1.7.5 2.7.5c1.3 0 2.3-.8 2.3-2.2 0-2.4-2.4-5-5-5z" />
+      <ellipse cx="5.2" cy="10.2" rx="1.7" ry="2.2" /><ellipse cx="9" cy="6" rx="1.7" ry="2.3" />
+      <ellipse cx="15" cy="6" rx="1.7" ry="2.3" /><ellipse cx="18.8" cy="10.2" rx="1.7" ry="2.2" />
+    </Fragment>
+  )}
+  {nome === 'tesoura' && (
+    <Fragment>
+      <circle cx="6" cy="6.5" r="2.6" /><circle cx="6" cy="17.5" r="2.6" />
+      <path d="M8.2 8l11.3 9.5M8.2 16l11.3-9.5" />
+    </Fragment>
+  )}
+  {nome === 'seringa' && (
+    <Fragment>
+      <path d="M17 3.5l3.5 3.5M18.8 5.2l-3 3M15 6.5l2.5 2.5M16.2 7.7l-9 9-3 .3.3-3 9-9" /><path d="M4.5 19.5L3 21M9.5 11.5l1.5 1.5M7.5 13.5L9 15" />
+    </Fragment>
+  )}
+  {nome === 'estetoscopio' && (
+    <Fragment>
+      <path d="M5 3.5v5a4.5 4.5 0 0 0 9 0v-5" /><path d="M9.5 13v2.5a4.5 4.5 0 0 0 9 0v-2" /><circle cx="18.5" cy="11" r="2.2" />
+    </Fragment>
+  )}
+  {nome === 'sacola' && (
+    <Fragment>
+      <path d="M5 8h14l-1 12.5H6L5 8z" /><path d="M9 10V6.5a3 3 0 0 1 6 0V10" />
+    </Fragment>
+  )}
+  {nome === 'casa' && (
+    <Fragment>
+      <path d="M4 11l8-6.5 8 6.5" /><path d="M6 9.5V20h12V9.5" /><path d="M10 20v-5h4v5" />
+    </Fragment>
+  )}
+  {nome === 'carro' && (
+    <Fragment>
+      <path d="M3.5 16.5V12l2-5h13l2 5v4.5h-17z" /><path d="M3.5 12h17" /><circle cx="7.5" cy="16.5" r="1.8" /><circle cx="16.5" cy="16.5" r="1.8" />
+    </Fragment>
+  )}
+  {nome === 'plantao' && (
+    <Fragment>
+      <path d="M9.5 3.5h5v6h6v5h-6v6h-5v-6h-6v-5h6z" />
+    </Fragment>
+  )}
+  {nome === 'check' && <path d="M4.5 12.5l4.5 4.5 10.5-10.5" />}
+  {nome === 'exame' && (
+    <Fragment>
+      <path d="M9.5 3.5h5M10.5 3.5v6.2L5.3 18.4A1.5 1.5 0 0 0 6.6 20.5h10.8a1.5 1.5 0 0 0 1.3-2.1l-5.2-8.7V3.5" /><path d="M7.5 15h9" />
+    </Fragment>
+  )}
+</svg>

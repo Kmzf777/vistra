@@ -9,9 +9,9 @@ Veio da pasta local `sites-comercios-locais` em 15/10/2026. Aquela pasta fica co
 - O código reaproveitável dos sites fica aqui, no git.
 - Dados reais de clientes e leads **nunca** entram no git. Ficam só no disco, ignorados pelo `.gitignore` da raiz:
   - `sites/leads/` inteiro (planilhas, `abordagens.csv`, mensagens por lead, `raw/`, `screenshots/`, `casos.md`).
-  - `sites/clientes/*.json`, menos `exemplo.json`.
-  - `sites/src/assets/clientes/*/`, menos `exemplo/`.
-- O único cliente versionado é o `exemplo` (Clínica Exemplo, fictícia, telefone falso, imagens geradas por `scripts/gerar-imagens-exemplo.mjs`). O build funciona só com ele.
+  - `sites/clientes/*.json`, menos `exemplo.json` e `exemplo-pet.json`.
+  - `sites/src/assets/clientes/*/`, menos `exemplo/` e `exemplo-pet/`.
+- Os únicos clientes versionados são os fictícios: `exemplo` (Clínica Exemplo, odontologia, imagens de `scripts/gerar-imagens-exemplo.mjs`) e `exemplo-pet` (Pet Exemplo, pet shop + veterinária, imagens de `scripts/gerar-imagens-exemplo-pet.mjs`). Telefones falsos. O build funciona só com eles.
 - Nos arquivos versionados, lead real aparece só de forma anônima ("lead nº 1", "caso 2"). Os nomes ficam em `sites/leads/casos.md`, local.
 - Antes de cada commit, conferir no staged se não há telefone, e-mail ou nome de clínica real.
 
@@ -50,6 +50,7 @@ Veio da pasta local `sites-comercios-locais` em 15/10/2026. Aquela pasta fica co
 - `clientes/<slug>.json`: todos os dados do cliente (contato, endereço, horário, nota do Google, tratamentos, avaliações reais, fotos, cores do tema). O formato é o tipo `Cliente` de `src/lib/clientes.ts`, e `clientes/exemplo.json` serve de modelo. Campo `nicho` escolhe o template. `demo: true` coloca `noindex` e uma nota de "prévia" no rodapé.
 - `src/assets/clientes/<slug>/`: fotos do cliente (o JSON referencia só o nome do arquivo; o Astro gera WebP responsivo).
 - `src/templates/Odontologia.astro`: template do nicho (hero, antes/depois com slider, tratamentos, primeira consulta, avaliações do Google, espaço, mapa sob demanda + horário, botão fixo de WhatsApp, schema `Dentist`/LocalBusiness).
+- `src/templates/Pet.astro` (`nicho: "pet"`): pet shop, veterinária ou os dois pelo campo `tipo`. Faixa de emergência 24h, medalha com a nota do Google, serviços por categoria com preço "a partir de", tabela de banho e tosa por porte com mensagem de agendamento pronta, leva e traz, equipe com CRMV, schema `PetStore`/`VeterinaryCare`. Regra do CFMV (Res. 1.649/2025): nome e CRMV do responsável técnico na página e nada de preço de ato veterinário (o template ignora `aPartirDe` em `clinica`, `vacinas` e `exames` e avisa no build).
 - `scripts/`: `gerar_planilha.py` (planilha de leads a partir de um JSON em `leads/`) e `gerar-imagens-exemplo.mjs` (imagens do exemplo).
 - `vendas/`: textos de venda sem dado pessoal.
 - Rodar: `npm install`, `npm run build` gera `dist/`, `npx astro preview` serve local.

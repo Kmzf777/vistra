@@ -57,7 +57,7 @@ Decisão do Kelwin (13/10/2026): a mensagem diz que a prévia já está feita, p
 
 ## Etapa 4. Escrever as mensagens
 
-Estilo do Kelwin: frases curtas, minúsculas no começo das linhas, sem dois-pontos, sem travessões, sem linguagem de vendedor, no máximo 750 caracteres. Contar os caracteres antes de entregar.
+Estilo do Kelwin: frases curtas, minúsculas no começo das linhas, sem dois-pontos, sem travessões, sem linguagem de vendedor. A mensagem principal (AIDA) soma **no máximo 650 caracteres** e vai **dividida em 2 ou 3 mensagens**, nunca um textão (regra de 16/10/2026). Contar os caracteres antes de entregar.
 
 Pontuação (regra do Kelwin): depois de ponto final, interrogação ou exclamação, OU quebra a linha e começa com minúscula, OU continua na mesma linha com maiúscula. Nunca ponto seguido de minúscula na mesma linha.
 

@@ -46,8 +46,10 @@ motion/ferramentas/whisper.cpp/
 sites/leads/
 sites/clientes/*
 !sites/clientes/exemplo.json
+!sites/clientes/exemplo-pet.json
 sites/src/assets/clientes/*
 !sites/src/assets/clientes/exemplo/
+!sites/src/assets/clientes/exemplo-pet/
 sites/dist/
 sites/.astro/
 sites/.vercel/

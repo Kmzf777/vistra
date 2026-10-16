@@ -1,0 +1,161 @@
+{
+  "slug": "exemplo-pet",
+  "nicho": "pet",
+  "tipo": "petshop-veterinaria",
+  "demo": true,
+
+  "nome": "Pet Exemplo",
+  "complemento": "Pet shop e veterinária",
+  "descricao": "Pet shop e clínica veterinária fictícios, usados como modelo do template. Banho e tosa com leva e traz, consultas, vacinas e emergência 24 horas. Nota 4,8 no Google com 214 avaliações.",
+
+  "contato": {
+    "whatsapp": "5534900000000",
+    "telefone": "+55 34 90000-0000",
+    "mensagemWhatsapp": "Olá! Vi o site do Pet Exemplo e queria tirar uma dúvida.",
+    "instagram": "petexemplo"
+  },
+
+  "endereco": {
+    "rua": "Rua Exemplo, 456",
+    "bairro": "Santa Mônica",
+    "cidade": "Uberlândia",
+    "uf": "MG",
+    "cep": "38400-000",
+    "lat": -18.9186,
+    "lng": -48.2772,
+    "mapsUrl": "https://www.google.com/maps/search/?api=1&query=-18.9186%2C-48.2772"
+  },
+
+  "google": {
+    "nota": 4.8,
+    "avaliacoes": 214,
+    "cincoEstrelas": 189,
+    "placeId": "EXEMPLO-PET-PLACE-ID"
+  },
+
+  "horario": [
+    { "dia": 1, "abre": "08:00", "fecha": "19:00" },
+    { "dia": 2, "abre": "08:00", "fecha": "19:00" },
+    { "dia": 3, "abre": "08:00", "fecha": "19:00" },
+    { "dia": 4, "abre": "08:00", "fecha": "19:00" },
+    { "dia": 5, "abre": "08:00", "fecha": "19:00" },
+    { "dia": 6, "abre": "08:00", "fecha": "14:00" }
+  ],
+
+  "emergencia24h": {
+    "telefone": "+55 34 90000-0000",
+    "texto": "Plantão veterinário 24 horas, todos os dias"
+  },
+
+  "levaETraz": {
+    "texto": "Buscamos e levamos seu pet em casa no Santa Mônica e bairros vizinhos.",
+    "aPartirDe": 10
+  },
+
+  "destaques": ["Cães e gatos", "Estacionamento na porta"],
+
+  "hero": {
+    "titulo": "Banho, tosa e veterinário no Santa Mônica",
+    "subtitulo": "Seu pet sai cheiroso e bem cuidado, com leva e traz e veterinário de plantão 24 horas.",
+    "imagem": "hero.jpg",
+    "imagemAlt": "Imagem ilustrativa de um cachorro e um gato"
+  },
+
+  "servicos": [
+    {
+      "categoria": "clinica",
+      "itens": [
+        { "nome": "Consulta veterinária", "texto": "Clínico geral para cães e gatos, com hora marcada." },
+        { "nome": "Retorno e acompanhamento", "texto": "Revisão depois de tratamento ou cirurgia." }
+      ]
+    },
+    {
+      "categoria": "vacinas",
+      "itens": [
+        { "nome": "V8, V10 e antirrábica", "texto": "Carteirinha de vacinação em dia, com lembrete da próxima dose." },
+        { "nome": "Vacinas para gatos", "texto": "Tríplice e quádrupla felina." }
+      ]
+    },
+    {
+      "categoria": "exames",
+      "itens": [
+        { "nome": "Exames de sangue", "texto": "Coleta na clínica." },
+        { "nome": "Castração", "texto": "Agendada depois da avaliação do veterinário." }
+      ]
+    },
+    {
+      "categoria": "estetica",
+      "itens": [
+        { "nome": "Banho", "texto": "Com secagem e perfume.", "aPartirDe": 45 },
+        { "nome": "Banho e tosa", "texto": "Tosa higiênica, na tesoura ou na máquina.", "aPartirDe": 70 },
+        { "nome": "Hidratação de pelos", "aPartirDe": 25 }
+      ]
+    },
+    {
+      "categoria": "loja",
+      "itens": [
+        { "nome": "Rações e petiscos", "texto": "Marcas premium e super premium." },
+        { "nome": "Farmácia pet", "texto": "Antipulgas, vermífugos e remédios receitados." }
+      ]
+    },
+    {
+      "categoria": "hospedagem",
+      "itens": [
+        { "nome": "Creche durante o dia", "texto": "Para o pet não ficar sozinho em casa.", "aPartirDe": 50 }
+      ]
+    }
+  ],
+
+  "banhoETosa": {
+    "texto": "Agende pelo WhatsApp e escolha o horário. Avisamos quando o seu pet estiver pronto.",
+    "portes": [
+      { "porte": "Pequeno", "peso": "até 10 kg", "banho": 45, "banhoETosa": 70 },
+      { "porte": "Médio", "peso": "10 a 25 kg", "banho": 60, "banhoETosa": 90 },
+      { "porte": "Grande", "peso": "25 a 40 kg", "banho": 80, "banhoETosa": 120 },
+      { "porte": "Gigante", "peso": "acima de 40 kg", "banho": 100, "banhoETosa": 150 }
+    ],
+    "inclui": ["Shampoo para o tipo de pelo", "Corte de unhas", "Limpeza de ouvidos", "Secagem e perfume"],
+    "mensagemWhatsapp": "Olá! Quero agendar banho e tosa.\nNome do pet:\nPorte (pequeno, médio, grande):\nDia e horário que prefiro:",
+    "passos": [
+      { "titulo": "Chame no WhatsApp", "texto": "A mensagem já vai pronta, é só completar com o nome e o porte do pet." },
+      { "titulo": "Escolha o horário", "texto": "A equipe confirma o dia e se você quer o leva e traz." },
+      { "titulo": "Buscamos o pet pronto", "texto": "Avisamos pelo WhatsApp quando ele estiver cheiroso." }
+    ]
+  },
+
+  "responsavelTecnico": { "nome": "Dra. Ana Exemplo", "crmv": "CRMV-MG 00000" },
+
+  "equipe": {
+    "titulo": "Quem cuida do seu pet",
+    "texto": "Pessoas e cargos fictícios. Imagens ilustrativas.",
+    "pessoas": [
+      { "nome": "Dra. Ana Exemplo", "funcao": "Médica-veterinária e responsável técnica", "registro": "CRMV-MG 00000", "foto": "equipe-1.jpg" },
+      { "nome": "Dr. Bruno Exemplo", "funcao": "Médico-veterinário, plantão", "registro": "CRMV-MG 00001", "foto": "equipe-2.jpg" },
+      { "nome": "Carla Exemplo", "funcao": "Banhista e tosadora", "foto": "equipe-3.jpg" }
+    ]
+  },
+
+  "avaliacoes": [
+    { "autor": "Tutor A.", "quando": "setembro de 2026", "texto": "Avaliação fictícia de exemplo. Meu cachorro voltou do banho cheiroso e calmo, e o leva e traz chegou no horário." },
+    { "autor": "Tutora B.", "quando": "agosto de 2026", "texto": "Avaliação fictícia de exemplo. Fui atendida de madrugada no plantão e a veterinária explicou tudo com calma." },
+    { "autor": "Tutor C.", "quando": "agosto de 2026", "texto": "Avaliação fictícia de exemplo. Preço justo e equipe que trata os bichos com carinho." }
+  ],
+
+  "espaco": {
+    "titulo": "Conheça o espaço",
+    "texto": "Área de banho separada da clínica, para o pet não se estressar. Imagens ilustrativas.",
+    "fotos": [
+      { "src": "recepcao.jpg", "alt": "Imagem ilustrativa da recepção e da loja" },
+      { "src": "banho.jpg", "alt": "Imagem ilustrativa da área de banho e tosa" },
+      { "src": "consultorio.jpg", "alt": "Imagem ilustrativa do consultório veterinário" },
+      { "src": "loja.jpg", "alt": "Imagem ilustrativa das prateleiras da loja" }
+    ],
+    "acessibilidade": ["Entrada sem degrau", "Estacionamento na porta"]
+  },
+
+  "tema": {
+    "grafite": "#26225A",
+    "acento": "#F2C230",
+    "acentoTexto": "#6E5200"
+  }
+}

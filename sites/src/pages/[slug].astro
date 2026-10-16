@@ -1,14 +1,15 @@
 ---
 import { listarClientes, type Cliente } from '../lib/clientes';
 import Odontologia from '../templates/Odontologia.astro';
+import Pet from '../templates/Pet.astro';
 
 export function getStaticPaths() {
   return listarClientes().map((cliente) => ({ params: { slug: cliente.slug }, props: { cliente } }));
 }
 
-const templates = { odontologia: Odontologia };
+// O campo `nicho` do JSON escolhe o template.
 const { cliente } = Astro.props as { cliente: Cliente };
-const Template = templates[cliente.nicho];
 ---
 
-<Template cliente={cliente} />
+{cliente.nicho === 'odontologia' && <Odontologia cliente={cliente} />}
+{cliente.nicho === 'pet' && <Pet cliente={cliente} />}

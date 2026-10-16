@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import Icone from '../components/Icone.astro';
 import Comparador from '../components/Comparador.astro';
 import {
-  type Cliente,
+  type ClienteOdontologia,
   imagem,
   linkWhatsapp,
   linkAvaliacoesGoogle,
@@ -14,7 +14,7 @@ import {
 } from '../lib/clientes';
 
 interface Props {
-  cliente: Cliente;
+  cliente: ClienteOdontologia;
 }
 const { cliente: c } = Astro.props;
 

@@ -34,6 +34,8 @@ BUSCAS = {
     "solar":       ["energia solar"],
     "idiomas":     ["escola de ingles", "curso profissionalizante"],
     "veterinaria": ["clinica veterinaria"],
+    "petshop":     ["pet shop", "banho e tosa", "agropecuaria pet"],
+    "advocacia":   ["escritorio de advocacia", "advogado"],
     "eventos":     ["buffet infantil", "espaco de eventos"],
 }
 
@@ -73,7 +75,10 @@ def linha(p):
     if "google.com/aclk" in site:
         site = ""
     texto = json.dumps(p, ensure_ascii=False)
-    fechado = 1 if ("Fechado permanentemente" in texto or "CLOSED_PERMANENTLY" in texto) else 0
+    # Permanente ou temporário: nos dois casos o lead não serve para abordar agora.
+    fechado = 1 if any(s in texto for s in (
+        "Fechado permanentemente", "Fechado temporariamente", "Permanently closed",
+        "Temporarily closed", "CLOSED_PERMANENTLY", "CLOSED_TEMPORARILY")) else 0
     cidade = "Uberlândia" in texto or "Uberlandia" in texto
     nota_s = f"{nota:.1f}".replace(".", ",") if isinstance(nota, (int, float)) else ""
     campos = [nome, nota_s, str(aval or ""), cat, end, tel, site, str(fechado), "0"]
