@@ -11,6 +11,17 @@ Dados reais de clientes e leads nunca entram no git: `sites/leads/`, os JSONs de
 de `sites/src/assets/clientes/` ficam ignorados, menos o cliente fictício `exemplo`. Regras e decisões do
 negócio de sites em `sites/CLAUDE.md`. Fluxo de prospecção na skill `prospectar` (`.claude/skills/prospectar/`).
 
+## Regras obrigatórias
+
+Valem para toda tarefa do projeto:
+
+1. **Subagentes em background.** Execute as tarefas com subagentes em background e rode em paralelo o que
+   for independente.
+2. **Skills.** Identifique e use as skills instaladas que se aplicam à tarefa.
+3. **Pesquisa antes da solução.** Pesquise na internet antes de apresentar uma solução. Priorize documentação
+   oficial, boas práticas comprovadas e informação atualizada, e cite as fontes.
+4. **Validação antes da entrega.** Verifique o resultado (build, teste, conferência) antes de entregá-lo.
+
 ## Mapa
 
 | Pasta | O que é |
