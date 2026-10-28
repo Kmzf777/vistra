@@ -53,3 +53,9 @@ sites/src/assets/clientes/*
 sites/dist/
 sites/.astro/
 sites/.vercel/
+
+# Rascunhos do brainstorming (visual companion)
+.superpowers/
+
+# Worktrees de desenvolvimento
+.worktrees/
