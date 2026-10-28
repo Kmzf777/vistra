@@ -12,7 +12,9 @@ function lerArgumentos(argv: string[]): Opcoes {
     const i = argv.indexOf(nome);
     return i >= 0 && argv[i + 1] && !argv[i + 1].startsWith("--") ? argv[i + 1] : padrao;
   };
-  return { prefixo: valor("--prefixo", "exemplo-"), emails: valor("--emails", ""), gravar: argv.includes("--gravar") };
+  const o = { prefixo: valor("--prefixo", "exemplo-"), emails: valor("--emails", ""), gravar: argv.includes("--gravar") };
+  if (!o.prefixo.startsWith("exemplo-")) throw new Error('--prefixo precisa começar com "exemplo-".');
+  return o;
 }
 
 export function clienteSecreto(): SupabaseClient {
@@ -27,7 +29,7 @@ function exigir<T>(r: { data: T | null; error: { message: string } | null }, ond
 
 // Tabelas que talvez ainda não existam (criadas em tarefas posteriores): erro de tabela ausente é ignorado.
 function tabelaAusente(erro: { code?: string; message: string } | null): boolean {
-  return !!erro && (erro.code === "42P01" || erro.code === "PGRST205" || /does not exist|schema cache/i.test(erro.message));
+  return !!erro && (erro.code === "42P01" || erro.code === "PGRST205");
 }
 
 async function listarUsuarios(sb: SupabaseClient, prefixoEmail: string) {
@@ -45,6 +47,7 @@ async function listarUsuarios(sb: SupabaseClient, prefixoEmail: string) {
 }
 
 export async function limparExemplos(sb: SupabaseClient, o: Opcoes): Promise<Resultado> {
+  if (!o.prefixo.startsWith("exemplo-")) throw new Error('prefixo precisa começar com "exemplo-".');
   const leads = exigir(
     await sb.from("leads").select("id").like("origem_id", `${o.prefixo}%`),
     "ler leads",

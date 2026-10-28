@@ -1,6 +1,10 @@
 begin;
 select plan(36);
 
+-- isola a fila: só a Cidade Exemplo fica ativa (vale dentro desta transação, que termina em rollback)
+insert into public.cidades (nome, uf, ativa) values ('Cidade Exemplo', 'EX', true) on conflict (nome, uf) do update set ativa = true;
+update public.cidades set ativa = false where not (nome = 'Cidade Exemplo' and uf = 'EX');
+
 select set_config('t.v1', testes.criar_usuario('fila1@exemplo.com', 'Vendedor Um Exemplo')::text, true);
 select set_config('t.v2', testes.criar_usuario('fila2@exemplo.com', 'Vendedor Dois Exemplo')::text, true);
 select set_config('t.v3', testes.criar_usuario('fila3@exemplo.com', 'Vendedor Tres Exemplo')::text, true);

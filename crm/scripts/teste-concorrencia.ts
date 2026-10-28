@@ -38,11 +38,12 @@ async function main() {
     // 2. leads prontos
     const cidade = ok(await adm.from("cidades").select("id").eq("nome", "Uberlândia").eq("uf", "MG").single(), "cidade") as { id: string };
     const nicho = ok(await adm.from("nichos").select("id").eq("nome", "Pet shop").single(), "nicho") as { id: string };
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 1; i <= 5; i++) {
+      // 04 e 05 são irmãos do mesmo grupo: só um deles pode ser entregue
       const lead = ok(
         await adm.from("leads").insert({
           nome: `Pet Shop Exemplo Conc 0${i}`, cidade_id: cidade.id, nicho_id: nicho.id,
-          origem_id: `exemplo-conc-0${i}`, google_place_id: `exemplo-conc-0${i}`,
+          origem_id: `exemplo-conc-0${i}`, ...(i >= 4 ? { grupo: "exemplo-conc-grupo" } : {}), google_place_id: `exemplo-conc-0${i}`,
           // no topo da fila, para valer mesmo com outros leads prontos no banco
           prioridade: 1, nota: 5.0, avaliacoes: 9999,
         }).select("id").single(),
@@ -82,11 +83,15 @@ async function main() {
     const repetidos = sucessos.length - new Set(sucessos).size;
     const conc = ok(await adm.from("leads").select("id").like("origem_id", "exemplo-conc-"+"%"), "leads de concorrência") as { id: string }[];
     const idsConc = new Set(conc.map((l) => l.id));
+    const irmaos = ok(await adm.from("leads").select("id").in("origem_id", ["exemplo-conc-04", "exemplo-conc-05"]), "irmãos") as { id: string }[];
+    const idsIrmaos = new Set(irmaos.map((l) => l.id));
     entregues = sucessos.filter((id) => idsConc.has(id)).length;
-    console.log(`${respostas.length} pedidos, ${repetidos} ids repetidos, ${entregues} leads de concorrência entregues.`);
+    const irmaosEntregues = sucessos.filter((id) => idsIrmaos.has(id)).length;
+    console.log(`${respostas.length} pedidos, ${repetidos} ids repetidos, ${entregues} leads de concorrência entregues, ${irmaosEntregues} irmão(s) do grupo entregue(s).`);
     if (repetidos !== 0) falha = "ids repetidos";
     else if (sucessos.length + recusas !== 6) falha = "sucessos + recusas diferente de 6";
-    else if (entregues !== 3) falha = "os 3 leads de concorrência não foram todos entregues";
+    else if (irmaosEntregues !== 1) falha = "esperava exatamente 1 irmão do grupo entregue";
+    else if (entregues !== 4) falha = "esperava 4 leads de concorrência entregues (3 avulsos + 1 do grupo)";
   } catch (e) {
     falha = (e as Error).message;
   } finally {
