@@ -241,7 +241,7 @@ export default function LeadsPoco({ modo, leads, vendedores, meuId, meuNome, dem
           <strong>Dados de demonstração.</strong> Não há credenciais do Supabase no{" "}
           <code>.env</code>, então estes {leads.length} leads são inventados e nenhuma ação é
           gravada. Preencha <code>NEXT_PUBLIC_SUPABASE_URL</code> e{" "}
-          <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> para ver o poço de verdade.
+          <code>NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code> para ver o poço de verdade.
         </p>
       )}
 

@@ -1,6 +1,6 @@
 import { LEADS_EXEMPLO, VENDEDOR_EXEMPLO, type LeadDoPoco } from "@/lib/leadsExemplo";
 import { lerLeadsRaspados } from "@/lib/leadsRaspados";
-import { criarClienteServidor, temCredenciaisServidor } from "@/lib/supabase/servidor";
+import { criarClienteServidorLegado, temCredenciais } from "@/lib/supabase/servidor";
 
 // Carregamento compartilhado pelas duas telas de lead.
 //
@@ -47,7 +47,7 @@ export type Carga =
 export async function carregarLeads(): Promise<Carga> {
   // Sem credenciais não existe poço. Em vez de girar para sempre ou estourar
   // erro de rede, devolve leads de mentira — e a tela diz que são de mentira.
-  if (!temCredenciaisServidor()) {
+  if (!temCredenciais()) {
     // Havendo raspagem no disco, ela entra no lugar dos exemplos: são leads
     // de verdade, só que as ações ainda não gravam em lugar nenhum.
     const raspados = lerLeadsRaspados();
@@ -66,7 +66,7 @@ export async function carregarLeads(): Promise<Carga> {
   }
 
   try {
-    const sb = await criarClienteServidor();
+    const sb = await criarClienteServidorLegado();
 
     const { data: sessao, error: erroSessao } = await sb.auth.getUser();
     if (erroSessao || !sessao.user) return { estado: "anonimo" };

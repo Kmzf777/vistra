@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Kanban from "@/components/Kanban";
 import { montarCartoes, type CartaoLead } from "@/components/KanbanTipos";
-import { caminhoDeLogin, usuarioAtual } from "@/lib/auth";
+import { caminhoDeLogin, perfilAtual } from "@/lib/dados/sessao";
 import { cartoesExemplo } from "@/lib/funilExemplo";
-import { criarClienteServidor, temCredenciaisServidor } from "@/lib/supabase/servidor";
+import { criarClienteServidorLegado, temCredenciais } from "@/lib/supabase/servidor";
 import type { Contato, Evento, Lead } from "@/lib/tipos";
 import estilo from "./funil.module.css";
 
@@ -24,7 +24,7 @@ async function carregar(): Promise<Carga> {
   // Sem chaves no .env não existe banco para consultar. Em vez de girar ou
   // estourar um erro de rede, o quadro sobe com dados de demonstração e a
   // tela diz isso em letras grandes.
-  if (!temCredenciaisServidor()) {
+  if (!temCredenciais()) {
     return { tipo: "demonstracao", cartoes: cartoesExemplo() };
   }
 
@@ -33,12 +33,12 @@ async function carregar(): Promise<Carga> {
   // Em operação normal o proxy já teria mandado quem não tem sessão para o
   // /login — mas ele deixa passar de propósito quando a rede falha, então
   // este caminho tem que existir e dizer o que aconteceu.
-  const usuario = await usuarioAtual();
+  const usuario = await perfilAtual();
   if (!usuario) return { tipo: "anonimo" };
   const vendedorId = usuario.id;
 
   try {
-    const sb = await criarClienteServidor();
+    const sb = await criarClienteServidorLegado();
 
     // A regra do quadro, em duas cláusulas: é MEU e está QUALIFICADO.
     // `etapa` não entra no filtro porque o gatilho `leads_coerencia` já
@@ -115,7 +115,7 @@ export default async function Funil() {
       {carga.tipo === "demonstracao" && (
         <p className={estilo.faixa} data-tom="demo">
           <strong>Dados de demonstração.</strong> O <code>.env</code> não tem{" "}
-          <code>NEXT_PUBLIC_SUPABASE_URL</code> e <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code>, então
+          <code>NEXT_PUBLIC_SUPABASE_URL</code> e <code>NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code>, então
           não há banco para consultar. Estes {carga.cartoes.length} cartões são inventados, o
           quadro se move na tela e <strong>nada é gravado em lugar nenhum</strong>.
         </p>

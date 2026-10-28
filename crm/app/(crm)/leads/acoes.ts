@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { criarClienteServidor, temCredenciaisServidor } from "@/lib/supabase/servidor";
+import { criarClienteServidorLegado, temCredenciais } from "@/lib/supabase/servidor";
 
 /**
  * Toda ação do poço devolve isto. Nunca lança: um throw em Server Action
@@ -11,7 +11,7 @@ import { criarClienteServidor, temCredenciaisServidor } from "@/lib/supabase/ser
 export type Resultado = { ok: true; recado: string } | { ok: false; erro: string };
 
 const SEM_BANCO =
-  "Sem banco. Falta NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY no .env do app — nada é gravado.";
+  "Sem banco. Falta NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY no .env do app — nada é gravado.";
 
 function texto(e: unknown) {
   return e instanceof Error ? e.message : String(e);
@@ -22,16 +22,16 @@ function limpar(v: unknown, limite = 300) {
   return typeof v === "string" ? v.trim().slice(0, limite) : "";
 }
 
-type Sessao = { sb: Awaited<ReturnType<typeof criarClienteServidor>>; eu: string };
+type Sessao = { sb: Awaited<ReturnType<typeof criarClienteServidorLegado>>; eu: string };
 
 /**
  * Começo comum de toda ação: credencial + sessão. Sem uma das duas a ação
  * para aqui e explica o porquê, em vez de estourar no meio de um update.
  */
 async function abrir(): Promise<Sessao | { erro: string }> {
-  if (!temCredenciaisServidor()) return { erro: SEM_BANCO };
+  if (!temCredenciais()) return { erro: SEM_BANCO };
   try {
-    const sb = await criarClienteServidor();
+    const sb = await criarClienteServidorLegado();
     const { data, error } = await sb.auth.getUser();
     if (error || !data.user) return { erro: "Sessão expirada. Entre de novo para continuar." };
     return { sb, eu: data.user.id };

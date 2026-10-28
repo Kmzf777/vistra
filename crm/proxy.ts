@@ -22,23 +22,23 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-// Constantes repetidas de propósito: `lib/auth.ts` importa `next/headers` e
+// Constantes repetidas de propósito: `lib/dados/sessao.ts` importa `next/headers` e
 // `redirect`, que não existem no runtime do proxy. Importar de lá arrastaria
 // o módulo inteiro para cá e quebraria o build.
 const ROTA_LOGIN = "/login";
-const ROTA_CADASTRO = "/cadastro";
-const ROTA_INICIO = "/leads";
+const ROTA_CONFIRMAR = "/auth/confirmar";
+const ROTA_INICIO = "/inicio";
 
 // Lidas no topo do módulo: NEXT_PUBLIC_* são embutidas no build, não existe
 // leitura de .env em tempo de requisição aqui.
 const URL_SUPABASE = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const CHAVE_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const CHAVE_PUBLICAVEL = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
 // As duas portas que existem sem sessão. Quem já tem sessão e cai numa
 // delas é devolvido ao trabalho — ficar numa tela de entrar já estando
 // dentro só confunde.
 function ePublica(caminho: string): boolean {
-  return [ROTA_LOGIN, ROTA_CADASTRO].some(
+  return [ROTA_LOGIN, ROTA_CONFIRMAR].some(
     (r) => caminho === r || caminho.startsWith(`${r}/`)
   );
 }
@@ -98,13 +98,13 @@ export async function proxy(pedido: NextRequest) {
   // Travar tudo aqui deixaria o app inteiro inacessível (as telas caem nos
   // dados de demonstração) sem proteger um dado sequer. Então passa reto, e a
   // /login é quem explica, por escrito, o que está faltando.
-  if (!URL_SUPABASE || !CHAVE_ANON) return NextResponse.next();
+  if (!URL_SUPABASE || !CHAVE_PUBLICAVEL) return NextResponse.next();
 
   // A resposta nasce ANTES da conversa com o Supabase: é nela que os cookies
   // renovados vão ser escritos, de dentro do setAll abaixo.
   let resposta = NextResponse.next({ request: pedido });
 
-  const supabase = createServerClient(URL_SUPABASE, CHAVE_ANON, {
+  const supabase = createServerClient(URL_SUPABASE, CHAVE_PUBLICAVEL, {
     cookies: {
       getAll: () => pedido.cookies.getAll(),
       setAll: (lista, cabecalhos) => {
@@ -174,7 +174,9 @@ export async function proxy(pedido: NextRequest) {
   }
 
   // --- com sessão, parado no login ---
-  if (temSessao && ePublica(caminho)) {
+  // /auth/confirmar fica de fora: quem recebe um convite já pode ter outra
+  // sessão aberta, e o link precisa trocar o token mesmo assim.
+  if (temSessao && ePublica(caminho) && !caminho.startsWith(ROTA_CONFIRMAR)) {
     const paraOnde = destinoSeguro(url.searchParams.get("de")) ?? ROTA_INICIO;
     // `new URL(caminho, origem)` separa path de query sozinho. Atribuir o
     // valor em `pathname` escaparia o "?" e o destino viraria literalmente

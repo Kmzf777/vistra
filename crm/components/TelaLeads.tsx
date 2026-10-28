@@ -66,7 +66,7 @@ export default async function TelaLeads({ modo }: { modo: "universal" | "meus" }
           ) : (
             <>
               Confira <code>NEXT_PUBLIC_SUPABASE_URL</code> e{" "}
-              <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> no <code>.env</code> do projeto.
+              <code>NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code> no <code>.env</code> do projeto.
             </>
           )}
         </p>

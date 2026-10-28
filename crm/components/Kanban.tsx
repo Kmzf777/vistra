@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { criarCliente } from "@/lib/supabase/cliente";
+import { criarClienteLegado } from "@/lib/supabase/cliente";
 import { ETAPAS, type Etapa, type Evento } from "@/lib/tipos";
 import KanbanColuna from "./KanbanColuna";
 import PainelLead from "./PainelLead";
@@ -82,8 +82,8 @@ export default function Kanban({ iniciais, vendedorId, demonstracao }: Props) {
 
   // Um cliente por montagem. `createBrowserClient` guarda a sessão em cookie,
   // então não há estado a perder entre chamadas.
-  const refBanco = useRef<ReturnType<typeof criarCliente> | null>(null);
-  const banco = () => (refBanco.current ??= criarCliente());
+  const refBanco = useRef<ReturnType<typeof criarClienteLegado> | null>(null);
+  const banco = () => (refBanco.current ??= criarClienteLegado());
 
   const anunciar = useCallback((tom: Tom, texto: string) => {
     setAviso({ tom, texto });
