@@ -1,5 +1,5 @@
 begin;
-select plan(44);
+select plan(54);
 
 -- isola a fila: só a Cidade Exemplo fica ativa (vale dentro desta transação, que termina em rollback)
 insert into public.cidades (nome, uf, ativa) values ('Cidade Exemplo', 'EX', true) on conflict (nome, uf) do update set ativa = true;
@@ -153,6 +153,46 @@ select is((select etapa from public.leads where id = current_setting('t.q')::uui
 select is((select status from public.pedidos_previa where lead_id = current_setting('t.q')::uuid), 'enviada', 'pedido enviado');
 select pg_temp.ag(current_setting('t.v4'), current_setting('t.q'), 'pediu_parar');
 select is((select etapa from public.leads where id = current_setting('t.q')::uuid), 'perdeu', 'pediu_parar com etapa vira perdeu');
+
+-- bloqueio depois da reserva com dois WhatsApp: o principal bloqueado não pode trocar de número em silêncio
+select set_config('t.w', testes.criar_lead_pronto('Pet Exemplo W', '+5534900000111')::text, true);
+insert into public.telefones_lead (lead_id, e164, tipo, principal) values (current_setting('t.w')::uuid, '+5534900000112', 'whatsapp', false);
+select pg_temp.reservar(current_setting('t.w'), current_setting('t.v5'));
+insert into public.bloqueios (telefone_e164, motivo, origem) values ('+5534900000111', 'cliente', 'teste');
+select is(pg_temp.ag(current_setting('t.v5'), current_setting('t.w'), 'abertura_enviada'),
+  'Esse número pediu para não ser chamado. O lead saiu da sua lista.', 'principal bloqueado com 2 WhatsApp devolve o recado');
+select is((select estado || ':' || motivo_fim from public.leads where id = current_setting('t.w')::uuid), 'descartado:pediu_parar',
+  '2 WhatsApp, principal bloqueado: descartado');
+select is((select count(*) from public.eventos_lead where lead_id = current_setting('t.w')::uuid and tipo = 'abertura_enviada'),
+  0::bigint, '2 WhatsApp, principal bloqueado: sem evento de abertura');
+select is((select dados->>'bloqueio_motivo' from public.eventos_lead where lead_id = current_setting('t.w')::uuid and tipo = 'descartou'),
+  'cliente', 'evento guarda o motivo real do bloqueio');
+
+-- place id bloqueado depois da reserva
+select set_config('t.y', testes.criar_lead_pronto('Pet Exemplo Y', '+5534900000113')::text, true);
+select pg_temp.reservar(current_setting('t.y'), current_setting('t.v5'));
+insert into public.bloqueios (google_place_id, motivo, origem)
+select l.google_place_id, 'descarte', 'teste' from public.leads l where l.id = current_setting('t.y')::uuid;
+select is(pg_temp.ag(current_setting('t.v5'), current_setting('t.y'), 'abertura_enviada'),
+  'Esse número pediu para não ser chamado. O lead saiu da sua lista.', 'place id bloqueado devolve o recado');
+select is((select estado from public.leads where id = current_setting('t.y')::uuid), 'descartado', 'place id bloqueado: descartado');
+select is((select count(*) from public.eventos_lead where lead_id = current_setting('t.y')::uuid and tipo = 'abertura_enviada'),
+  0::bigint, 'place id bloqueado: sem evento de abertura');
+
+-- numero_errado sem telefone livre e previa_enviada sem pedido pronto
+select set_config('t.z', testes.criar_lead_pronto('Pet Exemplo Z', '+5534900000114')::text, true);
+select pg_temp.reservar(current_setting('t.z'), current_setting('t.v5'));
+insert into public.bloqueios (telefone_e164, motivo, origem) values ('+5534900000114', 'pediu_parar', 'teste');
+select throws_ok(format($$select pg_temp.ag(%L, %L, 'numero_errado')$$, current_setting('t.v5'), current_setting('t.z')),
+  'P0001', 'Esse passo já foi registrado ou não vale agora. Atualize a tela.', 'numero_errado sem telefone livre é recusado');
+
+select set_config('t.k', testes.criar_lead_pronto('Pet Exemplo K', '+5534900000115')::text, true);
+select pg_temp.reservar(current_setting('t.k'), current_setting('t.v3'));
+select pg_temp.ag(current_setting('t.v3'), current_setting('t.k'), 'abertura_enviada');
+update public.leads set etapa = 'previa_pronta' where id = current_setting('t.k')::uuid;
+select throws_ok(format($$select pg_temp.ag(%L, %L, 'previa_enviada')$$, current_setting('t.v3'), current_setting('t.k')),
+  'P0001', 'Esse passo já foi registrado ou não vale agora. Atualize a tela.', 'previa_enviada sem pedido pronto é recusada');
+select is((select etapa from public.leads where id = current_setting('t.k')::uuid), 'previa_pronta', 'etapa não avançou sozinha');
 
 -- privilégios
 select ok(not has_function_privilege('anon', 'public.registrar_acao(uuid,text,bigint)', 'execute'), 'anon não executa registrar_acao');
