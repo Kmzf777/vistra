@@ -1,5 +1,5 @@
 begin;
-select plan(15);
+select plan(19);
 
 select set_config('t.v1', testes.criar_usuario('v1@exemplo.com', 'Vendedor Um Exemplo')::text, true);
 select set_config('t.v2', testes.criar_usuario('v2@exemplo.com', 'Vendedor Dois Exemplo')::text, true);
@@ -40,9 +40,17 @@ select throws_ok(format($$update public.leads set nota = 5.5 where id = %L$$, cu
 select throws_ok(
   format($$insert into public.mensagens_lead (lead_id, versao, partes, status) values (%L, 2, array['a','b'], 'aprovada')$$, current_setting('t.l1')), '23505');
 
+select throws_ok(format($$insert into public.mensagens_lead (lead_id, versao, partes) values (%L, 3, '{}')$$, current_setting('t.l2')), '23514', null, 'partes vazias');
+select throws_ok(format($$insert into public.mensagens_lead (lead_id, versao, partes) values (%L, 4, array['a', null])$$, current_setting('t.l2')), '23514', null, 'parte NULL');
+select throws_ok(format($$insert into public.mensagens_lead (lead_id, versao, partes) values (%L, 5, array['a','b','c','d'])$$, current_setting('t.l2')), '23514', null, 'quatro partes');
+
 insert into public.verificacoes_site (lead_id, veredito, verificado_em)
 values (current_setting('t.l1')::uuid, 'TEM_SITE', now() + interval '1 day');
 select is((select veredito_atual from public.leads where id = current_setting('t.l1')::uuid), 'TEM_SITE', 'veredito mais novo vira o atual');
+
+insert into public.verificacoes_site (lead_id, veredito, verificado_em)
+values (current_setting('t.l1')::uuid, 'FECHADO', now() - interval '2 days');
+select is((select veredito_atual from public.leads where id = current_setting('t.l1')::uuid), 'TEM_SITE', 'verificação mais antiga inserida depois não vence');
 
 select * from finish();
 rollback;

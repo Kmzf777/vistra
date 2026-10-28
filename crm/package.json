@@ -10,7 +10,7 @@
     "build:novo": "node --env-file=.env.novo.local node_modules/next/dist/bin/next build",
     "test": "vitest run",
     "db:testar": "tsx scripts/pgtap.ts",
-    "db:tipos": "supabase gen types typescript --linked --schema public > lib/supabase/database.types.ts",
+    "db:tipos": "tsx scripts/gerar-tipos.ts",
     "importar:leads": "tsx scripts/importar-leads.ts",
     "importar:mensagens": "tsx scripts/importar-mensagens.ts",
     "convidar": "tsx scripts/convidar.ts",
