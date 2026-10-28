@@ -333,7 +333,12 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "largar_lead":
+            "importar_leads":
+{ Args: { "p_autor": string,"p_itens": Json }; Returns: {
+              "indice": number,"lead_id": string,"resultado": string
+            }[]
+                           },
+"largar_lead":
 { Args: { "p_lead_id": string,"p_motivo": string }; Returns: undefined
                            },
 "marcar_acesso":
