@@ -301,7 +301,20 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            [_ in never]: never
+            "largar_lead":
+{ Args: { "p_lead_id": string,"p_motivo": string }; Returns: undefined
+                           },
+"marcar_acesso":
+{ Args: Record<PropertyKey, never>; Returns: undefined
+                           },
+"minha_cota":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "abertas_hoje": number,"cota": number
+            }[]
+                           },
+"proximo_lead":
+{ Args: Record<PropertyKey, never>; Returns: string
+                           }
           }
           Enums: {
             [_ in never]: never
