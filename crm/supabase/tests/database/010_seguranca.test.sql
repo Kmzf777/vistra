@@ -1,5 +1,5 @@
 begin;
-select plan(18);
+select plan(19);
 
 select is((select count(*) from pg_tables where schemaname = 'public' and not rowsecurity), 0::bigint, 'RLS em toda tabela');
 select is((select count(*) from information_schema.role_table_grants where grantee = 'anon' and table_schema = 'public'), 0::bigint, 'anon sem grant');
@@ -40,6 +40,11 @@ select is(private.dias_uteis_entre('2026-11-06 18:00-03', '2026-11-10 09:00-03')
 
 select is((select count(*) from etapas_funil), 6::bigint, 'seis etapas do funil');
 select is((select preco_tabela from configuracao), 497.00, 'preço de tabela 497');
+
+select is((select count(*) from unnest(array[
+  'private.eu_admin()', 'private.eu_ativo()', 'private.exigir_ativo()', 'private.inicio_do_dia(timestamptz)',
+  'private.somar_dias_uteis(timestamptz,int)', 'private.dias_uteis_entre(timestamptz,timestamptz)'
+]) f where has_function_privilege('anon', f, 'execute')), 0::bigint, 'anon sem execute nas funções private');
 
 select * from finish();
 rollback;
