@@ -1,0 +1,95 @@
+{
+  "gerado_em": "2026-10-28T12:00:00.000Z",
+  "modelo": "modelo-exemplo-2026-10",
+  "nichos": [
+    {
+      "nome": "Pet shop",
+      "dor": "o tutor pergunta tudo no WhatsApp, como preço do banho, horário e endereço",
+      "transformacao": "o tutor vê serviços, horário e fotos no site e chama só para marcar"
+    }
+  ],
+  "modelos": [
+    {
+      "nicho": null,
+      "tipo": "abertura",
+      "rotulo": "",
+      "texto": "Olá [saudacao]"
+    },
+    {
+      "nicho": null,
+      "tipo": "robo",
+      "rotulo": "menu",
+      "texto": "menu"
+    },
+    {
+      "nicho": null,
+      "tipo": "robo",
+      "rotulo": "digite o assunto",
+      "texto": "falar com o responsável"
+    },
+    {
+      "nicho": null,
+      "tipo": "acompanhamento",
+      "rotulo": "",
+      "texto": "oi, [saudacao], passando para saber se você viu minha mensagem sobre a prévia do site. Posso mandar?"
+    },
+    {
+      "nicho": null,
+      "tipo": "preco",
+      "rotulo": "",
+      "texto": "te mostro a prévia primeiro, aí você vê se faz sentido e eu te passo o valor. Posso mandar?"
+    }
+  ],
+  "mensagens": [
+    {
+      "lead": {
+        "google_place_id": "exemplo-place-01"
+      },
+      "partes": [
+        "que bom falar com você! Sou [nome].\nvi a nota 4,1 da Pet Shop Exemplo 01 no Google, com 60 avaliações. Parabéns, nota assim não é fácil!",
+        "só não achei um site de vocês. Aí quem acha vocês no Google muitas vezes pergunta tudo no WhatsApp, quanto é o banho, se tem horário, onde fica.\ncom um site, o tutor já vê os serviços, o horário e as fotos, e chama vocês só para marcar.",
+        "estou montando uma startup com uns amigos e, para levantar capital, fazemos sites por um preço justo.\nainda hoje a gente monta uma prévia do site com as fotos e as avaliações de vocês. É gratuita e você não precisa fazer nada. Quer ver?"
+      ]
+    },
+    {
+      "lead": {
+        "google_place_id": "exemplo-place-02"
+      },
+      "partes": [
+        "que bom falar com você! Sou [nome].\nvi a nota 4,2 da Pet Shop Exemplo 02 no Google, com 70 avaliações. Parabéns, nota assim não é fácil!",
+        "só não achei um site de vocês. Aí quem acha vocês no Google muitas vezes pergunta tudo no WhatsApp, quanto é o banho, se tem horário, onde fica.\ncom um site, o tutor já vê os serviços, o horário e as fotos, e chama vocês só para marcar.",
+        "estou montando uma startup com uns amigos e, para levantar capital, fazemos sites por um preço justo.\nainda hoje a gente monta uma prévia do site com as fotos e as avaliações de vocês. É gratuita e você não precisa fazer nada. Quer ver?"
+      ]
+    },
+    {
+      "lead": {
+        "google_place_id": "exemplo-place-03"
+      },
+      "partes": [
+        "que bom falar com você! Sou [nome].\nvi a nota 4,3 da Pet Shop Exemplo 03 no Google, com 80 avaliações. Parabéns, nota assim não é fácil!",
+        "só não achei um site de vocês. Aí quem acha vocês no Google muitas vezes pergunta tudo no WhatsApp, quanto é o banho, se tem horário, onde fica.\ncom um site, o tutor já vê os serviços, o horário e as fotos, e chama vocês só para marcar.",
+        "estou montando uma startup com uns amigos e, para levantar capital, fazemos sites por um preço justo.\nainda hoje a gente monta uma prévia do site com as fotos e as avaliações de vocês. É gratuita e você não precisa fazer nada. Quer ver?"
+      ]
+    },
+    {
+      "lead": {
+        "google_place_id": "exemplo-place-04"
+      },
+      "partes": [
+        "que bom falar com você! Sou [nome].\nvi a nota 4,4 da Pet Shop Exemplo 04 no Google, com 90 avaliações. Parabéns, nota assim não é fácil!",
+        "só não achei um site de vocês. Aí quem acha vocês no Google muitas vezes pergunta tudo no WhatsApp, quanto é o banho, se tem horário, onde fica.\ncom um site, o tutor já vê os serviços, o horário e as fotos, e chama vocês só para marcar.",
+        "estou montando uma startup com uns amigos e, para levantar capital, fazemos sites por um preço justo.\nainda hoje a gente monta uma prévia do site com as fotos e as avaliações de vocês. É gratuita e você não precisa fazer nada. Quer ver?"
+      ]
+    },
+    {
+      "lead": {
+        "google_place_id": "exemplo-place-05"
+      },
+      "partes": [
+        "que bom falar com você! Sou [nome].\nvi a nota 4,5 da Pet Shop Exemplo 05 no Google, com 100 avaliações. Parabéns, nota assim não é fácil!",
+        "só não achei um site de vocês. Aí quem acha vocês no Google muitas vezes pergunta tudo no WhatsApp, quanto é o banho, se tem horário, onde fica.\ncom um site, o tutor já vê os serviços, o horário e as fotos, e chama vocês só para marcar.",
+        "estou montando uma startup com uns amigos e, para levantar capital, fazemos sites por um preço justo.\nainda hoje a gente monta uma prévia do site com as fotos e as avaliações de vocês. É gratuita e você não precisa fazer nada. Quer ver?"
+      ]
+    }
+  ]
+}

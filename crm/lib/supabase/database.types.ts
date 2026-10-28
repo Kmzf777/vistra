@@ -338,6 +338,14 @@ isOneToOne: false
               "indice": number,"lead_id": string,"resultado": string
             }[]
                            },
+"importar_mensagens":
+{ Args: { "p_autor": string,"p_itens": Json }; Returns: {
+              "indice": number,"mensagem_id": number,"resultado": string
+            }[]
+                           },
+"importar_modelos":
+{ Args: { "p_autor": string,"p_modelos": Json,"p_nichos": Json }; Returns: number
+                           },
 "largar_lead":
 { Args: { "p_lead_id": string,"p_motivo": string }; Returns: undefined
                            },
