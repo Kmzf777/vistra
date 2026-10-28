@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { confirmar } from "./acoes";
 import estilo from "./confirmar.module.css";
 
-export const metadata: Metadata = { title: "Entrar · Vistra CRM", robots: { index: false } };
+export const metadata: Metadata = { title: "Entrar · Vistra CRM", robots: { index: false }, referrer: "no-referrer" };
 export const dynamic = "force-dynamic";
 
 // O GET só mostra o botão. Quem gasta o token é o POST (ver acoes.ts).

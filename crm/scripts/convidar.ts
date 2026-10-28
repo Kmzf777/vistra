@@ -24,7 +24,8 @@ async function main() {
     console.error('--artigo precisa ser "a" ou "o".');
     process.exit(1);
   }
-  if (/^https?:\/\/(localhost|127\.0\.0\.1)/.test(values.base ?? "")) {
+  const base = values.base ?? "http://localhost:3000";
+  if (/^https?:\/\/(localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0)([:/]|$)/i.test(base)) {
     console.error("atenção, link local; para a equipe use --base https://vistracrm.vercel.app");
   }
   const amb = carregarAmbiente();
@@ -34,7 +35,7 @@ async function main() {
   const r = await gerarConvite(
     admin,
     { email: values.email, nome: values.nome, curso: values.curso ?? "", artigo: values.artigo },
-    values.base ?? "http://localhost:3000"
+    base
   );
   if ("erro" in r) {
     console.error(r.erro);
