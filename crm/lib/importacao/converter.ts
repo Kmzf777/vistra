@@ -52,7 +52,10 @@ export type LeadImportado = {
 
 function numero(v: string | number | null | undefined): number | null {
   if (v === null || v === undefined || v === "") return null;
-  const n = typeof v === "number" ? v : Number(String(v).replace(/\./g, "").replace(",", "."));
+  if (typeof v === "number") return Number.isFinite(v) ? v : null;
+  const t = v.trim();
+  // com vírgula, o ponto é milhar ("1.234,5"); sem vírgula, o ponto é decimal ("4.7")
+  const n = Number(t.includes(",") ? t.replace(/\./g, "").replace(",", ".") : t);
   return Number.isFinite(n) ? n : null;
 }
 
@@ -75,15 +78,26 @@ export function converterLeadRaspado(
   const nome = texto(cru.nome);
   if (!nome) return { lead: null, aviso: "lead sem nome" };
 
-  let aviso: string | null = null;
+  const avisos: string[] = [];
   const telefones: LeadImportado["telefones"] = [];
   if (texto(cru.tel)) {
     const t = normalizarTelefone(cru.tel as string);
-    if (t) telefones.push({ e164: t.e164, tipo: t.tipo, origem: "google", principal: true });
-    else aviso = `${nome}: telefone inválido`;
+    // WhatsApp presumido: celular do Google vale como whatsapp e entra na fila; fixo fica fora.
+    // Se o número estiver errado, o fluxo numero_errado resolve.
+    if (t) telefones.push({ e164: t.e164, tipo: t.tipo === "celular" ? "whatsapp" : "fixo", origem: "google", principal: true });
+    else avisos.push("telefone inválido");
   }
 
-  const nota = numero(cru.nota);
+  let nota = numero(cru.nota);
+  if (nota !== null && (nota < 0 || nota > 5)) {
+    avisos.push(`nota fora de 0 a 5 (${String(cru.nota)})`);
+    nota = null;
+  }
+  let prioridade: number | null = null;
+  if (cru.prioridade !== null && cru.prioridade !== undefined) {
+    if (Number.isInteger(cru.prioridade) && cru.prioridade >= 1 && cru.prioridade <= 4) prioridade = cru.prioridade;
+    else avisos.push(`prioridade inválida (${String(cru.prioridade)})`);
+  }
   const aval = numero(cru.aval);
   const seguidores = numero(cru.seguidores);
 
@@ -99,7 +113,7 @@ export function converterLeadRaspado(
     nicho: texto(cru.nicho),
     categoria: texto(cru.cat),
     endereco: texto(cru.end),
-    nota: nota === null ? null : Math.min(5, Math.max(0, nota)),
+    nota,
     avaliacoes: aval === null ? null : Math.max(0, Math.round(aval)),
     instagram: texto(cru.ig),
     seguidores: seguidores === null ? null : Math.max(0, Math.round(seguidores)),
@@ -107,7 +121,7 @@ export function converterLeadRaspado(
     site: texto(cru.site),
     email: texto(cru.email),
     gancho: texto(cru.gancho),
-    prioridade: cru.prioridade && cru.prioridade >= 1 && cru.prioridade <= 4 ? cru.prioridade : null,
+    prioridade,
     grupo: null,
     telefones,
     verificacao: veredito
@@ -121,5 +135,6 @@ export function converterLeadRaspado(
     estado_inicial: motivo ? "descartado" : "no_poco",
     motivo_fim: motivo,
   };
+  const aviso = avisos.length ? `${nome}: ${avisos.join("; ")}` : null;
   return { lead, aviso };
 }

@@ -1,5 +1,5 @@
 // Importa leads raspados (novos-aprovados.json) para o banco novo.
-// Uso: npm run importar:leads -- --arquivo <json> [--autor <email do admin>] [--cidade Uberlândia --uf MG] [--gravar]
+// Uso: npm run importar:leads -- --arquivo <json> [--autor <email do admin>] [--cidade Uberlândia --uf MG] [--verificado-em <ISO>] [--gravar]
 // Sem --gravar não toca no banco: só converte e imprime contagens. Nunca imprime telefone.
 import fs from "node:fs";
 import path from "node:path";
@@ -28,7 +28,9 @@ async function principal() {
   const cru = JSON.parse(fs.readFileSync(path.resolve(arquivo), "utf8"));
   if (!Array.isArray(cru)) throw new Error("O arquivo precisa ser uma lista de leads.");
 
-  const verificadoEm = new Date().toISOString();
+  // data da verificação: --verificado-em, senão o mtime do arquivo (estável entre execuções)
+  const informado = valor("--verificado-em");
+  const verificadoEm = informado ? new Date(informado).toISOString() : fs.statSync(path.resolve(arquivo)).mtime.toISOString();
   const leads: LeadImportado[] = [];
   const avisos: string[] = [];
   for (const item of cru as LeadRaspado[]) {

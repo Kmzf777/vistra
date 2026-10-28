@@ -1,5 +1,5 @@
 begin;
-select plan(24);
+select plan(32);
 
 select set_config('t.autor', testes.criar_usuario('importa1@exemplo.com', 'Admin Importa Exemplo', 'admin')::text, true);
 
@@ -10,7 +10,7 @@ language sql as $$
     'origem_id', 'exemplo-' || p_nome, 'google_place_id', p_place, 'nome', p_nome,
     'cidade', 'Uberlândia', 'uf', 'MG', 'nicho', 'Pet shop', 'nota', 4.5, 'avaliacoes', 80, 'prioridade', 2,
     'telefones', case when p_tel is null then '[]'::jsonb
-      else jsonb_build_array(jsonb_build_object('e164', p_tel, 'tipo', 'celular', 'origem', 'google', 'principal', true)) end,
+      else jsonb_build_array(jsonb_build_object('e164', p_tel, 'tipo', 'whatsapp', 'origem', 'google', 'principal', true)) end,
     'verificacao', jsonb_build_object('veredito', 'PODE_ABORDAR', 'evidencias', '[]'::jsonb,
       'verificado_em', '2026-10-28T12:00:00Z', 'ferramenta', 'teste'),
     'estado_inicial', 'no_poco') || p_extra;
@@ -43,7 +43,7 @@ select is((select count(*)::int from public.verificacoes_site v join public.lead
   where l.google_place_id = 'exemplo-imp-a'), 1, 'verificação repetida não duplica');
 select is((select veredito_atual from public.leads where google_place_id = 'exemplo-imp-a'), 'PODE_ABORDAR', 'veredito_atual gravado');
 select is((select t.tipo from public.telefones_lead t join public.leads l on l.id = t.lead_id
-  where l.google_place_id = 'exemplo-imp-a'), 'whatsapp', 'celular entra como whatsapp');
+  where l.google_place_id = 'exemplo-imp-a'), 'whatsapp', 'tipo vem do converter e é gravado como veio');
 select is((select count(*)::int from public.eventos_lead e join public.leads l on l.id = e.lead_id
   where l.google_place_id = 'exemplo-imp-a' and e.tipo = 'importado' and e.autor_id = current_setting('t.autor')::uuid
     and e.dados ->> 'origem_id' = 'exemplo-Pet Imp A'), 2, 'evento importado com autor e origem_id');
@@ -89,6 +89,39 @@ select ok((select nicho_id is null from public.leads where google_place_id = 'ex
 select pg_temp.imp(jsonb_build_array(pg_temp.item('Pet Imp Filial', 'exemplo-imp-g', '+5534900000061')));
 select ok((select l1.grupo is not null and l1.grupo = l2.grupo from public.leads l1, public.leads l2
   where l1.google_place_id = 'exemplo-imp-g' and l2.google_place_id = 'exemplo-imp-a'), 'mesmo telefone, place diferente: mesmo grupo');
+
+-- verificação não duplica com timestamps diferentes
+select pg_temp.imp(jsonb_build_array(pg_temp.item('Pet Imp A', 'exemplo-imp-a', '+5534900000061',
+  '{"verificacao":{"veredito":"PODE_ABORDAR","evidencias":[],"verificado_em":"2026-11-05T09:00:00Z","ferramenta":"teste"}}')));
+select is((select count(*)::int from public.verificacoes_site v join public.leads l on l.id = v.lead_id
+  where l.google_place_id = 'exemplo-imp-a'), 1, 'timestamp novo, mesmo veredito e ferramenta: 1 verificação');
+select pg_temp.imp(jsonb_build_array(pg_temp.item('Pet Imp A', 'exemplo-imp-a', '+5534900000061',
+  '{"verificacao":{"veredito":"TEM_SITE","evidencias":[],"verificado_em":"2026-11-06T09:00:00Z","ferramenta":"teste"}}')));
+select is((select count(*)::int from public.verificacoes_site v join public.leads l on l.id = v.lead_id
+  where l.google_place_id = 'exemplo-imp-a'), 2, 'veredito diferente entra');
+
+-- descartado sem place id, achado pelo telefone
+insert into public.leads (nome, cidade_id, google_place_id, estado, motivo_fim, fim_em)
+select 'Pet Imp Desc Tel', c.id, 'exemplo-imp-desc2', 'descartado', 'fechado', now()
+from public.cidades c where c.nome = 'Uberlândia' and c.uf = 'MG';
+insert into public.telefones_lead (lead_id, e164, tipo) select id, '+5534900000070', 'whatsapp' from public.leads where google_place_id = 'exemplo-imp-desc2';
+select is(pg_temp.imp(jsonb_build_array(pg_temp.item('Pet Imp Desc Tel Novo', null, '+5534900000070'))), 'ja_descartado', 'sem place id, telefone de descartado');
+select is((select count(*)::int from public.leads where nome = 'Pet Imp Desc Tel Novo'), 0, 'não cria lead novo');
+
+-- descartado criado na importação recebe fim_por e fim_em
+select is(pg_temp.imp(jsonb_build_array(pg_temp.item('Pet Imp Nasce Desc', 'exemplo-imp-h', '+5534900000071',
+  '{"estado_inicial":"descartado","motivo_fim":"tem_site"}'))), 'criado', 'cria descartado');
+select ok((select fim_por = current_setting('t.autor')::uuid and fim_em is not null and estado = 'descartado'
+  from public.leads where google_place_id = 'exemplo-imp-h'), 'fim_por e fim_em gravados');
+
+-- erro por item traz o SQLSTATE
+select ok(pg_temp.imp(jsonb_build_array(pg_temp.item('Pet Imp Erro', 'exemplo-imp-i', '+5534900000072', '{"nota":"abc"}'))) like 'invalido:erro:%',
+  'erro por item traz SQLSTATE');
+
+-- autor precisa ser admin ativo
+select set_config('role', 'service_role', true);
+select throws_ok($$select * from public.importar_leads(gen_random_uuid(), '[]'::jsonb)$$, 'P0001', 'Autor precisa ser um admin ativo.', 'autor desconhecido');
+reset role;
 
 -- permissão
 select testes.entrar_como(current_setting('t.autor')::uuid);

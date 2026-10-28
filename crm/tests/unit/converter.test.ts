@@ -33,11 +33,26 @@ describe("converterLeadRaspado", () => {
     expect(lead!.google_place_id).toBe("exemplo-place-01");
     expect(lead!.origem_id).toBe("exemplo-01");
     expect(lead!.telefones).toEqual([
-      { e164: "+5534900000001", tipo: "celular", origem: "google", principal: true },
+      { e164: "+5534900000001", tipo: "whatsapp", origem: "google", principal: true },
     ]);
     expect(lead!.verificacao?.veredito).toBe("PODE_ABORDAR");
     expect(lead!.verificacao?.ferramenta).toBe("verificar_sem_site.py");
     expect(lead!.estado_inicial).toBe("no_poco");
+  });
+  it("fixo continua fixo", () => {
+    const { lead } = converterLeadRaspado({ ...base, tel: "(34) 3000-0006" }, opcoes);
+    expect(lead!.telefones[0].tipo).toBe("fixo");
+  });
+  it("nota com ponto é decimal, e nota fora de 0 a 5 avisa", () => {
+    expect(converterLeadRaspado({ ...base, nota: "4.7" }, opcoes).lead!.nota).toBe(4.7);
+    const r = converterLeadRaspado({ ...base, nota: "47" }, opcoes);
+    expect(r.lead!.nota).toBeNull();
+    expect(r.aviso).toContain("nota");
+  });
+  it("prioridade não inteira avisa e vira null", () => {
+    const r = converterLeadRaspado({ ...base, prioridade: 1.5 }, opcoes);
+    expect(r.lead!.prioridade).toBeNull();
+    expect(r.aviso).toContain("prioridade");
   });
   it("telefone inválido vira aviso e lead sem telefone", () => {
     const { lead, aviso } = converterLeadRaspado({ ...base, tel: "123" }, opcoes);
