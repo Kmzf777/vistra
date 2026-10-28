@@ -241,6 +241,38 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"pedidos_previa": {
+                  Row: {
+                    "enviada_em": string | null,"id": string,"lead_id": string,"pdf_url": string | null,"pedido_em": string,"pronta_em": string | null,"pronta_por": string | null,"site_url": string | null,"status": string,"vendedor_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "enviada_em"?: string | null,"id"?: string,"lead_id": string,"pdf_url"?: string | null,"pedido_em"?: string,"pronta_em"?: string | null,"pronta_por"?: string | null,"site_url"?: string | null,"status"?: string,"vendedor_id": string
+                  }
+                  Update: {
+                    "enviada_em"?: string | null,"id"?: string,"lead_id"?: string,"pdf_url"?: string | null,"pedido_em"?: string,"pronta_em"?: string | null,"pronta_por"?: string | null,"site_url"?: string | null,"status"?: string,"vendedor_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "pedidos_previa_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: false
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "pedidos_previa_pronta_por_fkey"
+      columns: ["pronta_por"]
+isOneToOne: false
+      referencedRelation: "perfis"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "pedidos_previa_vendedor_id_fkey"
+      columns: ["vendedor_id"]
+isOneToOne: false
+      referencedRelation: "perfis"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"perfis": {
                   Row: {
                     "artigo": string,"ativo": boolean,"comissao_pct": number | null,"cota_diaria": number,"criado_em": string,"curso": string,"email": string,"id": string,"nome": string,"papel": string,"ultimo_acesso_em": string | null
@@ -314,6 +346,9 @@ isOneToOne: false
                            },
 "proximo_lead":
 { Args: Record<PropertyKey, never>; Returns: string
+                           },
+"registrar_acao":
+{ Args: { "p_acao": string,"p_lead_id": string,"p_mensagem_id"?: number }; Returns: string
                            }
           }
           Enums: {
