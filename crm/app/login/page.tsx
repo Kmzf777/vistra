@@ -70,6 +70,11 @@ export default async function PaginaLogin({
       </section>
 
       <section className={estilo.console}>
+        {params.erro === "desativado" && (
+          <p role="alert" className={estilo.erro}>
+            Seu acesso foi desativado. Fale com o Kelwin.
+          </p>
+        )}
         {linkInvalido && (
           <p role="alert" className={estilo.erro}>
             Esse link já foi usado ou expirou. Peça um novo ao Kelwin.

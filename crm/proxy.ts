@@ -27,6 +27,7 @@ import { NextResponse, type NextRequest } from "next/server";
 // o módulo inteiro para cá e quebraria o build.
 const ROTA_LOGIN = "/login";
 const ROTA_CONFIRMAR = "/auth/confirmar";
+const ROTA_SAIR = "/auth/sair";
 const ROTA_INICIO = "/inicio";
 
 // Lidas no topo do módulo: NEXT_PUBLIC_* são embutidas no build, não existe
@@ -38,7 +39,7 @@ const CHAVE_PUBLICAVEL = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 // delas é devolvido ao trabalho — ficar numa tela de entrar já estando
 // dentro só confunde.
 function ePublica(caminho: string): boolean {
-  return [ROTA_LOGIN, ROTA_CONFIRMAR].some(
+  return [ROTA_LOGIN, ROTA_CONFIRMAR, ROTA_SAIR].some(
     (r) => caminho === r || caminho.startsWith(`${r}/`)
   );
 }
@@ -174,9 +175,10 @@ export async function proxy(pedido: NextRequest) {
   }
 
   // --- com sessão, parado no login ---
-  // /auth/confirmar fica de fora: quem recebe um convite já pode ter outra
-  // sessão aberta, e o link precisa trocar o token mesmo assim.
-  if (temSessao && ePublica(caminho) && !caminho.startsWith(ROTA_CONFIRMAR)) {
+  // /auth/confirmar e /auth/sair ficam de fora: o convite precisa trocar a
+  // sessão aberta e o sair precisa encerrar a de um perfil desativado (sem
+  // isso o login devolveria a pessoa para /inicio em loop).
+  if (temSessao && ePublica(caminho) && !caminho.startsWith("/auth/")) {
     const paraOnde = destinoSeguro(url.searchParams.get("de")) ?? ROTA_INICIO;
     // `new URL(caminho, origem)` separa path de query sozinho. Atribuir o
     // valor em `pathname` escaparia o "?" e o destino viraria literalmente

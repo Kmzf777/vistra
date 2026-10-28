@@ -23,45 +23,70 @@ export function caminhoDeLogin(de?: string): string {
   return `${ROTA_LOGIN}?de=${encodeURIComponent(de)}`;
 }
 
+type Leitura =
+  | { tipo: "ok"; perfil: Perfil }
+  | { tipo: "sem_sessao" }
+  | { tipo: "inativo" }
+  | { tipo: "erro" };
+
 /**
- * O perfil de quem está logado. `getClaims()` valida o JWT (nunca getSession).
- * Perfil ausente ou inativo dá null. O RLS só deixa ler o próprio perfil.
+ * Separa quatro desfechos: perfil ativo, sem sessão, perfil ausente/inativo e
+ * falha de banco. Falha de rede nunca vira "desativado".
+ * `getClaims()` valida o JWT (nunca getSession); o RLS só deixa ler o próprio perfil.
  */
-export async function perfilAtual(): Promise<Perfil | null> {
-  if (!temCredenciais()) return null;
+async function lerPerfil(): Promise<Leitura> {
+  if (!temCredenciais()) return { tipo: "sem_sessao" };
   try {
     const sb = await criarClienteServidor();
     const { data: claims, error } = await sb.auth.getClaims();
     const id = claims?.claims?.sub;
-    if (error || !id) return null;
+    if (error || !id) return { tipo: "sem_sessao" };
 
     const { data, error: erroPerfil } = await sb
       .from("perfis")
       .select("id, nome, curso, artigo, email, papel, ativo, cota_diaria")
       .eq("id", id)
       .maybeSingle();
-    if (erroPerfil || !data || !data.ativo) return null;
+    if (erroPerfil) return { tipo: "erro" };
+    if (!data || !data.ativo) return { tipo: "inativo" };
 
     return {
-      id: data.id,
-      nome: data.nome,
-      curso: data.curso ?? "",
-      artigo: data.artigo === "a" ? "a" : "o",
-      email: data.email ?? "",
-      papel: data.papel === "admin" ? "admin" : "vendedor",
-      ativo: data.ativo,
-      cota_diaria: data.cota_diaria,
+      tipo: "ok",
+      perfil: {
+        id: data.id,
+        nome: data.nome,
+        curso: data.curso ?? "",
+        artigo: data.artigo === "a" ? "a" : "o",
+        email: data.email ?? "",
+        papel: data.papel === "admin" ? "admin" : "vendedor",
+        ativo: data.ativo,
+        cota_diaria: data.cota_diaria,
+      },
     };
   } catch {
-    return null;
+    return { tipo: "erro" };
   }
 }
 
-/** Exige perfil ativo; sem ele, redireciona para o login. Não chame dentro de try/catch. */
+/** Perfil ativo de quem está logado, ou null (sem sessão, inativo ou falha). */
+export async function perfilAtual(): Promise<Perfil | null> {
+  const r = await lerPerfil();
+  return r.tipo === "ok" ? r.perfil : null;
+}
+
+/**
+ * Exige perfil ativo. Sem sessão vai para o login; com sessão mas sem perfil
+ * ativo vai para /auth/sair (que encerra a sessão), senão o proxy devolveria
+ * a pessoa do login para /inicio em loop. Falha de banco lança, para a página
+ * de erro aparecer em vez de deslogar alguém por causa de um soluço de rede.
+ * Não chame dentro de try/catch.
+ */
 export async function exigirPerfil(de?: string): Promise<Perfil> {
-  const perfil = await perfilAtual();
-  if (!perfil) redirect(caminhoDeLogin(de));
-  return perfil;
+  const r = await lerPerfil();
+  if (r.tipo === "ok") return r.perfil;
+  if (r.tipo === "sem_sessao") redirect(caminhoDeLogin(de));
+  if (r.tipo === "inativo") redirect("/auth/sair");
+  throw new Error("Não deu para falar com o banco. Tente de novo.");
 }
 
 /** Exige admin; vendedor vai para /inicio. */
@@ -85,12 +110,12 @@ export async function abrirAcao(
   }
   try {
     const sb = await criarClienteServidor();
-    const { data, error } = await sb.auth.getClaims();
-    if (error || !data?.claims?.sub) return { erro: "Sessão expirada. Entre de novo para continuar." };
-    const perfil = await perfilAtual();
-    if (!perfil) return { erro: "Seu acesso foi desativado. Fale com o Kelwin." };
-    if (opcoes.admin && perfil.papel !== "admin") return { erro: "Você não tem permissão para isso." };
-    return { sb, perfil };
+    const r = await lerPerfil();
+    if (r.tipo === "sem_sessao") return { erro: "Sessão expirada. Entre de novo para continuar." };
+    if (r.tipo === "erro") return { erro: "Não deu para falar com o banco. Tente de novo." };
+    if (r.tipo === "inativo") return { erro: "Seu acesso foi desativado. Fale com o Kelwin." };
+    if (opcoes.admin && r.perfil.papel !== "admin") return { erro: "Você não tem permissão para isso." };
+    return { sb, perfil: r.perfil };
   } catch (e) {
     return { erro: `Não deu para falar com o banco: ${e instanceof Error ? e.message : String(e)}` };
   }

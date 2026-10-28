@@ -24,6 +24,9 @@ async function main() {
     console.error('--artigo precisa ser "a" ou "o".');
     process.exit(1);
   }
+  if (/^https?:\/\/(localhost|127\.0\.0\.1)/.test(values.base ?? "")) {
+    console.error("atenção, link local; para a equipe use --base https://vistracrm.vercel.app");
+  }
   const amb = carregarAmbiente();
   const admin = createClient(amb.url, amb.secreta, {
     auth: { persistSession: false, autoRefreshToken: false },
