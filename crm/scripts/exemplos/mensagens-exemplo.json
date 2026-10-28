@@ -18,14 +18,14 @@
     {
       "nicho": null,
       "tipo": "robo",
-      "rotulo": "menu",
-      "texto": "menu"
+      "rotulo": "digite o assunto",
+      "texto": "parceria, site para o negócio"
     },
     {
       "nicho": null,
       "tipo": "robo",
-      "rotulo": "digite o assunto",
-      "texto": "falar com o responsável"
+      "rotulo": "ia",
+      "texto": "oi!\nnão é agendamento, é um assunto para o responsável ou para quem cuida do marketing. Consegue me passar para uma pessoa da equipe?"
     },
     {
       "nicho": null,

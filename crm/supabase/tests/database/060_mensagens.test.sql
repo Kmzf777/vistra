@@ -1,5 +1,5 @@
 begin;
-select plan(25);
+select plan(31);
 
 select set_config('t.autor', testes.criar_usuario('msg1@exemplo.com', 'Admin Mensagens Exemplo', 'admin')::text, true);
 select set_config('t.vend', testes.criar_usuario('msg2@exemplo.com', 'Vendedor Mensagens Exemplo')::text, true);
@@ -74,6 +74,27 @@ select is((select tipo || ':' || principal::text || ':' || origem from public.te
   where lead_id = current_setting('t.l')::uuid and e164 = '+5534900000081'), 'whatsapp:true:bio do Instagram', 'whatsapp principal criado');
 select is((select count(*)::int from public.telefones_lead where lead_id = current_setting('t.l')::uuid and principal), 1, 'só um principal');
 select ok(private.lead_pronto(current_setting('t.l')::uuid), 'depois: o lead está pronto');
+
+-- partes vazias ou com null
+select is(pg_temp.imp(jsonb_build_array(pg_temp.item('{"google_place_id":"exemplo-msg-a"}', '{"partes":[]}'))), 'invalida:partes', 'partes vazias');
+select is(pg_temp.imp(jsonb_build_array(pg_temp.item('{"google_place_id":"exemplo-msg-a"}', '{"partes":["a",null,"c"]}'))), 'invalida:partes', 'parte null');
+
+-- whatsapp já marcado como inválido neste lead
+update public.telefones_lead set invalido_em = now() where lead_id = current_setting('t.l')::uuid and e164 = '+5534900000081';
+update public.telefones_lead set principal = false where lead_id = current_setting('t.l')::uuid;
+select is(pg_temp.imp(jsonb_build_array(pg_temp.item('{"google_place_id":"exemplo-msg-a"}',
+  '{"whatsapp":{"numero":"+5534900000081","origem":"bio"}}'))), 'invalida:telefone_invalido', 'whatsapp inválido é recusado');
+select is((select count(*)::int from public.telefones_lead where lead_id = current_setting('t.l')::uuid and principal), 0, 'e não vira principal');
+
+-- mesmo whatsapp em dois leads: mesmo grupo
+insert into public.leads (nome, cidade_id, google_place_id)
+select 'Pet Msg Exemplo B', c.id, 'exemplo-msg-b' from public.cidades c where c.nome = 'Uberlândia' and c.uf = 'MG';
+insert into public.leads (nome, cidade_id, google_place_id)
+select 'Pet Msg Exemplo C', c.id, 'exemplo-msg-c' from public.cidades c where c.nome = 'Uberlândia' and c.uf = 'MG';
+select is(pg_temp.imp(jsonb_build_array(
+  pg_temp.item('{"google_place_id":"exemplo-msg-b"}', '{"whatsapp":{"numero":"+5534900000082","origem":"bio"}}'),
+  pg_temp.item('{"google_place_id":"exemplo-msg-c"}', '{"whatsapp":{"numero":"+5534900000082","origem":"bio"}}'))), 'aprovada,aprovada', 'dois leads com o mesmo whatsapp');
+select ok((select count(distinct grupo) = 1 and count(grupo) = 2 from public.leads where google_place_id in ('exemplo-msg-b', 'exemplo-msg-c')), 'ficam no mesmo grupo');
 
 -- modelos
 create function pg_temp.imp_modelos(p_nichos jsonb, p_modelos jsonb) returns int

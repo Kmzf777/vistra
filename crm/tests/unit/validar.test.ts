@@ -91,3 +91,15 @@ describe("validarMensagem", () => {
     expect(erros(com(2, "Quer ver?", "Quer ver.")).join("|")).toMatch(/termina com pergunta/);
   });
 });
+
+import { validarEstiloTexto } from "../../lib/mensagens/validar";
+describe("validarEstiloTexto", () => {
+  it("aceita texto de modelo com quebra depois da pontuação", () => {
+    expect(validarEstiloTexto("oi!\nnão é agendamento, é um assunto. Consegue me passar para alguém?")).toEqual([]);
+  });
+  it("recusa dois-pontos, travessão e pontuação seguida de minúscula", () => {
+    expect(validarEstiloTexto("oi: tudo bem")).toContain("tem dois-pontos");
+    expect(validarEstiloTexto("oi — tudo bem")).toContain("tem travessão");
+    expect(validarEstiloTexto("oi! não é agendamento")).toContain("pontuação seguida de minúscula na mesma linha");
+  });
+});

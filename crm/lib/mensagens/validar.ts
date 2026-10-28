@@ -22,6 +22,23 @@ function formatarInteiro(n: number): string {
   return String(Math.trunc(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
+// Regras de estilo que valem para qualquer texto (mensagens e modelos): sem dois-pontos, travessão, Vistra,
+// link ou telefone, e sem pontuação seguida de minúscula na mesma linha.
+export function validarEstiloTexto(texto: string, dominioPermitido?: string | null): string[] {
+  const erros: string[] = [];
+  if (texto.includes(":")) erros.push("tem dois-pontos");
+  if (/[—–]/.test(texto)) erros.push("tem travessão");
+  if (/vistra/i.test(texto)) erros.push("cita a Vistra");
+  const semDominio = dominioPermitido ? texto.split(dominioPermitido).join("") : texto;
+  if (/https?:\/\/|www\.|\b[\w-]+\.(com|br|net|org|app|site|me)\b|\d{4,5}[-\s]?\d{4}/i.test(semDominio)) {
+    erros.push("tem link ou telefone");
+  }
+  if (texto.split("\n").some((l) => /[.!?]["')]*[ \t]+\p{Ll}/u.test(l))) {
+    erros.push("pontuação seguida de minúscula na mesma linha");
+  }
+  return erros;
+}
+
 export function validarMensagem(partes: string[], ctx: ContextoValidacao): string[] {
   const erros: string[] = [];
   if (!Array.isArray(partes) || partes.length < 2 || partes.length > 3) {
@@ -33,22 +50,12 @@ export function validarMensagem(partes: string[], ctx: ContextoValidacao): strin
   const total = partes.join("").length;
   if (total > teto) erros.push(`passa de ${teto} caracteres (${total}, contando os placeholders)`);
 
-  if (texto.includes(":")) erros.push("tem dois-pontos");
-  if (/[—–]/.test(texto)) erros.push("tem travessão");
-  if (/vistra/i.test(texto)) erros.push("cita a Vistra");
   if (/somos da ufu/i.test(texto)) erros.push("diz \"somos da UFU\"");
 
-  // link ou telefone, menos o domínio permitido
-  let semDominio = texto;
-  if (ctx.dominioPermitido) semDominio = texto.split(ctx.dominioPermitido).join("");
-  if (/https?:\/\/|www\.|\b[\w-]+\.(com|br|net|org|app|site|me)\b|\d{4,5}[-\s]?\d{4}/i.test(semDominio)) {
-    erros.push("tem link ou telefone");
-  }
+  erros.push(...validarEstiloTexto(texto, ctx.dominioPermitido));
 
   const linhas = partes.flatMap((p) => p.split("\n"));
-  if (linhas.some((l) => /[.!?]["')]*[ \t]+\p{Ll}/u.test(l))) {
-    erros.push("pontuação seguida de minúscula na mesma linha");
-  }
+
   if (linhas.some((l) => /^\s*\p{Lu}/u.test(l))) erros.push("linha começa com maiúscula");
 
   if (ctx.nota != null) {

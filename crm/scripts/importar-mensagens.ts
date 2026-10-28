@@ -6,7 +6,7 @@ import path from "node:path";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { carregarAmbiente } from "./_ambiente";
 import { normalizarTelefone } from "../lib/telefone";
-import { validarMensagem } from "../lib/mensagens/validar";
+import { validarEstiloTexto, validarMensagem } from "../lib/mensagens/validar";
 
 type ArquivoMensagens = {
   gerado_em: string;
@@ -114,6 +114,28 @@ async function principal() {
       observacao: m.observacao ?? null,
       ...(numero ? { whatsapp: { numero, origem: m.whatsapp?.origem ?? null } } : {}),
     });
+  });
+
+  // modelos: nicho existente no banco, tipo válido, texto não vazio e regras de estilo
+  const TIPOS = ["abertura", "robo", "acompanhamento", "preco"];
+  const nichosArquivo = (dados.nichos ?? []).map((n) => n.nome);
+  const nomesNicho = [...new Set([...nichosArquivo, ...(dados.modelos ?? []).map((m) => m.nicho).filter((x): x is string => !!x)])];
+  const nichosBanco = new Set<string>();
+  if (nomesNicho.length) {
+    const { data, error } = await sb.from("nichos").select("nome").in("nome", nomesNicho);
+    if (error) throw new Error(`buscar nichos: ${error.message}`);
+    for (const n of data ?? []) nichosBanco.add(n.nome);
+  }
+  for (const nome of nichosArquivo) {
+    if (!nichosBanco.has(nome)) reprovadas.push(`  nicho "${nome}": não existe no banco`);
+  }
+  (dados.modelos ?? []).forEach((m, idx) => {
+    const erros: string[] = [];
+    if (!TIPOS.includes(m.tipo)) erros.push("tipo inválido");
+    if (!m.texto || !m.texto.trim()) erros.push("texto vazio");
+    else erros.push(...validarEstiloTexto(m.texto));
+    if (m.nicho && !nichosBanco.has(m.nicho)) erros.push(`nicho "${m.nicho}" não existe no banco`);
+    if (erros.length) reprovadas.push(`  modelo ${idx + 1} (${m.tipo}${m.rotulo ? " " + m.rotulo : ""}): ${erros.join("; ")}`);
   });
 
   console.log(`${validas} válidas, ${reprovadas.length} reprovadas, ${semLead} sem lead no banco`);
