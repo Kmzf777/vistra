@@ -39,6 +39,12 @@ describe("converterLeadRaspado", () => {
     expect(lead!.verificacao?.ferramenta).toBe("verificar_sem_site.py");
     expect(lead!.estado_inicial).toBe("no_poco");
   });
+  it("milhar com ponto em avaliações e seguidores", () => {
+    const { lead } = converterLeadRaspado({ ...base, aval: "1.234", seguidores: "12.500" }, opcoes);
+    expect(lead!.avaliacoes).toBe(1234);
+    expect(lead!.seguidores).toBe(12500);
+    expect(converterLeadRaspado({ ...base, aval: 1234, seguidores: 800 }, opcoes).lead!.avaliacoes).toBe(1234);
+  });
   it("fixo continua fixo", () => {
     const { lead } = converterLeadRaspado({ ...base, tel: "(34) 3000-0006" }, opcoes);
     expect(lead!.telefones[0].tipo).toBe("fixo");

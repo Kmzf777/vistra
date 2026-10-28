@@ -50,13 +50,20 @@ export type LeadImportado = {
   motivo_fim: string | null;
 };
 
-function numero(v: string | number | null | undefined): number | null {
+// Nota: vírgula ou ponto é decimal ("4,7" e "4.7").
+function parseNota(v: string | number | null | undefined): number | null {
   if (v === null || v === undefined || v === "") return null;
   if (typeof v === "number") return Number.isFinite(v) ? v : null;
-  const t = v.trim();
-  // com vírgula, o ponto é milhar ("1.234,5"); sem vírgula, o ponto é decimal ("4.7")
-  const n = Number(t.includes(",") ? t.replace(/\./g, "").replace(",", ".") : t);
+  const n = Number(v.trim().replace(",", "."));
   return Number.isFinite(n) ? n : null;
+}
+
+// Contagens (avaliações, seguidores): ponto é separador de milhar ("1.234" = 1234); número já inteiro passa direto.
+function parseInteiro(v: string | number | null | undefined): number | null {
+  if (v === null || v === undefined || v === "") return null;
+  if (typeof v === "number") return Number.isFinite(v) ? Math.round(v) : null;
+  const n = Number(v.trim().replace(/\./g, "").replace(",", "."));
+  return Number.isFinite(n) ? Math.round(n) : null;
 }
 
 function texto(v: string | null | undefined): string | null {
@@ -88,7 +95,7 @@ export function converterLeadRaspado(
     else avisos.push("telefone inválido");
   }
 
-  let nota = numero(cru.nota);
+  let nota = parseNota(cru.nota);
   if (nota !== null && (nota < 0 || nota > 5)) {
     avisos.push(`nota fora de 0 a 5 (${String(cru.nota)})`);
     nota = null;
@@ -98,8 +105,8 @@ export function converterLeadRaspado(
     if (Number.isInteger(cru.prioridade) && cru.prioridade >= 1 && cru.prioridade <= 4) prioridade = cru.prioridade;
     else avisos.push(`prioridade inválida (${String(cru.prioridade)})`);
   }
-  const aval = numero(cru.aval);
-  const seguidores = numero(cru.seguidores);
+  const aval = parseInteiro(cru.aval);
+  const seguidores = parseInteiro(cru.seguidores);
 
   const veredito = cru.veredito;
   const motivo = cru.fechado ? "fechado" : veredito ? (DESCARTE_POR_VEREDITO[veredito] ?? null) : null;

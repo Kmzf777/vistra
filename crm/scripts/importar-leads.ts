@@ -30,6 +30,9 @@ async function principal() {
 
   // data da verificação: --verificado-em, senão o mtime do arquivo (estável entre execuções)
   const informado = valor("--verificado-em");
+  if (informado && Number.isNaN(new Date(informado).getTime())) {
+    throw new Error("--verificado-em inválido, use ISO como 2026-10-28");
+  }
   const verificadoEm = informado ? new Date(informado).toISOString() : fs.statSync(path.resolve(arquivo)).mtime.toISOString();
   const leads: LeadImportado[] = [];
   const avisos: string[] = [];
