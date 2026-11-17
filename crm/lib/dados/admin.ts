@@ -23,22 +23,18 @@ export type LinhaPainel = {
   parado: boolean;
 };
 
-/** Uma linha por vendedor (o admin fica de fora: o painel mede a equipe de vendas). */
+/** Uma linha por perfil, admin incluso: o dono também prospecta. */
 export async function carregarPainel(periodo: Periodo): Promise<{ ativos: LinhaPainel[]; inativos: LinhaPainel[]; alertaDias: number }> {
   await exigirAdmin();
   const sb = await criarClienteServidor();
   const desde = inicioDoPeriodo(periodo, new Date());
-  const [painelR, perfisR, configR] = await Promise.all([
+  const [painelR, configR] = await Promise.all([
     sb.rpc("painel_dono", { p_desde: (desde ? desde.toISOString() : null) as unknown as string }),
-    sb.from("perfis").select("id, papel"),
     sb.from("configuracao").select("dias_alerta_parado").maybeSingle(),
   ]);
   if (painelR.error) falha(painelR.error);
-  if (perfisR.error) falha(perfisR.error);
   if (configR.error) falha(configR.error);
-  const admins = new Set((perfisR.data ?? []).filter((p) => p.papel === "admin").map((p) => p.id));
   const linhas: LinhaPainel[] = (painelR.data ?? [])
-    .filter((l) => !admins.has(l.vendedor_id))
     .map((l) => ({
       id: l.vendedor_id,
       nome: l.nome,

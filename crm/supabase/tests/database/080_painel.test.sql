@@ -1,5 +1,5 @@
 begin;
-select plan(54);
+select plan(56);
 
 select set_config('t.v1', testes.criar_usuario('painel1@exemplo.com', 'Vendedor Um Exemplo')::text, true);
 select set_config('t.v2', testes.criar_usuario('painel2@exemplo.com', 'Vendedor Dois Exemplo')::text, true);
@@ -114,6 +114,10 @@ update public.eventos_lead set criado_em = now() - interval '7 days'
 select ok(pg_temp.col('dias_sem_abertura', current_setting('t.v1'))::int >= 3, 'dias úteis sem abertura passam de 3');
 select is(pg_temp.col('parado', current_setting('t.v1')), 'true', 'v1 está parado');
 select is(pg_temp.col('parado', current_setting('t.v2')), 'false', 'v2 recém-criado não está parado');
+-- o admin ativo e sem atividade também aparece e pode ficar parado
+select is(pg_temp.col('parado', current_setting('t.adm')), 'false', 'admin recém-criado aparece e não está parado');
+update public.perfis set criado_em = now() - interval '7 days' where id = current_setting('t.adm')::uuid;
+select is(pg_temp.col('parado', current_setting('t.adm')), 'true', 'admin ativo sem abertura fica parado');
 
 -- comissão a receber e vendas: só com pago_em e sem repassado_em
 select set_config('t.l3', testes.criar_lead_pronto('Pet Exemplo Painel L3', '+5534900000303')::text, true);
