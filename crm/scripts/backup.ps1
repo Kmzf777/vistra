@@ -5,7 +5,7 @@
 # Requer Docker em execução (o CLI usa um contêiner com pg_dump).
 param(
   [string]$Destino = (Join-Path $env:USERPROFILE 'Backups\vistra-crm'),
-  [int]$DiasGuardar = 30
+  [ValidateRange(1,3650)][int]$DiasGuardar = 30
 )
 $ErrorActionPreference = 'Stop'
 $crm = Split-Path -Parent $PSScriptRoot
@@ -31,8 +31,9 @@ if (-not $dbUrl) {
 }
 if (-not $dbUrl) { throw 'SUPABASE_DB_URL não encontrada no ambiente nem em .env.novo.local.' }
 
-$pasta = Join-Path $destinoAbs (Get-Date -Format 'yyyy-MM-dd_HHmm')
-New-Item -ItemType Directory -Force -Path $pasta | Out-Null
+$pasta = Join-Path $destinoAbs (Get-Date -Format 'yyyy-MM-dd_HHmmss')
+if (Test-Path $pasta) { throw 'Pasta de backup já existe; tente de novo.' }
+New-Item -ItemType Directory -Path $pasta | Out-Null
 
 Push-Location $crm
 try {
@@ -44,10 +45,16 @@ try {
   foreach ($p in $passos) {
     $saida = Join-Path $pasta $p.arq
     $ErrorActionPreference = 'Continue'
-    & npx supabase db dump --db-url $dbUrl @($p.args) -f $saida 2>&1 | ForEach-Object { $_ -replace 'postgres(ql)?://\S+', '<conexao>' } | Out-Null
+    $texto = (& npx supabase db dump --db-url $dbUrl @($p.args) -f $saida 2>&1 | Out-String)
+    $codigo = $LASTEXITCODE
     $ErrorActionPreference = 'Stop'
-    if ($LASTEXITCODE -ne 0 -or -not (Test-Path $saida)) {
-      throw "Falha ao gerar $($p.arq). O Docker está em execução?"
+    if ($codigo -ne 0 -or -not (Test-Path $saida)) {
+      $mascarado = $texto -replace 'postgres(ql)?://\S+', '<conexao>'
+      if ($dbUrl -match '^[a-z]+://[^:/@]+:([^@]+)@') { $mascarado = $mascarado.Replace($Matches[1], '<senha>') }
+      $fim = ($mascarado.Split([char]10) | Where-Object { $_.Trim() } | Select-Object -Last 20) -join [Environment]::NewLine
+      Write-Host $fim
+      Remove-Item -Recurse -Force -LiteralPath $pasta -ErrorAction SilentlyContinue
+      throw "Falha ao gerar $($p.arq) (código $codigo). Causas comuns: Docker parado, conexão ou senha inválida, rede. Pasta parcial removida."
     }
     Write-Host ("{0}  {1} bytes" -f $p.arq, (Get-Item $saida).Length)
   }
