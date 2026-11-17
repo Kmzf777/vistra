@@ -27,8 +27,8 @@ export function carregarAmbiente(arquivo = path.join(RAIZ, ".env.novo.local")) {
 }
 
 // Banco antigo (crm/.env.local), usado só pela migração de dados.
-export function lerAmbienteAntigo() {
-  const v = ler(path.join(RAIZ, ".env.local"));
+export function lerAmbienteAntigo(arquivo = path.join(RAIZ, ".env.local")) {
+  const v = ler(arquivo);
   return {
     url: exigir(v, "NEXT_PUBLIC_SUPABASE_URL"),
     serviceRole: exigir(v, "SUPABASE_SERVICE_ROLE_KEY"),
