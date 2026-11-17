@@ -14,6 +14,7 @@ const GRUPOS: { chave: string; titulo: string }[] = [
   { chave: "previa_pedida", titulo: "Prévia pedida" },
   { chave: "previa_pronta", titulo: "Prévia pronta" },
   { chave: "previa_enviada", titulo: "Prévia enviada" },
+  { chave: "negociando", titulo: "Negociando" },
   { chave: "outros", titulo: "Outros" },
 ];
 

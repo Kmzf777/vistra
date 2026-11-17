@@ -307,6 +307,38 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"vendas": {
+                  Row: {
+                    "comissao": number | null,"comissao_pct": number,"criado_em": string,"fechado_em": string,"forma_pagamento": string,"id": string,"lead_id": string,"pago_em": string | null,"registrado_por": string,"repassado_em": string | null,"valor": number,"vendedor_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "comissao"?: never,"comissao_pct": number,"criado_em"?: string,"fechado_em": string,"forma_pagamento": string,"id"?: string,"lead_id": string,"pago_em"?: string | null,"registrado_por": string,"repassado_em"?: string | null,"valor": number,"vendedor_id": string
+                  }
+                  Update: {
+                    "comissao"?: never,"comissao_pct"?: number,"criado_em"?: string,"fechado_em"?: string,"forma_pagamento"?: string,"id"?: string,"lead_id"?: string,"pago_em"?: string | null,"registrado_por"?: string,"repassado_em"?: string | null,"valor"?: number,"vendedor_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "vendas_lead_id_fkey"
+      columns: ["lead_id"]
+isOneToOne: true
+      referencedRelation: "leads"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "vendas_registrado_por_fkey"
+      columns: ["registrado_por"]
+isOneToOne: false
+      referencedRelation: "perfis"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "vendas_vendedor_id_fkey"
+      columns: ["vendedor_id"]
+isOneToOne: false
+      referencedRelation: "perfis"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"verificacoes_site": {
                   Row: {
                     "criado_em": string,"evidencias": NonNullable<Json>,"ferramenta": string | null,"id": number,"lead_id": string,"veredito": string,"verificado_em": string
@@ -333,7 +365,10 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "importar_leads":
+            "anexar_previa":
+{ Args: { "p_pdf_url": string,"p_pedido_id": string,"p_site_url": string }; Returns: undefined
+                           },
+"importar_leads":
 { Args: { "p_autor": string,"p_itens": Json }; Returns: {
               "indice": number,"lead_id": string,"resultado": string
             }[]
@@ -352,16 +387,31 @@ isOneToOne: false
 "marcar_acesso":
 { Args: Record<PropertyKey, never>; Returns: undefined
                            },
+"marcar_comissao_repassada":
+{ Args: { "p_repassado_em": string,"p_venda_id": string }; Returns: undefined
+                           },
+"marcar_venda_paga":
+{ Args: { "p_pago_em": string,"p_venda_id": string }; Returns: undefined
+                           },
 "minha_cota":
 { Args: Record<PropertyKey, never>; Returns: {
               "abertas_hoje": number,"cota": number
             }[]
+                           },
+"mover_etapa":
+{ Args: { "p_etapa": string,"p_lead_id": string }; Returns: undefined
                            },
 "proximo_lead":
 { Args: Record<PropertyKey, never>; Returns: string
                            },
 "registrar_acao":
 { Args: { "p_acao": string,"p_lead_id": string,"p_mensagem_id"?: number }; Returns: string
+                           },
+"registrar_venda":
+{ Args: { "p_fechado_em": string,"p_forma": string,"p_lead_id": string,"p_valor": number }; Returns: string
+                           },
+"salvar_contato":
+{ Args: { "p_cargo": string,"p_lead_id": string,"p_nome": string,"p_telefone_e164": string }; Returns: string
                            }
           }
           Enums: {

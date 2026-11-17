@@ -1,0 +1,19 @@
+.form { display: flex; flex-direction: column; gap: 12px; }
+.campo { display: flex; flex-direction: column; gap: 5px; font-size: 13px; color: var(--tinta-fraca); }
+.campo input, .campo select {
+  width: 100%;
+  min-height: 44px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--tinta);
+  background: var(--vazio);
+  border: 1px solid var(--linha-viva);
+  border-radius: var(--raio-p);
+  padding: 8px 12px;
+}
+.campo input:focus, .campo select:focus { outline: 2px solid var(--voce); outline-offset: 1px; }
+.ajuda { font-size: 12px; color: var(--tinta-fantasma); }
+.acoes { display: flex; gap: 8px; flex-wrap: wrap; }
+.acoes button { min-height: 44px; min-width: 44px; }
+.erro { font-size: 13.5px; color: var(--erro); }
+.ok { font-size: 13.5px; color: var(--voce); }
