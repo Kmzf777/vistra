@@ -408,6 +408,9 @@ isOneToOne: false
 "marcar_venda_paga":
 { Args: { "p_pago_em": string,"p_venda_id": string }; Returns: undefined
                            },
+"migrar_conversa":
+{ Args: { "p_atribuido_em"?: string,"p_contato": Json,"p_dono": string,"p_eventos": Json,"p_lead_id": string,"p_passo": string }; Returns: undefined
+                           },
 "minha_cota":
 { Args: Record<PropertyKey, never>; Returns: {
               "abertas_hoje": number,"cota": number
