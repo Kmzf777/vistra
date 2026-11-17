@@ -368,6 +368,21 @@ isOneToOne: false
             "anexar_previa":
 { Args: { "p_pdf_url": string,"p_pedido_id": string,"p_site_url": string }; Returns: undefined
                            },
+"atualizar_configuracao":
+{ Args: { "p_comissao": number,"p_cota_padrao": number,"p_dias_acompanhamento": number,"p_dias_alerta": number,"p_piso": number,"p_preco": number }; Returns: undefined
+                           },
+"bloquear":
+{ Args: { "p_google_place_id": string,"p_motivo": string,"p_telefone_e164": string }; Returns: undefined
+                           },
+"definir_filtro_fila":
+{ Args: { "p_ativo": boolean,"p_id": string,"p_tipo": string }; Returns: undefined
+                           },
+"definir_vendedor":
+{ Args: { "p_ativo": boolean,"p_cota": number,"p_perfil_id": string }; Returns: undefined
+                           },
+"descartar_lead":
+{ Args: { "p_lead_id": string,"p_motivo": string }; Returns: undefined
+                           },
 "importar_leads":
 { Args: { "p_autor": string,"p_itens": Json }; Returns: {
               "indice": number,"lead_id": string,"resultado": string
@@ -401,14 +416,27 @@ isOneToOne: false
 "mover_etapa":
 { Args: { "p_etapa": string,"p_lead_id": string }; Returns: undefined
                            },
+"painel_dono":
+{ Args: { "p_desde": string }; Returns: {
+              "aberturas": number,"ativo": boolean,"comissao_a_receber": number,"dias_sem_abertura": number,"nome": string,"parado": boolean,"pedidos_previa": number,"recebidos": number,"respostas_pessoa": number,"ultimo_acesso_em": string,"vendas": number,"vendedor_id": string
+            }[]
+                           },
 "proximo_lead":
 { Args: Record<PropertyKey, never>; Returns: string
+                           },
+"reatribuir_lead":
+{ Args: { "p_lead_id": string,"p_novo_dono": string }; Returns: undefined
                            },
 "registrar_acao":
 { Args: { "p_acao": string,"p_lead_id": string,"p_mensagem_id"?: number }; Returns: string
                            },
 "registrar_venda":
 { Args: { "p_fechado_em": string,"p_forma": string,"p_lead_id": string,"p_valor": number }; Returns: string
+                           },
+"resumo_fila":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "cidade": string,"nicho": string,"prontos": number
+            }[]
                            },
 "salvar_contato":
 { Args: { "p_cargo": string,"p_lead_id": string,"p_nome": string,"p_telefone_e164": string }; Returns: string

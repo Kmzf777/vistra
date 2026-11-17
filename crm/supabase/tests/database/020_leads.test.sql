@@ -30,8 +30,8 @@ select is((select count(*) from leads), 0::bigint, 'v2 não vê lead alheio');
 reset role;
 
 select testes.entrar_como(current_setting('t.adm')::uuid);
-select is((select count(*) from leads), 2::bigint, 'admin vê todos os leads');
-select is((select count(*) from bloqueios), 1::bigint, 'admin vê os bloqueios');
+select is((select count(*) from leads where id in (current_setting('t.l1')::uuid, current_setting('t.l2')::uuid)), 2::bigint, 'admin vê todos os leads');
+select is((select count(*) from bloqueios where telefone_e164 = '+5534900000099'), 1::bigint, 'admin vê os bloqueios');
 reset role;
 
 select throws_ok(

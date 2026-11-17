@@ -17,3 +17,4 @@
 .acoes button { min-height: 44px; min-width: 44px; }
 .erro { font-size: 13.5px; color: var(--erro); }
 .ok { font-size: 13.5px; color: var(--voce); }
+.pessoa { display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: var(--raio-p); background: var(--painel); border: 1px solid var(--linha); list-style: none; }
