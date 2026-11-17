@@ -108,7 +108,7 @@ export default async function Funil() {
         <p className={estilo.regra}>
           Aqui só entra lead <strong>qualificado</strong> — e qualificado quer dizer uma coisa
           só: <em>você tem o número de quem decide</em>. O resto está no{" "}
-          <Link href="/leads">poço</Link>.
+          <Link href="/inicio">Início</Link>.
         </p>
       </header>
 
@@ -152,7 +152,7 @@ export default async function Funil() {
       {carga.tipo === "ok" && carga.cartoes.length === 0 && (
         <p className={estilo.faixa}>
           Nenhum lead qualificado seu ainda. Um lead chega aqui quando você consegue o contato de
-          quem decide — até então ele vive no <Link href="/leads">poço</Link>.
+          quem decide — até então ele vive no <Link href="/inicio">Início</Link>.
         </p>
       )}
 

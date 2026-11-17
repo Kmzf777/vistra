@@ -83,6 +83,7 @@
 
 .texto { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
 .texto strong { font-size: 14px; font-weight: 600; }
+.curto { display: none; }
 .texto em {
   font-style: normal;
   font-size: 11px;
@@ -92,11 +93,41 @@
 
 .pe { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--linha); }
 
-/* Estreito: só o símbolo e os glifos, para não roubar largura do conteúdo. */
-@media (max-width: 860px) {
+/* Médio: só o símbolo e os glifos, para não roubar largura do conteúdo. */
+@media (min-width: 641px) and (max-width: 860px) {
   .menu { padding: 20px 8px; align-items: center; }
   .marca { padding: 0 0 16px; justify-content: center; }
   .nomeMarca { display: none; }
   .texto { display: none; }
   .porta { justify-content: center; padding: 11px 0; width: 44px; }
+}
+
+/* Celular: barra fixa embaixo, ícone e rótulo curto, alvo de 44 px. */
+@media (max-width: 640px) {
+  .menu {
+    position: fixed;
+    top: auto; left: 0; right: 0; bottom: 0;
+    height: auto;
+    z-index: 20;
+    flex-direction: row;
+    gap: 0;
+    padding: 0 0 env(safe-area-inset-bottom);
+    border-right: none;
+    border-top: 1px solid var(--linha);
+    overflow-x: auto;
+  }
+  .marca { display: none; }
+  /* O rodapé vira uma célula só, com o botão de sair. */
+  .pe { flex: 0 0 52px; display: grid; place-items: center; margin: 0; padding: 0; border-top: none; }
+  .portas { flex-direction: row; flex: 1; gap: 0; }
+  .portas li { flex: 1 0 64px; }
+  .porta {
+    flex-direction: column; justify-content: center; gap: 2px;
+    min-height: 56px; min-width: 44px; padding: 6px 4px; border-radius: 0; text-align: center;
+  }
+  .aqui::before { left: 20%; right: 20%; top: -1px; bottom: auto; width: auto; height: 2px; }
+  .glifo { font-size: 16px; width: auto; }
+  .texto { align-items: center; }
+  .texto em, .longo { display: none; }
+  .curto { display: block; font-size: 11px; }
 }

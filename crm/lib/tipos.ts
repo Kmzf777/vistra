@@ -1,4 +1,4 @@
-// Tipos compartilhados pelas telas do CRM. Espelham supabase/schema.sql.
+// Tipos compartilhados pelas telas do CRM. Tipos do funil antigo (a Tarefa 10 troca pelos do banco novo).
 
 export type Situacao = "novo" | "meu" | "qualificado" | "nao_qualificado";
 export type Etapa = "novo_contato" | "conversando" | "proposta" | "fechou" | "perdeu";

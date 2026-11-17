@@ -100,3 +100,10 @@
   .sair { margin-left: 0; }
   .off, .entrar, .erro { text-align: center; font-size: 10px; letter-spacing: .06em; }
 }
+
+/* Celular: o rodapé cabe na barra inferior, só com o botão de sair (alvo de 44 px). */
+@media (max-width: 640px) {
+  .inicial, .off, .entrar { display: none; }
+  .sair { width: 44px; height: 44px; }
+  .erro { display: none; }
+}

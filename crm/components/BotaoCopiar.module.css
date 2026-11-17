@@ -1,0 +1,29 @@
+.bloco { display: flex; flex-direction: column; gap: 6px; }
+
+.botao {
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: var(--raio-p);
+  border: 1px solid var(--linha-viva);
+  background: var(--alto);
+  color: var(--tinta);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color .16s var(--mola), background .16s var(--mola);
+}
+.botao:hover:not(:disabled) { border-color: var(--voce); }
+.botao:disabled { opacity: .45; cursor: not-allowed; }
+
+.copiado { background: var(--voce); border-color: var(--voce); color: var(--sobre-voce); }
+
+.texto {
+  white-space: pre-wrap;
+  font-size: 14px;
+  color: var(--tinta-fraca);
+  user-select: text;
+  padding: 2px 4px;
+}
+
+.falha { font-size: 13px; color: var(--sinal); }

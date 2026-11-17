@@ -1,0 +1,24 @@
+.tela { display: flex; flex-direction: column; gap: 20px; max-width: 640px; margin: 0 auto; padding: 20px 16px 96px; }
+
+.cota { font-size: 20px; font-weight: 500; letter-spacing: -.01em; }
+.cota b { color: var(--voce); }
+
+.proximo {
+  width: 100%; min-height: 64px; padding: 14px 18px; border-radius: var(--raio);
+  border: none; background: var(--voce); color: var(--sobre-voce);
+  font: inherit; font-size: 18px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 0 24px rgba(57, 255, 20, .18);
+}
+.proximo:disabled { background: var(--alto); color: var(--tinta-fantasma); box-shadow: none; cursor: not-allowed; }
+.erro { margin-top: 8px; font-size: 14px; color: var(--erro); }
+
+.titulo { font-size: 13px; text-transform: uppercase; letter-spacing: .14em; color: var(--tinta-fantasma); margin-bottom: 10px; }
+.vazio { color: var(--tinta-fraca); font-size: 14px; }
+.lista { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.item {
+  display: flex; flex-direction: column; gap: 2px; min-height: 56px; justify-content: center;
+  padding: 10px 14px; border-radius: var(--raio-p); background: var(--painel); border: 1px solid var(--linha);
+  text-decoration: none; color: var(--tinta);
+}
+.item span { font-size: 13px; color: var(--tinta-fraca); }
+.item:hover { border-color: var(--voce); }
