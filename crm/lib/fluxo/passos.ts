@@ -19,6 +19,21 @@ export type Acao =
 
 export type Botao = { acao: Acao; rotulo: string; destaque: boolean; confirma?: string };
 
+/** As ações que dizem "mandei uma mensagem": ficam bloqueadas quando o número está bloqueado. */
+const ENVIOS: readonly Acao[] = ["abertura_enviada", "acompanhamento_enviado", "principal_enviada", "previa_enviada"];
+export function ehEnvio(acao: Acao): boolean {
+  return ENVIOS.includes(acao);
+}
+
+// As duas saídas da conversa: valem em todo passo depois da abertura (o banco aceita em qualquer passo).
+const SEM_INTERESSE: Botao = { acao: "sem_interesse", rotulo: "Não tem interesse", destaque: false };
+export const PEDIU_PARAR: Botao = {
+  acao: "pediu_parar",
+  rotulo: "Pediu para não chamar mais",
+  destaque: false,
+  confirma: "Isso bloqueia este número para todo mundo. Confirmar?",
+};
+
 /** Ordem em que os passos aparecem na lista da tela do lead. */
 export const PASSOS: { passo: Passo; rotulo: string }[] = [
   { passo: "abertura", rotulo: "Abertura" },
@@ -41,32 +56,36 @@ export function botoesDoPasso(passo: Passo | null, etapa: string | null): Botao[
       { acao: "robo", rotulo: "Caiu no robô", destaque: false },
       { acao: "pessoa", rotulo: "Falou uma pessoa", destaque: true },
       { acao: "sem_resposta", rotulo: "Ninguém respondeu", destaque: false },
+      SEM_INTERESSE,
+      PEDIU_PARAR,
     ];
   }
   if (passo === "robo") {
     return [
       { acao: "pessoa", rotulo: "Falou uma pessoa", destaque: true },
       { acao: "sem_resposta", rotulo: "Ninguém respondeu", destaque: false },
+      SEM_INTERESSE,
+      PEDIU_PARAR,
     ];
   }
   if (passo === "acompanhamento") {
-    return [{ acao: "acompanhamento_enviado", rotulo: "Enviei o acompanhamento", destaque: true }];
+    return [
+      { acao: "acompanhamento_enviado", rotulo: "Enviei o acompanhamento", destaque: true },
+      { acao: "pessoa", rotulo: "Falou uma pessoa", destaque: false },
+      SEM_INTERESSE,
+      PEDIU_PARAR,
+    ];
   }
   if (passo === "principal") {
-    return [{ acao: "principal_enviada", rotulo: "Mandei a mensagem principal", destaque: true }];
+    return [{ acao: "principal_enviada", rotulo: "Mandei a mensagem principal", destaque: true }, SEM_INTERESSE, PEDIU_PARAR];
   }
   if (passo === "resultado") {
     return [
       { acao: "quer_previa", rotulo: "Quer ver a prévia", destaque: true },
       { acao: "perguntou", rotulo: "Perguntou outra coisa ou preço", destaque: false },
-      { acao: "sem_interesse", rotulo: "Não tem interesse", destaque: false },
+      SEM_INTERESSE,
       { acao: "sem_resposta", rotulo: "Não respondeu", destaque: false },
-      {
-        acao: "pediu_parar",
-        rotulo: "Pediu para não chamar mais",
-        destaque: false,
-        confirma: "Isso bloqueia este número para todo mundo. Confirmar?",
-      },
+      PEDIU_PARAR,
     ];
   }
   if (etapa === "previa_pronta") {

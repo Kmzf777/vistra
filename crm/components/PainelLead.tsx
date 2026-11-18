@@ -3,9 +3,11 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { digitosWhatsApp } from "@/lib/telefone";
 import { rotuloEvento } from "@/lib/fluxo/eventos";
+import { PEDIU_PARAR } from "@/lib/fluxo/passos";
 import FormVenda from "./FormVenda";
 import {
   acoesDaEtapa,
+  podePedirParar,
   rotuloTempo,
   temperatura,
   type AcaoEtapa,
@@ -27,6 +29,8 @@ type Props = {
   pisoReferencia: number;
   aoFechar: () => void;
   aoExecutar: (acao: AcaoEtapa) => void;
+  /** "Pediu para não chamar mais": bloqueia o número para todos e leva o lead a Perdeu. */
+  aoPedirParar: () => void;
   aoCancelarVenda: () => void;
   aoRegistrarVenda: (valor: number, forma: string, fechadoEm: string) => void;
   /** Devolve o erro, ou null quando salvou. */
@@ -72,6 +76,7 @@ export default function PainelLead({
   pisoReferencia,
   aoFechar,
   aoExecutar,
+  aoPedirParar,
   aoCancelarVenda,
   aoRegistrarVenda,
   aoSalvarContato,
@@ -79,6 +84,7 @@ export default function PainelLead({
   const caixa = useRef<HTMLDivElement>(null);
   const idTitulo = useId();
   const [confirmaPerdeu, setConfirmaPerdeu] = useState(false);
+  const [confirmaParar, setConfirmaParar] = useState(false);
   const [novoContato, setNovoContato] = useState(false);
   const [nome, setNome] = useState("");
   const [cargo, setCargo] = useState("");
@@ -192,6 +198,34 @@ export default function PainelLead({
                   ),
                 )}
               </div>
+              {podePedirParar(cartao.etapa) &&
+                (confirmaParar ? (
+                  <div className={form.form}>
+                    <p className={form.erro}>{PEDIU_PARAR.confirma}</p>
+                    <div className={form.acoes}>
+                      <button
+                        type="button"
+                        className="btn"
+                        disabled={ocupado}
+                        onClick={() => {
+                          setConfirmaParar(false);
+                          aoPedirParar();
+                        }}
+                      >
+                        Sim, confirmar
+                      </button>
+                      <button type="button" className="btn" onClick={() => setConfirmaParar(false)}>
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className={form.acoes}>
+                    <button type="button" className="btn" disabled={ocupado} onClick={() => setConfirmaParar(true)}>
+                      {PEDIU_PARAR.rotulo}
+                    </button>
+                  </div>
+                ))}
             </section>
           )
         )}
@@ -264,6 +298,11 @@ export default function PainelLead({
 
         <section className={estilo.bloco}>
           <h3 className={estilo.rotulo}>Contato</h3>
+          {cartao.numeroBloqueado && (
+            <p className={form.erro} role="alert">
+              Este número está bloqueado. Fale com o admin.
+            </p>
+          )}
           {cartao.telefone && (
             <p>
               <a className={estilo.telefone} href={`https://wa.me/${digitosWhatsApp(cartao.telefone)}`} target="_blank" rel="noopener noreferrer">

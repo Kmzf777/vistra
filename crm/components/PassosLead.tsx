@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import BotaoCopiar from "@/components/BotaoCopiar";
 import { largarLead, registrarAcao } from "@/app/(crm)/lead/acoes";
-import { botoesDoPasso, PASSOS, type Acao, type Botao } from "@/lib/fluxo/passos";
+import { botoesDoPasso, ehEnvio, PASSOS, type Acao, type Botao } from "@/lib/fluxo/passos";
 import { linkWhatsApp } from "@/lib/mensagens/preencher";
 import type { LeadEmPasso } from "@/lib/dados/vendedor";
 import estilo from "./PassosLead.module.css";
@@ -23,7 +23,8 @@ function dataCurta(iso: string | null): string | null {
 }
 
 export default function PassosLead({ dados }: { dados: LeadEmPasso }) {
-  const { lead, telefone, abertura, robo, principal, acompanhamento, preco, faltando, mesmoGrupo, previa } = dados;
+  const { lead, telefone, numeroBloqueado, abertura, robo, principal, acompanhamento, preco, faltando, mesmoGrupo, previa } =
+    dados;
   const [pendente, iniciar] = useTransition();
   const [erro, setErro] = useState<string | null>(null);
   const [recado, setRecado] = useState<string | null>(null);
@@ -68,7 +69,15 @@ export default function PassosLead({ dados }: { dados: LeadEmPasso }) {
   }
 
   const link = telefone && abertura ? linkWhatsApp(telefone.e164, abertura) : null;
-  const podeAbrir = link !== null && !bloqueado;
+  const podeAbrir = link !== null && !bloqueado && !numeroBloqueado;
+  // Copiar é o jeito de mandar as outras mensagens: com perfil incompleto ou número bloqueado, fica fechado.
+  const semCopiar = bloqueado || numeroBloqueado;
+
+  /** "Enviei a abertura" acompanha o "Abrir no WhatsApp"; os outros envios param com o número bloqueado. */
+  function envioFechado(acao: Acao): boolean {
+    if (acao === "abertura_enviada") return !podeAbrir;
+    return ehEnvio(acao) && numeroBloqueado;
+  }
 
   return (
     <div className={estilo.tela}>
@@ -108,13 +117,18 @@ export default function PassosLead({ dados }: { dados: LeadEmPasso }) {
           {aviso}
         </p>
       )}
+      {numeroBloqueado && (
+        <p className={estilo.aviso} role="alert">
+          Este número está bloqueado. Fale com o admin.
+        </p>
+      )}
 
       <section className={estilo.cartao}>
         {lead.passo === "abertura" && (
           <>
             <h2>Mande a abertura</h2>
             {abertura && <p className={estilo.texto}>{abertura}</p>}
-            {!telefone && <p className={estilo.aviso}>Sem número de WhatsApp válido para este lead.</p>}
+            {!telefone && !numeroBloqueado && <p className={estilo.aviso}>Sem número de WhatsApp válido para este lead.</p>}
             {podeAbrir ? (
               <a className={estilo.acaoGrande} href={link!} target="_blank" rel="noopener">
                 Abrir no WhatsApp
@@ -138,7 +152,7 @@ export default function PassosLead({ dados }: { dados: LeadEmPasso }) {
                   key={r.rotulo}
                   rotulo={`Copiar: ${r.rotulo || "resposta"}`}
                   texto={r.texto}
-                  desabilitado={bloqueado}
+                  desabilitado={semCopiar}
                   mostrarTexto
                 />
               ))}
@@ -154,7 +168,7 @@ export default function PassosLead({ dados }: { dados: LeadEmPasso }) {
             <h2>Acompanhamento</h2>
             {lead.proximo_passo_em && <p className={estilo.meta}>A partir de {dataCurta(lead.proximo_passo_em)}</p>}
             {acompanhamento && (
-              <BotaoCopiar rotulo="Copiar acompanhamento" texto={acompanhamento} desabilitado={bloqueado} mostrarTexto />
+              <BotaoCopiar rotulo="Copiar acompanhamento" texto={acompanhamento} desabilitado={semCopiar} mostrarTexto />
             )}
           </>
         )}
@@ -169,7 +183,7 @@ export default function PassosLead({ dados }: { dados: LeadEmPasso }) {
                     key={i}
                     rotulo={`${copiadas[i] ? "✓ " : ""}Copiar parte ${i + 1}/${principal.partes.length}`}
                     texto={parte}
-                    desabilitado={bloqueado}
+                    desabilitado={semCopiar}
                     aoCopiar={() => setCopiadas((c) => ({ ...c, [i]: true }))}
                     mostrarTexto
                   />
@@ -185,7 +199,7 @@ export default function PassosLead({ dados }: { dados: LeadEmPasso }) {
           <>
             <h2>Como foi a resposta?</h2>
             {preco && (
-              <BotaoCopiar rotulo="Copiar resposta sobre preço" texto={preco} desabilitado={bloqueado} mostrarTexto />
+              <BotaoCopiar rotulo="Copiar resposta sobre preço" texto={preco} desabilitado={semCopiar} mostrarTexto />
             )}
           </>
         )}
@@ -216,6 +230,7 @@ export default function PassosLead({ dados }: { dados: LeadEmPasso }) {
         <div className={estilo.botoes}>
           {botoes.map((b) => {
             const semMensagem = b.acao === "principal_enviada" && !principal;
+            const fechado = semMensagem || envioFechado(b.acao);
             const emConfirmacao = confirmando === b.acao;
             return (
               <div key={b.acao + b.rotulo} className={estilo.botaoBloco}>
@@ -223,7 +238,7 @@ export default function PassosLead({ dados }: { dados: LeadEmPasso }) {
                 <button
                   type="button"
                   className={`${estilo.botao} ${b.destaque ? estilo.destaque : ""} ${emConfirmacao ? estilo.perigo : ""}`}
-                  disabled={pendente || semMensagem}
+                  disabled={pendente || fechado}
                   onClick={() => rodar(b)}
                 >
                   {pendente ? "Aguarde…" : emConfirmacao ? "Sim, confirmar" : b.rotulo}

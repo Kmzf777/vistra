@@ -61,15 +61,16 @@ export async function carregarFunil(): Promise<DadosFunil> {
   if (leads.length === 0) return { etapas, cartoes: [], ...config };
 
   const ids = leads.map((l) => l.id);
+  // O link do WhatsApp sai de telefone_para_abertura (olha os bloqueios), uma chamada por lead em jogo.
+  // Os terminais (fechou/perdeu) não levam link. A leitura direta só separa "sem número" de "bloqueado".
+  const terminais = new Set(etapas.filter((e) => e.terminal).map((e) => e.slug));
+  const emJogo = leads.filter((l) => !terminais.has(l.etapa)).map((l) => l.id);
+  const abrirR = await Promise.all(emJogo.map((id) => sb.rpc("telefone_para_abertura", { p_lead_id: id })));
+  for (const r of abrirR) if (r.error) falha(r.error);
   const [tel, contatos, eventos, previas, vendas] = await Promise.all([
-    sb
-      .from("telefones_lead")
-      .select("lead_id, e164")
-      .in("lead_id", ids)
-      .eq("tipo", "whatsapp")
-      .is("invalido_em", null)
-      .order("principal", { ascending: false })
-      .order("id", { ascending: true }),
+    emJogo.length
+      ? sb.from("telefones_lead").select("lead_id").in("lead_id", emJogo).eq("tipo", "whatsapp").is("invalido_em", null)
+      : Promise.resolve({ data: [] as { lead_id: string }[], error: null }),
     sb.from("contatos").select("id, lead_id, nome, cargo, telefone_e164").in("lead_id", ids).order("criado_em"),
     sb
       .from("eventos_lead")
@@ -86,8 +87,14 @@ export async function carregarFunil(): Promise<DadosFunil> {
   ]);
   for (const r of [tel, contatos, eventos, previas, vendas]) if (r.error) falha(r.error);
 
+  const comWhatsApp = new Set((tel.data ?? []).map((t) => t.lead_id));
   const telefones = new Map<string, string>();
-  for (const t of tel.data ?? []) if (!telefones.has(t.lead_id)) telefones.set(t.lead_id, t.e164);
+  const bloqueados = new Set<string>();
+  emJogo.forEach((id, i) => {
+    const e164 = abrirR[i].data;
+    if (e164) telefones.set(id, e164);
+    else if (comWhatsApp.has(id)) bloqueados.add(id);
+  });
   const mapaPrevias = new Map<string, { site_url: string | null; pdf_url: string | null }>();
   for (const p of previas.data ?? []) {
     if (!mapaPrevias.has(p.lead_id)) mapaPrevias.set(p.lead_id, { site_url: p.site_url, pdf_url: p.pdf_url });
@@ -108,6 +115,7 @@ export async function carregarFunil(): Promise<DadosFunil> {
     ...config,
     cartoes: montarCartoes(leads, {
       telefones,
+      bloqueados,
       contatos: (contatos.data ?? []) as (ContatoLead & { lead_id: string })[],
       eventos: (eventos.data ?? []).map((e) => ({
         id: e.id,

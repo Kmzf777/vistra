@@ -41,6 +41,7 @@ export async function registrarAcao(leadId: string, acao: Acao, mensagemId?: num
     if (error) return { ok: false, erro: traduzirErro(error) };
     revalidatePath("/inicio");
     revalidatePath("/conversas");
+    revalidatePath("/funil");
     revalidatePath(`/lead/${leadId}`);
     return { ok: true, recado: data ?? "Feito." };
   } catch {

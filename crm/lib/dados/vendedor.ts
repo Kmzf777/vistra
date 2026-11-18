@@ -27,7 +27,10 @@ export type LeadEmPasso = {
     estado: string;
     proximo_passo_em: string | null;
   };
+  /** O WhatsApp do wa.me, vindo de `telefone_para_abertura` (nulo se não há número livre ou se está bloqueado). */
   telefone: { e164: string; tipo: string } | null;
+  /** Há WhatsApp válido, mas algum telefone ou o place id do lead foi bloqueado: nada de abrir nem de "Enviei". */
+  numeroBloqueado: boolean;
   abertura: string | null;
   robo: { rotulo: string; texto: string }[];
   principal: { mensagemId: number; partes: string[] } | null;
@@ -127,7 +130,10 @@ export async function carregarLeadEmPasso(id: string): Promise<LeadEmPasso | nul
   if (error) falha(error);
   if (!l) return null;
 
-  const [tel, modelos, msg, grupo, previa] = await Promise.all([
+  // O número do wa.me vem da RPC, que olha os bloqueios (o vendedor não lê bloqueios). A leitura direta
+  // só diz se existe WhatsApp válido, para separar "sem número" de "número bloqueado".
+  const [abrir, tel, modelos, msg, grupo, previa] = await Promise.all([
+    sb.rpc("telefone_para_abertura", { p_lead_id: id }),
     sb
       .from("telefones_lead")
       .select("e164, tipo")
@@ -158,7 +164,7 @@ export async function carregarLeadEmPasso(id: string): Promise<LeadEmPasso | nul
       .limit(1)
       .maybeSingle(),
   ]);
-  for (const r of [tel, modelos, msg, grupo, previa]) if (r.error) falha(r.error);
+  for (const r of [abrir, tel, modelos, msg, grupo, previa]) if (r.error) falha(r.error);
 
   // O modelo do nicho do lead vale mais que o geral (nicho nulo), por tipo e rótulo.
   const doLead = new Map<string, { especifico: boolean; texto: string; tipo: string; rotulo: string }>();
@@ -191,7 +197,7 @@ export async function carregarLeadEmPasso(id: string): Promise<LeadEmPasso | nul
     return m ? montar(m.texto) : null;
   };
 
-  const e164 = tel.data?.e164 ?? null;
+  const e164 = abrir.data ?? null;
 
   return {
     lead: {
@@ -209,7 +215,8 @@ export async function carregarLeadEmPasso(id: string): Promise<LeadEmPasso | nul
       estado: l.estado,
       proximo_passo_em: l.proximo_passo_em,
     },
-    telefone: e164 ? { e164, tipo: tel.data?.tipo ?? "whatsapp" } : null,
+    telefone: e164 ? { e164, tipo: "whatsapp" } : null,
+    numeroBloqueado: !e164 && !!tel.data,
     abertura: primeiro("abertura"),
     robo: modelosDoLead
       .filter((m) => m.tipo === "robo")

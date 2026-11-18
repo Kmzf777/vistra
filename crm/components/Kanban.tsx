@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
-import { moverEtapa, registrarVenda, salvarContato } from "@/app/(crm)/lead/acoes";
+import { moverEtapa, registrarAcao, registrarVenda, salvarContato } from "@/app/(crm)/lead/acoes";
 import KanbanColuna from "./KanbanColuna";
 import PainelLead from "./PainelLead";
 import {
@@ -86,6 +86,17 @@ export default function Kanban({ etapas, cartoes, precoTabela, pisoReferencia }:
     });
   }
 
+  function pedirParar(c: CartaoLead) {
+    if (pendente) return;
+    setEmAcao(c.id);
+    iniciar(async () => {
+      const r = await registrarAcao(c.id, "pediu_parar");
+      setEmAcao(null);
+      if (r.ok) anunciar("ok", `${c.nome}: número bloqueado para todo mundo. O lead foi para Perdeu.`);
+      else anunciar("erro", `${c.nome}: ${r.erro}`);
+    });
+  }
+
   function registrar(c: CartaoLead, valor: number, forma: string, data: string) {
     setErroVenda(null);
     setEmAcao(c.id);
@@ -151,6 +162,7 @@ export default function Kanban({ etapas, cartoes, precoTabela, pisoReferencia }:
               pisoReferencia={pisoReferencia}
               aoFechar={fechar}
               aoExecutar={(a) => executar(cartaoAberto, a)}
+              aoPedirParar={() => pedirParar(cartaoAberto)}
               aoCancelarVenda={() => setVendendo(false)}
               aoRegistrarVenda={(v, f, d) => registrar(cartaoAberto, v, f, d)}
               aoSalvarContato={(n, cg, t) => contato(cartaoAberto, n, cg, t)}

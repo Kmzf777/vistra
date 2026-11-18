@@ -20,8 +20,10 @@ export type CartaoLead = {
   nicho: string | null;
   instagram: string | null;
   site: string | null;
-  /** WhatsApp principal do lead (E.164). */
+  /** WhatsApp do lead para o wa.me (E.164), vindo de `telefone_para_abertura`; nulo se não há ou está bloqueado. */
   telefone: string | null;
+  /** Há WhatsApp válido, mas algum telefone ou o place id do lead foi bloqueado. */
+  numeroBloqueado: boolean;
   etapa: string;
   /** Mais antigo primeiro. */
   contatos: ContatoLead[];
@@ -62,6 +64,11 @@ export function acoesDaEtapa(etapa: string): AcaoEtapa[] {
   return [];
 }
 
+/** "Pediu para não chamar mais" no painel do funil: só nas etapas em jogo (o lead ainda está em conversa). */
+export function podePedirParar(etapa: string): boolean {
+  return etapa === "previa_pedida" || etapa === "previa_pronta" || etapa === "previa_enviada" || etapa === "negociando";
+}
+
 /** A ação principal que aparece no cartão, sem abrir o painel. */
 export function proximaAcao(etapa: string): AcaoEtapa | null {
   if (etapa === "previa_enviada") return "negociando";
@@ -97,6 +104,8 @@ export function montarCartoes(
     eventos: (EventoLead & { lead_id: string })[];
     previas: Map<string, { site_url: string | null; pdf_url: string | null }>;
     vendas: Map<string, VendaLead>;
+    /** Leads com número bloqueado: o cartão não leva link. */
+    bloqueados?: Set<string>;
   },
   agora: number = Date.now(),
 ): CartaoLead[] {
@@ -114,7 +123,8 @@ export function montarCartoes(
       nicho: l.nicho,
       instagram: l.instagram,
       site: l.site,
-      telefone: extras.telefones.get(l.id) ?? null,
+      telefone: extras.bloqueados?.has(l.id) ? null : (extras.telefones.get(l.id) ?? null),
+      numeroBloqueado: extras.bloqueados?.has(l.id) ?? false,
       etapa: l.etapa,
       contatos,
       eventos,
