@@ -3,38 +3,38 @@
   "modelo": "modelo-exemplo-2026-10",
   "nichos": [
     {
-      "nome": "Pet shop",
+      "nome": "Nicho Exemplo",
       "dor": "o tutor pergunta tudo no WhatsApp, como preço do banho, horário e endereço",
       "transformacao": "o tutor vê serviços, horário e fotos no site e chama só para marcar"
     }
   ],
   "modelos": [
     {
-      "nicho": null,
+      "nicho": "Nicho Exemplo",
       "tipo": "abertura",
       "rotulo": "",
       "texto": "Olá [saudacao]"
     },
     {
-      "nicho": null,
+      "nicho": "Nicho Exemplo",
       "tipo": "robo",
       "rotulo": "digite o assunto",
       "texto": "parceria, site para o negócio"
     },
     {
-      "nicho": null,
+      "nicho": "Nicho Exemplo",
       "tipo": "robo",
       "rotulo": "ia",
       "texto": "oi!\nnão é agendamento, é um assunto para o responsável ou para quem cuida do marketing. Consegue me passar para uma pessoa da equipe?"
     },
     {
-      "nicho": null,
+      "nicho": "Nicho Exemplo",
       "tipo": "acompanhamento",
       "rotulo": "",
       "texto": "oi, [saudacao], passando para saber se você viu minha mensagem sobre a prévia do site. Posso mandar?"
     },
     {
-      "nicho": null,
+      "nicho": "Nicho Exemplo",
       "tipo": "preco",
       "rotulo": "",
       "texto": "te mostro a prévia primeiro, aí você vê se faz sentido e eu te passo o valor. Posso mandar?"

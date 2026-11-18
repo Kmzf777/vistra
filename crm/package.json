@@ -14,6 +14,7 @@
     "importar:leads": "tsx scripts/importar-leads.ts",
     "importar:mensagens": "tsx scripts/importar-mensagens.ts",
     "convidar": "tsx scripts/convidar.ts",
+    "criar:dominio": "tsx scripts/criar-dominio.ts",
     "migrar": "tsx scripts/migrar-dados.ts"
   },
   "dependencies": {

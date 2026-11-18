@@ -1,11 +1,15 @@
-// Apaga dados de exemplo (leads com origem_id começando com o prefixo e usuários @exemplo.com).
+// Apaga dados de exemplo: leads com origem_id começando com o prefixo, usuários @exemplo.com, os modelos de
+// mensagem desses usuários e do "Nicho Exemplo", e o próprio Nicho Exemplo. Nicho real não é tocado.
 // Uso: npx tsx scripts/limpar-exemplos.ts [--prefixo exemplo-] [--emails <prefixo do e-mail>] [--gravar]
-// Sem --gravar, só conta o que apagaria.
+// Sem --gravar, só conta o que apagaria. No fim, lista os modelos ativos (tipo e nicho, sem o texto).
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { carregarAmbiente } from "./_ambiente";
 
 type Opcoes = { prefixo: string; emails: string; gravar: boolean };
-export type Resultado = { leads: number; usuarios: number };
+export type ModeloAtivo = { tipo: string; nicho: string };
+export type Resultado = { leads: number; usuarios: number; modelos: number; nichos: number; ativos: ModeloAtivo[] };
+
+export const NICHO_EXEMPLO = "Nicho Exemplo";
 
 function lerArgumentos(argv: string[]): Opcoes {
   const valor = (nome: string, padrao: string) => {
@@ -46,6 +50,14 @@ async function listarUsuarios(sb: SupabaseClient, prefixoEmail: string) {
   return achados;
 }
 
+async function modelosAtivos(sb: SupabaseClient): Promise<ModeloAtivo[]> {
+  const linhas = exigir(
+    await sb.from("modelos_mensagem").select("tipo, nichos(nome)").eq("ativo", true).order("tipo"),
+    "ler modelos ativos",
+  ) as unknown as { tipo: string; nichos: { nome: string } | null }[];
+  return linhas.map((m) => ({ tipo: m.tipo, nicho: m.nichos?.nome ?? "(geral)" }));
+}
+
 export async function limparExemplos(sb: SupabaseClient, o: Opcoes): Promise<Resultado> {
   if (!o.prefixo.startsWith("exemplo-")) throw new Error('prefixo precisa começar com "exemplo-".');
   const leads = exigir(
@@ -56,7 +68,23 @@ export async function limparExemplos(sb: SupabaseClient, o: Opcoes): Promise<Res
   const usuarios = await listarUsuarios(sb, o.emails);
   const userIds = usuarios.map((u) => u.id);
 
-  if (!o.gravar) return { leads: leadIds.length, usuarios: usuarios.length };
+  // modelos de exemplo: os escritos por usuários de exemplo e os do Nicho Exemplo (um modelo geral de exemplo
+  // valeria para todo nicho real na fila)
+  const nicho = exigir(await sb.from("nichos").select("id").eq("nome", NICHO_EXEMPLO).maybeSingle(), "ler o Nicho Exemplo") as {
+    id: string;
+  } | null;
+  const idsModelos = new Set<number>();
+  if (userIds.length > 0) {
+    const doAutor = exigir(await sb.from("modelos_mensagem").select("id").in("autor_id", userIds), "ler modelos") as { id: number }[];
+    doAutor.forEach((m) => idsModelos.add(m.id));
+  }
+  if (nicho) {
+    const doNicho = exigir(await sb.from("modelos_mensagem").select("id").eq("nicho_id", nicho.id), "ler modelos") as { id: number }[];
+    doNicho.forEach((m) => idsModelos.add(m.id));
+  }
+  const contagem = { leads: leadIds.length, usuarios: usuarios.length, modelos: idsModelos.size, nichos: nicho ? 1 : 0 };
+
+  if (!o.gravar) return { ...contagem, ativos: await modelosAtivos(sb) };
 
   // 1. devolve à fila os leads reservados pelos usuários do filtro e apaga os eventos deles
   if (userIds.length > 0) {
@@ -81,19 +109,35 @@ export async function limparExemplos(sb: SupabaseClient, o: Opcoes): Promise<Res
   const b = await sb.from("bloqueios").delete().like("google_place_id", `${o.prefixo}%`).select("id");
   if (b.error) throw new Error(`apagar bloqueios: ${b.error.message}`);
 
-  // 3. usuários
+  // 3. modelos de exemplo e o Nicho Exemplo (antes dos usuários: modelos_mensagem.autor_id aponta para o perfil)
+  if (idsModelos.size > 0) {
+    exigir(await sb.from("modelos_mensagem").delete().in("id", [...idsModelos]).select("id"), "apagar modelos de exemplo");
+  }
+  if (nicho) {
+    const r = await sb.from("nichos").delete().eq("nome", NICHO_EXEMPLO).select("id");
+    if (r.error) {
+      throw new Error(`apagar o ${NICHO_EXEMPLO}: ${r.error.message} (ainda há lead fora do prefixo nesse nicho?)`);
+    }
+  }
+
+  // 4. usuários
   for (const u of usuarios) {
     const { error } = await sb.auth.admin.deleteUser(u.id);
     if (error) throw new Error(`apagar usuário de exemplo: ${error.message}`);
   }
-  return { leads: leadIds.length, usuarios: usuarios.length };
+  return { ...contagem, ativos: await modelosAtivos(sb) };
 }
 
 if (require.main === module) {
   (async () => {
     const o = lerArgumentos(process.argv.slice(2));
     const r = await limparExemplos(clienteSecreto(), o);
-    console.log(`${r.leads} leads de exemplo, ${r.usuarios} usuários de exemplo${o.gravar ? " (apagados)" : " (nada apagado; use --gravar)"}`);
+    console.log(
+      `${r.leads} leads de exemplo, ${r.usuarios} usuários de exemplo, ${r.modelos} modelos de exemplo, ` +
+        `${r.nichos} ${NICHO_EXEMPLO}${o.gravar ? " (apagados)" : " (nada apagado; use --gravar)"}`,
+    );
+    console.log(`Modelos ativos${o.gravar ? " agora" : ""} (${r.ativos.length}):`);
+    for (const m of r.ativos) console.log(`  ${m.tipo} · ${m.nicho}`);
   })().catch((e) => {
     console.error("Falhou:", (e as Error).message);
     process.exit(1);

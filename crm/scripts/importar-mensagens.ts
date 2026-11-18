@@ -1,25 +1,14 @@
 // Importa mensagens por lead e modelos gerais (arquivo local dos geradores) para o banco novo.
 // Uso: npm run importar:mensagens -- --arquivo <json> [--autor <email do admin>] [--gravar]
 // Sem --gravar não escreve no banco: valida e imprime o relatório. Nunca imprime telefone.
+// Com --gravar e qualquer item reprovado, nada é gravado (nem modelos, nem mensagens) e o script sai com código 1.
+// Nicho citado no arquivo precisa existir antes: crie com scripts/criar-dominio.ts.
 import fs from "node:fs";
 import path from "node:path";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { carregarAmbiente } from "./_ambiente";
 import { normalizarTelefone } from "../lib/telefone";
-import { validarEstiloTexto, validarMensagem } from "../lib/mensagens/validar";
-
-type ArquivoMensagens = {
-  gerado_em: string;
-  modelo: string;
-  nichos?: { nome: string; dor: string; transformacao: string }[];
-  modelos?: { nicho: string | null; tipo: "abertura" | "robo" | "acompanhamento" | "preco"; rotulo?: string; texto: string }[];
-  mensagens: {
-    lead: { google_place_id?: string; telefone?: string; origem_id?: string };
-    partes: string[];
-    whatsapp?: { numero: string; origem: string };
-    observacao?: string;
-  }[];
-};
+import { avaliarArquivo, motivoParaNaoGravar, nichosCitados, type ArquivoMensagens } from "../lib/mensagens/arquivo";
 
 type LeadBanco = {
   nome: string;
@@ -76,73 +65,40 @@ async function principal() {
   const sb = createClient(env.url, env.secreta, { auth: { persistSession: false, autoRefreshToken: false } });
   const { porPlace, porOrigem, porFone } = await buscarLeads(sb, dados.mensagens);
 
-  const aEnviar: Record<string, unknown>[] = [];
-  const reprovadas: string[] = [];
-  let validas = 0;
-  let semLead = 0;
-
-  dados.mensagens.forEach((m, idx) => {
-    const fone = m.lead.telefone ? normalizarTelefone(m.lead.telefone)?.e164 : undefined;
-    const lead =
-      (m.lead.google_place_id && porPlace.get(m.lead.google_place_id)) ||
-      (m.lead.origem_id && porOrigem.get(m.lead.origem_id)) ||
-      (fone && porFone.get(fone)) ||
-      null;
-    const rotulo = lead?.nome ?? m.lead.google_place_id ?? m.lead.origem_id ?? `item ${idx + 1}`;
-    if (!lead) semLead++;
-
-    const erros = validarMensagem(m.partes, {
-      nota: lead?.nota ?? null,
-      avaliacoes: lead?.avaliacoes ?? null,
-      clinica: lead?.nichos?.clinica ?? false,
-    });
-    let numero: string | undefined;
-    if (m.whatsapp) {
-      const n = normalizarTelefone(m.whatsapp.numero);
-      if (!n) erros.push("whatsapp com número inválido");
-      else numero = n.e164;
-    }
-    if (erros.length) {
-      reprovadas.push(`  ${rotulo}: ${erros.join("; ")}`);
-      return;
-    }
-    validas++;
-    aEnviar.push({
-      lead: { ...m.lead, ...(fone ? { telefone: fone } : {}) },
-      partes: m.partes,
-      modelo: dados.modelo,
-      observacao: m.observacao ?? null,
-      ...(numero ? { whatsapp: { numero, origem: m.whatsapp?.origem ?? null } } : {}),
-    });
-  });
-
-  // modelos: nicho existente no banco, tipo válido, texto não vazio e regras de estilo
-  const TIPOS = ["abertura", "robo", "acompanhamento", "preco"];
-  const nichosArquivo = (dados.nichos ?? []).map((n) => n.nome);
-  const nomesNicho = [...new Set([...nichosArquivo, ...(dados.modelos ?? []).map((m) => m.nicho).filter((x): x is string => !!x)])];
+  const nomesNicho = nichosCitados(dados);
   const nichosBanco = new Set<string>();
   if (nomesNicho.length) {
     const { data, error } = await sb.from("nichos").select("nome").in("nome", nomesNicho);
     if (error) throw new Error(`buscar nichos: ${error.message}`);
     for (const n of data ?? []) nichosBanco.add(n.nome);
   }
-  for (const nome of nichosArquivo) {
-    if (!nichosBanco.has(nome)) reprovadas.push(`  nicho "${nome}": não existe no banco`);
-  }
-  (dados.modelos ?? []).forEach((m, idx) => {
-    const erros: string[] = [];
-    if (!TIPOS.includes(m.tipo)) erros.push("tipo inválido");
-    if (!m.texto || !m.texto.trim()) erros.push("texto vazio");
-    else erros.push(...validarEstiloTexto(m.texto));
-    if (m.nicho && !nichosBanco.has(m.nicho)) erros.push(`nicho "${m.nicho}" não existe no banco`);
-    if (erros.length) reprovadas.push(`  modelo ${idx + 1} (${m.tipo}${m.rotulo ? " " + m.rotulo : ""}): ${erros.join("; ")}`);
-  });
+
+  const avaliacao = avaliarArquivo(
+    dados,
+    (m, fone) => {
+      const l =
+        (m.lead.google_place_id && porPlace.get(m.lead.google_place_id)) ||
+        (m.lead.origem_id && porOrigem.get(m.lead.origem_id)) ||
+        (fone && porFone.get(fone)) ||
+        null;
+      return l ? { nome: l.nome, nota: l.nota, avaliacoes: l.avaliacoes, clinica: l.nichos?.clinica ?? false } : null;
+    },
+    nichosBanco,
+  );
+  const { aEnviar, reprovadas, validas, semLead } = avaliacao;
 
   console.log(`${validas} válidas, ${reprovadas.length} reprovadas, ${semLead} sem lead no banco`);
-  for (const r of reprovadas) console.log(r);
+  for (const r of reprovadas) console.log(`  ${r.item}: ${r.erros}`);
 
   if (!gravar) {
     console.log("Simulação: nada foi gravado. Use --gravar para gravar.");
+    return;
+  }
+
+  const motivo = motivoParaNaoGravar(avaliacao);
+  if (motivo) {
+    console.error(motivo);
+    process.exitCode = 1;
     return;
   }
 
