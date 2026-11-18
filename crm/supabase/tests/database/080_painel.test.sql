@@ -1,5 +1,5 @@
 begin;
-select plan(56);
+select plan(63);
 
 select set_config('t.v1', testes.criar_usuario('painel1@exemplo.com', 'Vendedor Um Exemplo')::text, true);
 select set_config('t.v2', testes.criar_usuario('painel2@exemplo.com', 'Vendedor Dois Exemplo')::text, true);
@@ -199,6 +199,28 @@ select is((select ativo from public.perfis where id = current_setting('t.v1')::u
 select throws_ok(format($$select pg_temp.como(%L, %L)$$, current_setting('t.v1'), 'select public.proximo_lead()::text'),
   'P0001', 'Seu acesso foi desativado. Fale com o Kelwin.', 'v1 perde o acesso');
 select is(pg_temp.col('parado', current_setting('t.v1')), 'false', 'desativado não aparece como parado');
+
+-- editar nome, curso e artigo ("Sou o" / "Sou a") na tela de equipe
+select throws_ok(format($$select pg_temp.como(%L, %L)$$, current_setting('t.v2'),
+  format('select public.editar_perfil(%L::uuid, %L, %L, %L)::text', current_setting('t.v2'), 'Outro Nome', 'Direito', 'a')),
+  'P0001', 'Só o admin pode fazer isso.', 'vendedor não edita perfil');
+select throws_ok(format($$select pg_temp.como(%L, %L)$$, current_setting('t.adm'),
+  format('select public.editar_perfil(%L::uuid, %L, %L, %L)::text', current_setting('t.v2'), '  ', 'Direito', 'a')),
+  'P0001', 'Informe o nome.', 'nome vazio é recusado');
+select throws_ok(format($$select pg_temp.como(%L, %L)$$, current_setting('t.adm'),
+  format('select public.editar_perfil(%L::uuid, %L, %L, %L)::text', current_setting('t.v2'), 'Ana Exemplo', '', 'a')),
+  'P0001', 'Informe o curso.', 'curso vazio é recusado');
+select throws_ok(format($$select pg_temp.como(%L, %L)$$, current_setting('t.adm'),
+  format('select public.editar_perfil(%L::uuid, %L, %L, %L)::text', current_setting('t.v2'), 'Ana Exemplo', 'Direito', 'x')),
+  'P0001', 'Escolha "Sou o" ou "Sou a".', 'artigo inválido é recusado');
+select throws_ok(format($$select pg_temp.como(%L, %L)$$, current_setting('t.adm'),
+  format('select public.editar_perfil(%L::uuid, %L, %L, %L)::text', gen_random_uuid(), 'Ana Exemplo', 'Direito', 'a')),
+  'P0001', 'Pessoa não encontrada. Atualize a tela.', 'perfil inexistente é recusado');
+select pg_temp.como(current_setting('t.adm'),
+  format('select public.editar_perfil(%L::uuid, %L, %L, %L)::text', current_setting('t.v2'), ' Ana Exemplo ', ' Direito ', 'a'));
+select is((select nome || '|' || curso || '|' || artigo from public.perfis where id = current_setting('t.v2')::uuid),
+  'Ana Exemplo|Direito|a', 'admin grava nome, curso e artigo sem espaços nas pontas');
+select ok(not has_function_privilege('anon', 'public.editar_perfil(uuid, text, text, text)', 'execute'), 'anon não executa editar_perfil');
 
 select ok(has_function_privilege('authenticated', 'public.painel_dono(timestamptz)', 'execute'), 'authenticated executa painel_dono');
 select ok(not has_function_privilege('anon', 'public.painel_dono(timestamptz)', 'execute'), 'anon não executa painel_dono');

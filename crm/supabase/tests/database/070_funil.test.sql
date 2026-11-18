@@ -144,7 +144,7 @@ select testes.entrar_como(current_setting('t.v1')::uuid);
 select is((select count(*) from public.vendas), 1::bigint, 'v1 vê a própria venda');
 reset role;
 select testes.entrar_como(current_setting('t.adm')::uuid);
-select is((select count(*) from public.vendas), 1::bigint, 'admin vê a venda');
+select is((select count(*) from public.vendas where id = current_setting('t.venda')::uuid), 1::bigint, 'admin vê a venda');
 reset role;
 
 -- comissão do perfil vale mais que a da configuração; abaixo do piso passa sem aviso

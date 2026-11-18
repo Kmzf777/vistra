@@ -1,5 +1,5 @@
 begin;
-select plan(19);
+select plan(22);
 
 select is((select count(*) from pg_tables where schemaname = 'public' and not rowsecurity), 0::bigint, 'RLS em toda tabela');
 select is((select count(*) from information_schema.role_table_grants where grantee = 'anon' and table_schema = 'public'), 0::bigint, 'anon sem grant');
@@ -13,6 +13,14 @@ values (current_setting('t.meta')::uuid, 'meta@exemplo.com',
 select is((select nome from public.perfis where id = current_setting('t.meta')::uuid), 'Ana Exemplo', 'perfil nasce com o nome do metadata');
 select is((select curso from public.perfis where id = current_setting('t.meta')::uuid), 'Engenharia', 'perfil nasce com o curso do metadata');
 select is((select papel from public.perfis where id = current_setting('t.meta')::uuid), 'vendedor', 'metadata não promove a admin');
+
+-- só convite ativa: o perfil que o gatilho cria (cadastro pela chave pública, por exemplo) nasce inativo
+select is((select ativo from public.perfis where id = current_setting('t.meta')::uuid), false, 'perfil criado pelo gatilho nasce inativo');
+select testes.entrar_como(current_setting('t.meta')::uuid);
+select throws_ok('select public.proximo_lead()', 'P0001', 'Seu acesso foi desativado. Fale com o Kelwin.',
+  'perfil inativo não recebe lead da fila');
+select is((select count(*) from public.leads), 0::bigint, 'perfil inativo não lê leads');
+reset role;
 
 select set_config('t.vend', testes.criar_usuario('vendedor@exemplo.com', 'Vendedor Exemplo')::text, true);
 select set_config('t.adm', testes.criar_usuario('admin@exemplo.com', 'Admin Exemplo', 'admin')::text, true);
@@ -38,8 +46,11 @@ select is(private.somar_dias_uteis('2026-11-06 10:00-03', 2), '2026-11-10 10:00-
 select is(private.somar_dias_uteis('2026-11-07 10:00-03', 1), '2026-11-09 10:00-03'::timestamptz, 'sábado + 1 = segunda');
 select is(private.dias_uteis_entre('2026-11-06 18:00-03', '2026-11-10 09:00-03'), 2, 'dias úteis entre sexta e terça');
 
-select is((select count(*) from etapas_funil), 6::bigint, 'seis etapas do funil');
-select is((select preco_tabela from configuracao), 497.00, 'preço de tabela 497');
+-- estrutura, não valores que o admin pode mudar
+select is(array(select slug from etapas_funil where slug in
+  ('previa_pedida', 'previa_pronta', 'previa_enviada', 'negociando', 'fechou', 'perdeu') order by posicao),
+  array['previa_pedida', 'previa_pronta', 'previa_enviada', 'negociando', 'fechou', 'perdeu'], 'as etapas do funil existem na ordem');
+select is((select count(*) from configuracao), 1::bigint, 'configuração é uma linha só');
 
 select is((select count(*) from unnest(array[
   'private.eu_admin()', 'private.eu_ativo()', 'private.exigir_ativo()', 'private.inicio_do_dia(timestamptz)',

@@ -383,6 +383,9 @@ isOneToOne: false
 "descartar_lead":
 { Args: { "p_lead_id": string,"p_motivo": string }; Returns: undefined
                            },
+"editar_perfil":
+{ Args: { "p_artigo": string,"p_curso": string,"p_nome": string,"p_perfil_id": string }; Returns: undefined
+                           },
 "importar_leads":
 { Args: { "p_autor": string,"p_itens": Json }; Returns: {
               "indice": number,"lead_id": string,"resultado": string
@@ -409,7 +412,7 @@ isOneToOne: false
 { Args: { "p_pago_em": string,"p_venda_id": string }; Returns: undefined
                            },
 "migrar_conversa":
-{ Args: { "p_atribuido_em"?: string,"p_contato": Json,"p_dono": string,"p_eventos": Json,"p_lead_id": string,"p_passo": string }; Returns: undefined
+{ Args: { "p_atribuido_em"?: string,"p_contato": Json,"p_dono": string,"p_eventos": Json,"p_lead_id": string,"p_passo": string }; Returns: string
                            },
 "minha_cota":
 { Args: Record<PropertyKey, never>; Returns: {
@@ -443,6 +446,9 @@ isOneToOne: false
                            },
 "salvar_contato":
 { Args: { "p_cargo": string,"p_lead_id": string,"p_nome": string,"p_telefone_e164": string }; Returns: string
+                           },
+"telefone_para_abertura":
+{ Args: { "p_lead_id": string }; Returns: string
                            }
           }
           Enums: {
