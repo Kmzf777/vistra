@@ -43,7 +43,7 @@ function falso(responder: (c: Chamada) => unknown[]) {
               users: [
                 { id: "u-adm", email: "admin.exemplo@exemplo.com" },
                 { id: "u-conc", email: "concorrencia.01@exemplo.com" },
-                { id: "u-real", email: "real@outro.com" },
+                { id: "u-real", email: "fora.do.filtro@exemplo.com.br" },
               ],
             },
             error: null,
