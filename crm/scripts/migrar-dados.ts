@@ -1,7 +1,10 @@
 // Migra os dados do banco antigo para o novo.
 // Uso: npm run migrar -- [--autor <email do admin>] [--clientes <json local>] [--env-antigo <arquivo>] [--dados <pasta>] [--gravar]
 // Sem --gravar nada é escrito no banco: lê o antigo só com GET, monta o plano, imprime contagem, avisos e
-// totais, e grava o plano completo em <dados>/plano-migracao-<data>.json (pasta ignorada pelo git).
+// totais, e grava o plano completo em <dados>/plano-migracao-<data>.json, só depois de o `git check-ignore`
+// confirmar que o arquivo está ignorado (o repositório é público).
+// Com --gravar, --autor e --clientes são obrigatórios. Toda conversa que não sair 'migrada' ou 'ja_migrada' e todo
+// lead recusado são listados pelo origem id, e o script sai com código 1.
 // Nunca imprime telefone. Nomes de lead aparecem só nos avisos locais.
 import fs from "node:fs";
 import path from "node:path";
@@ -15,6 +18,8 @@ import {
   type LeadRevisado,
 } from "../lib/migracao/plano";
 import type { LeadRaspado } from "../lib/importacao/converter";
+import { conferirOpcoes, leadsComFalha, resumirConversas, type Problema } from "../lib/migracao/execucao";
+import { confirmarIgnoradoPeloGit } from "./_git";
 
 const RAIZ = path.resolve(__dirname, "..");
 
@@ -48,10 +53,11 @@ async function lerTudo<T>(sb: SupabaseClient, tabela: string, colunas: string, o
 async function principal() {
   const gravar = process.argv.includes("--gravar");
   const autor = valor("--autor");
-  if (gravar && !autor) throw new Error("Com --gravar, informe --autor <email do admin>.");
+  const arquivoClientes = valor("--clientes");
+  const erroOpcoes = conferirOpcoes({ gravar, autor, clientes: arquivoClientes });
+  if (erroOpcoes) throw new Error(erroOpcoes);
   const dados = path.resolve(valor("--dados", path.resolve(RAIZ, "..", "prospeccao", "leads", "uberlandia")) as string);
   const arquivoAntigo = valor("--env-antigo");
-  const arquivoClientes = valor("--clientes");
 
   // arquivos locais
   const export117 = lista<LeadAntigo>(lerJson(path.join(dados, "crm-export.json")));
@@ -117,8 +123,14 @@ async function principal() {
 
   if (!gravar) {
     const arquivo = path.join(dados, `plano-migracao-${new Date().toISOString().slice(0, 10)}.json`);
-    fs.writeFileSync(arquivo, JSON.stringify(plano, null, 2));
-    console.log(`Plano completo gravado em ${arquivo} (ignorado pelo git).`);
+    const ignorado = confirmarIgnoradoPeloGit(arquivo);
+    if (!ignorado.ok) {
+      console.error(`Plano NÃO gravado: ${ignorado.motivo}. Use --dados numa pasta ignorada pelo git (prospeccao/leads/...).`);
+      process.exitCode = 1;
+    } else {
+      fs.writeFileSync(arquivo, JSON.stringify(plano, null, 2));
+      console.log(`Plano completo gravado em ${arquivo} (ignorado pelo git, conferido com git check-ignore).`);
+    }
     console.log("Simulação: nada foi gravado no banco. Use --gravar para gravar.");
     return;
   }
@@ -126,30 +138,31 @@ async function principal() {
   // 1. todos os leads
   const idPorOrigem = new Map<string, string>();
   const totais: Record<string, number> = {};
+  const resultadosLeads: { origem_id: string | null; resultado: string }[] = [];
   for (let i = 0; i < plano.leads.length; i += 100) {
     const lote = plano.leads.slice(i, i + 100);
     const { data, error } = await sb.rpc("importar_leads", { p_autor: autorId, p_itens: lote });
     if (error) throw new Error(`importar_leads (lote ${i / 100 + 1}): ${error.message}`);
     for (const r of (data ?? []) as { indice: number; lead_id: string | null; resultado: string }[]) {
       totais[r.resultado] = (totais[r.resultado] ?? 0) + 1;
-      const origem = lote[r.indice]?.origem_id;
+      const origem = lote[r.indice]?.origem_id ?? null;
+      resultadosLeads.push({ origem_id: origem, resultado: r.resultado });
       if (origem && r.lead_id) idPorOrigem.set(origem, r.lead_id);
     }
   }
   console.log("importar_leads:");
   for (const [k, n] of Object.entries(totais)) console.log(`  ${k}: ${n}`);
+  const leadsRecusados = leadsComFalha(resultadosLeads);
 
-  // 2. conversas
-  let migradas = 0;
-  let falhas = 0;
+  // 2. conversas: cada uma diz o que aconteceu ('migrada', 'ja_migrada' ou 'ignorada:<estado>')
+  const linhas: { origem_id: string; status: string | null; erro: string | null }[] = [];
   for (const c of plano.conversas) {
     const leadId = idPorOrigem.get(c.origem_id);
     if (!leadId) {
-      falhas++;
-      console.log(`  conversa sem lead no banco novo (origem ${c.origem_id}), pulada`);
+      linhas.push({ origem_id: c.origem_id, status: null, erro: "sem lead no banco novo (importar_leads não devolveu id)" });
       continue;
     }
-    const { error } = await sb.rpc("migrar_conversa", {
+    const { data, error } = await sb.rpc("migrar_conversa", {
       p_lead_id: leadId,
       p_dono: c.dono_id,
       p_passo: c.passo,
@@ -157,12 +170,13 @@ async function principal() {
       p_eventos: c.eventos,
       p_atribuido_em: c.atribuido_em,
     });
-    if (error) {
-      falhas++;
-      console.log(`  migrar_conversa falhou (origem ${c.origem_id}): ${error.message}`);
-    } else migradas++;
+    linhas.push({ origem_id: c.origem_id, status: error ? null : (data ?? null), erro: error ? error.message : null });
   }
-  console.log(`conversas migradas: ${migradas}, falhas: ${falhas}`);
+  const conversas = resumirConversas(linhas);
+  console.log(
+    `conversas: ${conversas.migradas} migradas, ${conversas.jaMigradas} já migradas, ` +
+      `${conversas.ignoradas.length} ignoradas, ${conversas.falhas.length} falhas`,
+  );
 
   // 3. clientes viram bloqueios; o índice único parcial recusa duplicado (23505), que conta como já existente
   let novos = 0;
@@ -174,6 +188,23 @@ async function principal() {
     else throw new Error(`bloqueio: ${error.message}`);
   }
   console.log(`bloqueios: ${novos} novos, ${jaExistiam} já existiam`);
+
+  // 4. o que precisa de atenção, pelo origem id (sem telefone)
+  const listar = (titulo: string, xs: Problema[]) => {
+    if (xs.length === 0) return;
+    console.log(`${titulo} (${xs.length}):`);
+    for (const x of xs) console.log(`  - origem ${x.origem_id}: ${x.motivo}`);
+  };
+  listar("Leads recusados pelo importar_leads", leadsRecusados);
+  listar("Conversas ignoradas", conversas.ignoradas);
+  listar("Conversas com falha", conversas.falhas);
+  const problemas = leadsRecusados.length + conversas.ignoradas.length + conversas.falhas.length;
+  if (problemas > 0) {
+    console.error(`Migração com ${problemas} pendência(s). Não rode importar:mensagens --gravar até zerar falhas e ignoradas.`);
+    process.exitCode = 1;
+  } else {
+    console.log("Migração sem pendências: falhas 0, ignoradas 0.");
+  }
 }
 
 (async () => {

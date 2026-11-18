@@ -149,7 +149,58 @@ describe("montarPlanoMigracao", () => {
   });
 
   it("contagem", () => {
-    expect(plano.contagem).toMatchObject({ ativos: 3, descartados: 2, aprovados: 1, conversas: 2, mesclados: 1, contatos: 1, eventos: 2 });
+    expect(plano.contagem).toMatchObject({
+      ativos: 3,
+      descartados: 2,
+      aprovados: 1,
+      conversas: 2,
+      mesclados: 1,
+      contatos: 1,
+      eventos: 2,
+      com_contato_sem_dono: 0,
+    });
+  });
+
+  // No banco antigo, largar o lead voltava a situação para "novo" e tirava o dono: o rastro do contato só
+  // sobra nos eventos e contatos. Esse lead não pode voltar para a fila como se nunca tivesse sido abordado.
+  it("lead sem dono com eventos de contato vira conversa do admin, com aviso e contagem", () => {
+    const e = entradas();
+    const F = antigo("F", 16);
+    e.producao.leads.push(F);
+    e.export117.push(F);
+    e.producao.eventos.push(
+      { id: "f1", lead_id: F.id, vendedor_id: PERFIL_VEND, tipo: "atribuiu", nota: "", criado_em: "2026-10-10T09:00:00Z" },
+      { id: "f2", lead_id: F.id, vendedor_id: PERFIL_VEND, tipo: "largou", nota: "não respondeu", criado_em: "2026-10-12T09:00:00Z" },
+    );
+    const p = montarPlanoMigracao(e);
+    const f = p.conversas.find((c) => c.origem_id === F.id);
+    expect(f).toMatchObject({ dono_id: ADMIN, passo: "quem_respondeu", contato: null, atribuido_em: null });
+    expect(f?.eventos.map((x) => x.tipo_antigo)).toEqual(["atribuiu", "largou"]);
+    expect(p.leads.find((l) => l.origem_id === F.id)?.estado_inicial).toBe("no_poco");
+    expect(p.avisos).toContain("lead de Pet Exemplo F tinha contato anterior e ficou com o admin");
+    expect(p.contagem.com_contato_sem_dono).toBe(1);
+    expect(p.contagem.conversas).toBe(3);
+  });
+
+  it("lead sem dono só com contato também vira conversa do admin, com o contato", () => {
+    const e = entradas();
+    const G = antigo("G", 17);
+    e.producao.leads.push(G);
+    e.producao.contatos.push({
+      id: "g1", lead_id: G.id, nome: "Beltrana Exemplo", cargo: "gerente", telefone: "(34) 90000-0098", e_decisor: true,
+      criado_em: "2026-10-11T10:00:00Z",
+    });
+    const p = montarPlanoMigracao(e);
+    const g = p.conversas.find((c) => c.origem_id === G.id);
+    expect(g?.dono_id).toBe(ADMIN);
+    expect(g?.contato).toEqual({ nome: "Beltrana Exemplo", cargo: "gerente", telefone_e164: "+5534900000098" });
+    expect(p.contagem.com_contato_sem_dono).toBe(1);
+  });
+
+  it("só o evento de criação não conta como contato anterior", () => {
+    // o A da base tem só "criou" e continua na fila (primeiro teste)
+    expect(plano.conversas.some((c) => c.origem_id === "exemplo-antigo-A")).toBe(false);
+    expect(plano.avisos.some((a) => a.includes("Pet Exemplo A tinha contato anterior"))).toBe(false);
   });
 
   it("aprovado novo entra com origem udi e o aprovado que bate com descartado é pulado com aviso", () => {

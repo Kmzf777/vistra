@@ -173,12 +173,35 @@ export function montarPlanoMigracao(e: EntradasMigracao): PlanoMigracao {
   const leads: LeadImportado[] = [];
   const conversas: ConversaMigrada[] = [];
   let naoQualificados = 0;
+  let comContatoSemDono = 0;
+
+  // O lead vira conversa com o contato e os eventos antigos (todos, inclusive "criou").
+  function conversa(l: LeadAntigo, dono: string, passo: ConversaMigrada["passo"], c: ContatoAntigo[]): ConversaMigrada {
+    if (c.length > 1) avisos.push(`${l.nome}: ${c.length} contatos, só o primeiro foi migrado`);
+    return {
+      origem_id: l.id,
+      dono_id: dono,
+      passo,
+      atribuido_em: l.atribuido_em,
+      contato: c[0] ? { nome: c[0].nome ?? "", cargo: c[0].cargo ?? "", telefone_e164: e164(c[0].telefone) } : null,
+      eventos: (eventosPorLead.get(l.id) ?? []).map((ev) => ({
+        tipo_antigo: ev.tipo,
+        nota: ev.nota ?? "",
+        criado_em: ev.criado_em,
+      })),
+    };
+  }
+
   for (const l of e.producao.leads) {
     const lead = converter(l);
     if (!lead) {
       avisos.push(`${l.nome}: lead ativo ignorado, sem dados válidos`);
       continue;
     }
+    const contatosDoLead = contatosPorLead.get(l.id) ?? [];
+    // No banco antigo, largar o lead tirava o dono e voltava a situação para "novo": o rastro do contato
+    // só sobra nos eventos (menos "criou", que é só o cadastro) e nos contatos.
+    const tocado = contatosDoLead.length > 0 || (eventosPorLead.get(l.id) ?? []).some((ev) => ev.tipo !== "criou");
     if (l.situacao === "nao_qualificado") {
       naoQualificados++;
       lead.estado_inicial = "descartado";
@@ -194,22 +217,19 @@ export function montarPlanoMigracao(e: EntradasMigracao): PlanoMigracao {
       const emailAntigo = emailPorPerfil.get(l.vendedor_id);
       const donoNovo = emailAntigo ? e.donosNovos[emailAntigo] : undefined;
       if (!donoNovo) avisos.push(`lead de ${l.nome} ficou com o admin`);
-      const c = contatosPorLead.get(l.id) ?? [];
-      if (c.length > 1) avisos.push(`${l.nome}: ${c.length} contatos, só o primeiro foi migrado`);
-      conversas.push({
-        origem_id: l.id,
-        dono_id: donoNovo ?? e.adminId,
-        passo: l.situacao === "qualificado" ? "resultado" : "quem_respondeu",
-        atribuido_em: l.atribuido_em,
-        contato: c[0]
-          ? { nome: c[0].nome ?? "", cargo: c[0].cargo ?? "", telefone_e164: e164(c[0].telefone) }
-          : null,
-        eventos: (eventosPorLead.get(l.id) ?? []).map((ev) => ({
-          tipo_antigo: ev.tipo,
-          nota: ev.nota ?? "",
-          criado_em: ev.criado_em,
-        })),
-      });
+      conversas.push(
+        conversa(l, donoNovo ?? e.adminId, l.situacao === "qualificado" ? "resultado" : "quem_respondeu", contatosDoLead),
+      );
+    } else if (tocado) {
+      // 4b. sem dono, mas com contato anterior: fica com o admin (que pode largar), nunca volta frio para a fila
+      if (lead.estado_inicial === "descartado") {
+        avisos.push(`${l.nome}: tinha veredito de descarte, mas já tinha contato e entra em conversa com o admin`);
+      }
+      lead.estado_inicial = "no_poco";
+      lead.motivo_fim = null;
+      comContatoSemDono++;
+      avisos.push(`lead de ${l.nome} tinha contato anterior e ficou com o admin`);
+      conversas.push(conversa(l, e.adminId, "quem_respondeu", contatosDoLead));
     }
     leads.push(lead);
   }
@@ -293,6 +313,7 @@ export function montarPlanoMigracao(e: EntradasMigracao): PlanoMigracao {
     aprovados_pulados: pulados,
     nao_qualificados: naoQualificados,
     conversas: conversas.length,
+    com_contato_sem_dono: comContatoSemDono,
     contatos: conversas.filter((c) => c.contato).length,
     eventos: conversas.reduce((s, c) => s + c.eventos.length, 0),
     bloqueios: bloqueios.length,
