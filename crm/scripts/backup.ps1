@@ -62,10 +62,11 @@ try {
   Pop-Location
 }
 
-# Apaga só pastas de backup antigas dentro do destino.
+# Apaga só pastas de backup antigas dentro do destino, com o nome exato que este script cria
+# (yyyy-MM-dd_HHmmss): outra pasta que só comece com uma data nunca é apagada.
 $limite = (Get-Date).AddDays(-$DiasGuardar)
 Get-ChildItem -Path $destinoAbs -Directory | Where-Object {
-  $_.Name -match '^\d{4}-\d{2}-\d{2}' -and $_.LastWriteTime -lt $limite
+  $_.Name -match '^\d{4}-\d{2}-\d{2}_\d{6}$' -and $_.LastWriteTime -lt $limite
 } | ForEach-Object { Remove-Item -Recurse -Force -LiteralPath $_.FullName }
 
 Write-Host "Backup em $pasta"
