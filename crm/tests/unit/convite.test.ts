@@ -15,9 +15,13 @@ describe("montarLinkConvite", () => {
   });
 });
 
-function falso(retorno: unknown) {
+function falso(retorno: unknown, ativacao: { data: unknown; error: unknown } = { data: [{ id: "u-1" }], error: null }) {
   const generateLink = vi.fn().mockResolvedValue(retorno);
-  return { admin: { auth: { admin: { generateLink } } } as never, generateLink };
+  const select = vi.fn().mockResolvedValue(ativacao);
+  const eq = vi.fn().mockReturnValue({ select });
+  const update = vi.fn().mockReturnValue({ eq });
+  const from = vi.fn().mockReturnValue({ update });
+  return { admin: { auth: { admin: { generateLink } }, from } as never, generateLink, from, update, eq };
 }
 
 describe("gerarConvite", () => {
@@ -25,7 +29,7 @@ describe("gerarConvite", () => {
 
   it("pede invite com os dados no metadata e monta o link do hash", async () => {
     const { admin, generateLink } = falso({
-      data: { properties: { hashed_token: "h+1" } },
+      data: { properties: { hashed_token: "h+1" }, user: { id: "u-1" } },
       error: null,
     });
     const r = await gerarConvite(admin, dados, "http://localhost:3000");
@@ -44,7 +48,38 @@ describe("gerarConvite", () => {
   });
 
   it("devolve erro se não vier hashed_token", async () => {
-    const { admin } = falso({ data: { properties: {} }, error: null });
+    const { admin } = falso({ data: { properties: {}, user: { id: "u-1" } }, error: null });
+    expect("erro" in (await gerarConvite(admin, dados, "http://x"))).toBe(true);
+  });
+
+  // O perfil nasce inativo (gatilho do banco): só o convite ativa, pelo id que o generateLink devolve.
+  it("ativa o perfil do usuário devolvido pelo generateLink", async () => {
+    const { admin, from, update, eq } = falso({ data: { properties: { hashed_token: "t" }, user: { id: "u-9" } }, error: null });
+    const r = await gerarConvite(admin, dados, "http://x");
+    expect("link" in r).toBe(true);
+    expect(from).toHaveBeenCalledWith("perfis");
+    expect(update).toHaveBeenCalledWith({ ativo: true });
+    expect(eq).toHaveBeenCalledWith("id", "u-9");
+  });
+
+  it("sem o id do usuário não devolve link", async () => {
+    const { admin, from } = falso({ data: { properties: { hashed_token: "t" } }, error: null });
+    const r = await gerarConvite(admin, dados, "http://x");
+    expect("erro" in r).toBe(true);
+    expect(from).not.toHaveBeenCalled();
+  });
+
+  it("se a ativação falhar, não devolve link e diz o que fazer", async () => {
+    const { admin } = falso(
+      { data: { properties: { hashed_token: "t" }, user: { id: "u-1" } }, error: null },
+      { data: null, error: { message: "boom" } },
+    );
+    const r = await gerarConvite(admin, dados, "http://x");
+    expect(r).toEqual({ erro: expect.stringMatching(/Reative/) });
+  });
+
+  it("se nenhum perfil foi ativado, também é erro", async () => {
+    const { admin } = falso({ data: { properties: { hashed_token: "t" }, user: { id: "u-1" } }, error: null }, { data: [], error: null });
     expect("erro" in (await gerarConvite(admin, dados, "http://x"))).toBe(true);
   });
 });

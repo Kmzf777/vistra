@@ -1,4 +1,4 @@
-// Gera o link de convite (não envia e-mail). Uso:
+// Gera o link de convite (não envia e-mail) e ativa o perfil da pessoa, que nasce inativo. Uso:
 //   npm run convidar -- --email <e> --nome <n> [--curso <c>] [--artigo a|o] [--base http://localhost:3000]
 // Imprime só o link; mande-o à própria pessoa pelo WhatsApp.
 import { createClient } from "@supabase/supabase-js";
