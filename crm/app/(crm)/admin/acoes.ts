@@ -6,6 +6,7 @@ import { gerarConvite, gerarLinkDeAcesso } from "@/lib/convite";
 import { criarClienteAdmin } from "@/lib/supabase/admin";
 import { abrirAcao } from "@/lib/dados/sessao";
 import { traduzirErro, type Resultado } from "@/lib/resultado";
+import { telefoneDoFormulario } from "@/lib/telefone";
 
 const DATA = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -78,7 +79,7 @@ export async function convidarVendedor(dados: {
   if (!EMAIL.test(email)) return { ok: false, erro: "Informe um e-mail válido." };
   if (!nome) return { ok: false, erro: "Informe o nome." };
   if (!curso) return { ok: false, erro: "Informe o curso." };
-  if (dados.artigo !== "a" && dados.artigo !== "o") return { ok: false, erro: "Escolha o artigo (a ou o)." };
+  if (dados.artigo !== "a" && dados.artigo !== "o") return { ok: false, erro: 'Escolha "Sou o" ou "Sou a".' };
   const a = await abrirAcao({ admin: true });
   if ("erro" in a) return { ok: false, erro: a.erro };
   try {
@@ -101,6 +102,34 @@ export async function gerarAcesso(emailBruto: string): Promise<Resultado> {
     return { ok: true, recado: r.link };
   } catch {
     return { ok: false, erro: "Não deu para gerar o link. Tente de novo." };
+  }
+}
+
+/** Corrige nome, curso e artigo ("Sou o" / "Sou a") de uma pessoa da equipe. */
+export async function editarPerfil(
+  perfilId: string,
+  dados: { nome: string; curso: string; artigo: string },
+): Promise<Resultado> {
+  const nome = dados.nome.trim();
+  const curso = dados.curso.trim();
+  if (!nome) return { ok: false, erro: "Informe o nome." };
+  if (!curso) return { ok: false, erro: "Informe o curso." };
+  if (dados.artigo !== "a" && dados.artigo !== "o") return { ok: false, erro: 'Escolha "Sou o" ou "Sou a".' };
+  const a = await abrirAcao({ admin: true });
+  if ("erro" in a) return { ok: false, erro: a.erro };
+  try {
+    const { error } = await a.sb.rpc("editar_perfil", {
+      p_perfil_id: perfilId,
+      p_nome: nome,
+      p_curso: curso,
+      p_artigo: dados.artigo,
+    });
+    if (error) return { ok: false, erro: traduzirErro(error) };
+    revalidatePath("/admin");
+    revalidatePath("/admin/equipe");
+    return { ok: true, recado: "Perfil salvo." };
+  } catch {
+    return { ok: false, erro: traduzirErro(null) };
   }
 }
 
@@ -165,11 +194,14 @@ export async function salvarConfiguracao(dados: {
 }
 
 export async function bloquearContato(telefone: string, placeId: string, motivo: string): Promise<Resultado> {
+  // Mesma normalização do contato: "(34) 90000-0000" e "+55 34 90000-0000" viram o mesmo E.164 do bloqueio.
+  const fone = telefoneDoFormulario(telefone);
+  if ("erro" in fone) return { ok: false, erro: fone.erro };
   const a = await abrirAcao({ admin: true });
   if ("erro" in a) return { ok: false, erro: a.erro };
   try {
     const { error } = await a.sb.rpc("bloquear", {
-      p_telefone_e164: telefone.trim() || (null as unknown as string),
+      p_telefone_e164: fone.e164 ?? (null as unknown as string),
       p_google_place_id: placeId.trim() || (null as unknown as string),
       p_motivo: motivo,
     });

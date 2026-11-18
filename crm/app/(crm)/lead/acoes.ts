@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { abrirAcao } from "@/lib/dados/sessao";
 import type { Acao } from "@/lib/fluxo/passos";
 import { traduzirErro, type Resultado } from "@/lib/resultado";
-import { normalizarTelefone } from "@/lib/telefone";
+import { telefoneDoFormulario } from "@/lib/telefone";
 
 const MOTIVOS = ["tem_site", "fechado", "fora_do_nicho", "outro"] as const;
 type MotivoLargar = (typeof MOTIVOS)[number];
@@ -115,12 +115,9 @@ export async function registrarVenda(
 }
 
 export async function salvarContato(leadId: string, nome: string, cargo: string, telefone: string): Promise<Resultado> {
-  let e164 = "";
-  if (telefone.trim()) {
-    const n = normalizarTelefone(telefone);
-    if (!n) return { ok: false, erro: "Telefone inválido. Use DDD e número, como (34) 90000-0000." };
-    e164 = n.e164;
-  }
+  const fone = telefoneDoFormulario(telefone);
+  if ("erro" in fone) return { ok: false, erro: fone.erro };
+  const e164 = fone.e164 ?? "";
   const a = await abrirAcao();
   if ("erro" in a) return { ok: false, erro: a.erro };
   try {

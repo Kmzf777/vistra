@@ -29,8 +29,8 @@ export default function FormBloqueio() {
   return (
     <form className={estilo.form} onSubmit={enviar}>
       <label className={estilo.campo}>
-        Telefone com DDI
-        <input inputMode="tel" placeholder="+5534900000000" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+        Telefone
+        <input inputMode="tel" placeholder="(34) 90000-0000" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
       </label>
       <label className={estilo.campo}>
         Place id do Google (opcional)

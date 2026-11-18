@@ -36,7 +36,18 @@ export default async function Equipe() {
         <h2 className={estilo.sub}>Pessoas ({pessoas.length})</h2>
         <ul className={estilo.lista}>
           {pessoas.map((p) => (
-            <LinhaEquipe key={p.id} id={p.id} nome={p.nome} email={p.email} papel={p.papel} ativo={p.ativo} cota={p.cota} souEu={p.id === eu.id} />
+            <LinhaEquipe
+              key={p.id}
+              id={p.id}
+              nome={p.nome}
+              email={p.email}
+              papel={p.papel}
+              ativo={p.ativo}
+              cota={p.cota}
+              curso={p.curso}
+              artigo={p.artigo}
+              souEu={p.id === eu.id}
+            />
           ))}
         </ul>
       </section>

@@ -46,11 +46,12 @@ export default function FormConvite({ modo }: { modo: Modo }) {
             <span className={estilo.ajuda}>Entra na mensagem: &quot;estudo [curso] na UFU&quot;.</span>
           </label>
           <label className={estilo.campo}>
-            Artigo do curso
+            Como a pessoa se apresenta
             <select value={artigo} onChange={(e) => setArtigo(e.target.value)}>
-              <option value="o">o (estudo o curso)</option>
-              <option value="a">a (estudo a graduação)</option>
+              <option value="o">Sou o …</option>
+              <option value="a">Sou a …</option>
             </select>
+            <span className={estilo.ajuda}>Entra na mensagem: &quot;Sou o [nome]&quot; ou &quot;Sou a [nome]&quot;.</span>
           </label>
         </>
       )}

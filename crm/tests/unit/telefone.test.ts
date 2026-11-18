@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { digitosWhatsApp, normalizarTelefone } from "../../lib/telefone";
+import { digitosWhatsApp, normalizarTelefone, telefoneDoFormulario } from "../../lib/telefone";
 
 describe("normalizarTelefone", () => {
   it("celular com máscara", () => {
@@ -17,6 +17,19 @@ describe("normalizarTelefone", () => {
     expect(normalizarTelefone("(34) 9000-0001")).toBeNull();
     expect(normalizarTelefone("0001")).toBeNull();
     expect(normalizarTelefone("")).toBeNull();
+  });
+});
+
+describe("telefoneDoFormulario", () => {
+  it("vazio é opcional", () => {
+    expect(telefoneDoFormulario("  ")).toEqual({ e164: null });
+  });
+  it("com máscara ou com DDI vira E.164", () => {
+    expect(telefoneDoFormulario("(34) 90000-0001")).toEqual({ e164: "+5534900000001" });
+    expect(telefoneDoFormulario("+5534900000001")).toEqual({ e164: "+5534900000001" });
+  });
+  it("inválido devolve o erro em português", () => {
+    expect(telefoneDoFormulario("12345")).toEqual({ erro: "Telefone inválido. Use DDD e número, como (34) 90000-0000." });
   });
 });
 

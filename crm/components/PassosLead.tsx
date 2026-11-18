@@ -34,10 +34,11 @@ export default function PassosLead({ dados }: { dados: LeadEmPasso }) {
 
   // Só nome e curso (se o texto usa) bloqueiam: sem eles a mensagem sairia com o campo cru.
   const bloqueado = faltando.includes("nome") || faltando.includes("curso");
+  // Quem completa o perfil é o admin, na tela de equipe.
   const aviso = faltando.includes("nome")
-    ? "Complete seu nome no perfil antes de mandar"
+    ? "Falta seu nome no perfil. Peça ao admin para completar antes de mandar."
     : faltando.includes("curso")
-      ? "Complete seu curso no perfil antes de mandar"
+      ? "Falta seu curso no perfil. Peça ao admin para completar antes de mandar."
       : null;
 
   const botoes = botoesDoPasso(lead.passo, lead.etapa);

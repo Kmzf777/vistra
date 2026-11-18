@@ -56,13 +56,22 @@ export async function carregarPainel(periodo: Periodo): Promise<{ ativos: LinhaP
   };
 }
 
-export type PessoaEquipe = { id: string; nome: string; email: string; papel: string; ativo: boolean; cota: number; curso: string };
+export type PessoaEquipe = {
+  id: string;
+  nome: string;
+  email: string;
+  papel: string;
+  ativo: boolean;
+  cota: number;
+  curso: string;
+  artigo: "o" | "a";
+};
 
 export async function carregarEquipe(): Promise<{ pessoas: PessoaEquipe[]; cotaPadrao: number }> {
   await exigirAdmin();
   const sb = await criarClienteServidor();
   const [pessoasR, configR] = await Promise.all([
-    sb.from("perfis").select("id, nome, email, papel, ativo, cota_diaria, curso").order("nome"),
+    sb.from("perfis").select("id, nome, email, papel, ativo, cota_diaria, curso, artigo").order("nome"),
     sb.from("configuracao").select("cota_padrao").maybeSingle(),
   ]);
   if (pessoasR.error) falha(pessoasR.error);
@@ -76,6 +85,7 @@ export async function carregarEquipe(): Promise<{ pessoas: PessoaEquipe[]; cotaP
       ativo: p.ativo,
       cota: p.cota_diaria,
       curso: p.curso,
+      artigo: p.artigo === "a" ? ("a" as const) : ("o" as const),
     })),
     cotaPadrao: configR.data?.cota_padrao ?? 5,
   };
