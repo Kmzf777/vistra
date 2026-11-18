@@ -39,7 +39,13 @@ function falso(responder: (c: Chamada) => unknown[]) {
       admin: {
         listUsers: () =>
           Promise.resolve({
-            data: { users: [{ id: "u-adm", email: "admin.exemplo@exemplo.com" }, { id: "u-real", email: "real@outro.com" }] },
+            data: {
+              users: [
+                { id: "u-adm", email: "admin.exemplo@exemplo.com" },
+                { id: "u-conc", email: "concorrencia.01@exemplo.com" },
+                { id: "u-real", email: "real@outro.com" },
+              ],
+            },
             error: null,
           }),
         deleteUser: (id: string) => {
@@ -63,18 +69,28 @@ function responder(c: Chamada): unknown[] {
   return [];
 }
 
-const opcoes = { prefixo: "exemplo-", emails: "", gravar: false };
+const opcoes = { prefixo: "exemplo-", emails: "", gravar: false, nichoExemplo: true };
 
 describe("limparExemplos", () => {
   it("na simulação conta modelos de exemplo (do autor de exemplo ou do Nicho Exemplo) e não apaga nada", async () => {
     const { sb, chamadas } = falso(responder);
     const r = await limparExemplos(sb, opcoes);
-    expect(r).toMatchObject({ leads: 1, usuarios: 1, modelos: 3, nichos: 1 });
+    expect(r).toMatchObject({ leads: 1, usuarios: 2, modelos: 3, nichos: 1 });
     expect(r.ativos).toEqual([
       { tipo: "abertura", nicho: "Pet shop" },
       { tipo: "robo", nicho: "(geral)" },
     ]);
     expect(chamadas.some((c) => c.op === "delete" || c.op === "deleteUser" || c.op === "update")).toBe(false);
+  });
+
+  it("limpeza estreita (teste de concorrência) não toca o Nicho Exemplo nem os modelos dele", async () => {
+    const { sb, chamadas } = falso(responder);
+    const r = await limparExemplos(sb, { prefixo: "exemplo-conc-", emails: "concorrencia.", gravar: true });
+    expect(chamadas.some((c) => c.tabela === "nichos")).toBe(false);
+    const delModelos = chamadas.find((c) => c.tabela === "modelos_mensagem" && c.op === "delete") as Chamada | undefined;
+    expect(delModelos?.filtros).toContainEqual(["in", "id", [1, 2]]);
+    expect(r.nichos).toBe(0);
+    expect(chamadas.filter((c) => c.op === "deleteUser").map((c) => (c as { id: string }).id)).toEqual(["u-conc"]);
   });
 
   it("gravando, apaga os modelos e o Nicho Exemplo antes dos usuários", async () => {

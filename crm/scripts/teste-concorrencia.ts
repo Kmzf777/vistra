@@ -32,6 +32,8 @@ async function main() {
         email, password: senha, email_confirm: true, user_metadata: { nome: `Concorrencia ${i} Exemplo` },
       });
       if (r.error) throw new Error(`criar usuário ${i}: ${r.error.message}`);
+      // o perfil nasce inativo (só convite ativa); aqui o teste faz o papel do convite
+      ok(await adm.from("perfis").update({ ativo: true }).eq("id", r.data.user.id).select("id"), `ativar usuário ${i}`);
       usuarios.push({ email, senha });
     }
 

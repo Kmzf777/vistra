@@ -5,7 +5,9 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { carregarAmbiente } from "./_ambiente";
 
-type Opcoes = { prefixo: string; emails: string; gravar: boolean };
+// nichoExemplo: só a limpeza completa (prefixo "exemplo-") mexe no Nicho Exemplo e nos modelos dele. Uma
+// limpeza estreita (o teste de concorrência usa "exemplo-conc-") não pode apagar o que outros exemplos usam.
+type Opcoes = { prefixo: string; emails: string; gravar: boolean; nichoExemplo?: boolean };
 export type ModeloAtivo = { tipo: string; nicho: string };
 export type Resultado = { leads: number; usuarios: number; modelos: number; nichos: number; ativos: ModeloAtivo[] };
 
@@ -16,7 +18,8 @@ function lerArgumentos(argv: string[]): Opcoes {
     const i = argv.indexOf(nome);
     return i >= 0 && argv[i + 1] && !argv[i + 1].startsWith("--") ? argv[i + 1] : padrao;
   };
-  const o = { prefixo: valor("--prefixo", "exemplo-"), emails: valor("--emails", ""), gravar: argv.includes("--gravar") };
+  const prefixo = valor("--prefixo", "exemplo-");
+  const o = { prefixo, emails: valor("--emails", ""), gravar: argv.includes("--gravar"), nichoExemplo: prefixo === "exemplo-" };
   if (!o.prefixo.startsWith("exemplo-")) throw new Error('--prefixo precisa começar com "exemplo-".');
   return o;
 }
@@ -70,9 +73,11 @@ export async function limparExemplos(sb: SupabaseClient, o: Opcoes): Promise<Res
 
   // modelos de exemplo: os escritos por usuários de exemplo e os do Nicho Exemplo (um modelo geral de exemplo
   // valeria para todo nicho real na fila)
-  const nicho = exigir(await sb.from("nichos").select("id").eq("nome", NICHO_EXEMPLO).maybeSingle(), "ler o Nicho Exemplo") as {
-    id: string;
-  } | null;
+  const nicho = o.nichoExemplo
+    ? (exigir(await sb.from("nichos").select("id").eq("nome", NICHO_EXEMPLO).maybeSingle(), "ler o Nicho Exemplo") as {
+        id: string;
+      } | null)
+    : null;
   const idsModelos = new Set<number>();
   if (userIds.length > 0) {
     const doAutor = exigir(await sb.from("modelos_mensagem").select("id").in("autor_id", userIds), "ler modelos") as { id: number }[];
