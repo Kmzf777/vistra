@@ -25,6 +25,19 @@ export async function criarClienteServidor() {
   );
 }
 
+/**
+ * Cliente com uma foto dos cookies tirada agora, para usar dentro de `after()` num Server Component:
+ * lá dentro não se pode ler cookies (docs do Next: 03-api-reference/04-functions/after.md). Só lê; não grava.
+ */
+export async function criarClienteComFotoDosCookies() {
+  const foto = (await cookies()).getAll();
+  return createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    { cookies: { getAll: () => foto, setAll: () => {} } }
+  );
+}
+
 export function temCredenciais() {
   return Boolean(
     process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
