@@ -719,6 +719,7 @@ O `importar_modelos` atualiza `nichos.dor` e `nichos.transformacao` pelo nome, d
 - [ ] **Passo 6: Conferência.** `npm test`, `npx tsc --noEmit` e `npm run build:novo`. Esperado: tudo verde. O `funil` antigo pode falhar no build: nesse caso, nesta tarefa, troque a página `/funil` por um recado "Funil em obras" e a Tarefa 10 a refaz.
 
 - [ ] **Passo 7: Teste manual (fictício).**
+  0. `npm run criar:dominio -- --nicho "Nicho Exemplo" --gravar`. Todo dado de exemplo (leads, modelos, dor e transformação) fica nesse nicho fictício: nenhum modelo geral e nenhum nicho real é tocado (revisão final, I5).
   1. `npm run importar:leads -- --arquivo scripts/exemplos/leads-exemplo.json --autor admin.exemplo@exemplo.com --gravar`.
   2. `npm run importar:mensagens -- --arquivo scripts/exemplos/mensagens-exemplo.json --autor admin.exemplo@exemplo.com --gravar`.
   3. Entre como Ana Exemplo, com o DevTools em 360 px.
@@ -940,7 +941,7 @@ Regras do plano, que refletem o §8 e o §12.2 do design:
   | No notebook, o `wa.me` não recarrega nem trava o WhatsApp Web | — | — | |
   | Telas a 360 px sem rolagem horizontal; botões ≥ 44 px | | | — |
 
-  Se o `wa.me` travar o WhatsApp Web no notebook, registre e mostre ao lado do botão o aviso "No notebook, abra a conversa pela busca e use os botões de copiar" (fluxo §3.1). No fim, o admin descarta o lead de teste com motivo `outro`, e `npx tsx scripts/limpar-exemplos.ts --gravar` remove os exemplos. Esperado: `6 leads de exemplo apagados, 2 usuários de exemplo apagados`.
+  Se o `wa.me` travar o WhatsApp Web no notebook, registre e mostre ao lado do botão o aviso "No notebook, abra a conversa pela busca e use os botões de copiar" (fluxo §3.1). No fim, o admin descarta o lead de teste com motivo `outro`, e `npx tsx scripts/limpar-exemplos.ts --gravar` remove os exemplos: leads, usuários, os modelos desses usuários e do Nicho Exemplo, e o próprio nicho. No fim ele lista os modelos ativos (tipo e nicho, sem texto). Esperado: nenhum modelo `(geral)` de exemplo e nenhum `Nicho Exemplo` na lista.
 
 - [ ] **Passo 5: Backup.** O `scripts/backup.ps1` roda os três `npx supabase db dump --db-url $env:SUPABASE_DB_URL` da receita oficial (`--role-only`, o esquema, e `--data-only --use-copy`) para uma pasta **fora do repositório**, por padrão `$env:USERPROFILE\Backups\vistra-crm\<data>`, e apaga os backups com mais de 30 dias. Rode uma vez. Esperado: os três arquivos, sem nenhum caminho dentro do repo. O agendamento diário vai no runbook.
 
@@ -953,17 +954,25 @@ Regras do plano, que refletem o §8 e o §12.2 do design:
 Cada passo é feito com o Kelwin. Os que dependem do Rafael estão marcados.
 
 - [ ] **Passo 1: Antes do dia.**
+  0. **Cadastro fechado (só com o ok do Kelwin, pelo Chrome).** No Dashboard do projeto novo, Authentication > Sign In / Providers (`dashboard/project/<ref>/auth/providers`): desligar "Allow new users to sign up" e conferir que "Allow anonymous sign-ins" está desligado. Depois, `npx tsx scripts/conferir-cadastro-fechado.ts`. Esperado: `OK` nas duas linhas (o `signUp` com e-mail `@exemplo.com` e a entrada anônima voltam `signup_disabled`). O convite continua funcionando: ele usa a chave secreta (`generateLink`) e ativa o perfil, que nasce inativo desde a revisão final (C1).
   1. As mensagens no modelo novo (pesquisa Hormozi) chegam como arquivo local no formato da Tarefa 7.
-  2. `npm run importar:mensagens -- --arquivo <arquivo> --autor <Kelwin>`. Esperado: 0 reprovadas, ou o Kelwin corrige e roda de novo.
+  2. `npm run importar:mensagens -- --arquivo <arquivo> --autor <Kelwin>`. Esperado: 0 reprovadas, ou o Kelwin corrige e roda de novo. Com `--gravar`, qualquer reprovada faz o script não gravar nada.
   3. Os vendedores reconvidados pela tela de equipe (o Kelwin já foi convidado na Tarefa 13), com o link mandado no WhatsApp de cada um. A tela de equipe roda em `dev:novo`, e o link usa a base `https://vistracrm.vercel.app` (`--base` no script, ou o `origin` da tela). Ele só funciona depois do corte. Se for preciso entrar antes, gere com a base local.
   4. Novo dry-run (`npm run migrar`). Esperado: os avisos de dono ausente só para quem não voltou.
   5. Agende o `backup.ps1` no Agendador de Tarefas do Windows, diário às 03:00.
+  6. **Checklist antes do corte** (cada item com a saída colada no resumo):
+     - [ ] cadastro fechado: `conferir-cadastro-fechado.ts` com `OK` nas duas linhas (item 0);
+     - [ ] `npx tsx scripts/limpar-exemplos.ts --gravar` rodado; a lista de modelos ativos que ele imprime não tem modelo de exemplo, nem `(geral)` de exemplo, nem `Nicho Exemplo`. A dor e a transformação do Pet shop no banco novo ainda têm o texto do exemplo antigo da Tarefa 9: o arquivo real de mensagens precisa trazer o Pet shop em `nichos`;
+     - [ ] nichos Advocacia e Móveis planejados e cidades Governador Valadares/MG e Caratinga/MG criados (`npm run criar:dominio -- --nicho "Advocacia" --gravar`, idem para os outros, e `--cidade "Caratinga" --uf MG`), com os modelos de cada nicho no arquivo de mensagens, antes de importar leads e mensagens deles;
+     - [ ] último dry-run (`npm run migrar -- --dados <pasta ignorada>`): o plano JSON só é gravado se o `git check-ignore` confirmar que está ignorado; ele recusa caso contrário;
+     - [ ] o arquivo local dos clientes atuais pronto para o `--clientes` (sem ele o `--gravar` não roda);
+     - [ ] combinado: depois do corte ninguém roda `scripts/teste-concorrencia.ts` (ele cria e apaga dados no banco de produção).
 
 - [ ] **Passo 2: Congelar o banco antigo.** Aviso no grupo da equipe: "CRM em manutenção de <hora> a <hora>, não registre nada". Daqui em diante o banco antigo é só leitura, por combinação. A partir deste momento, rodar de novo o dry-run da Tarefa 12 dá os mesmos números do último dry-run.
 
 - [ ] **Passo 3: Gravar os dados reais no banco novo.**
-  1. `npm run migrar -- --autor <Kelwin> --clientes <arquivo local dos clientes> --gravar`.
-  2. `npm run importar:mensagens -- --arquivo <arquivo> --autor <Kelwin> --gravar`.
+  1. `npm run migrar -- --autor <Kelwin> --clientes <arquivo local dos clientes> --gravar` (sem `--clientes` ele recusa). Esperado no fim: `Migração sem pendências: falhas 0, ignoradas 0.` Toda conversa que não sai `migrada` ou `ja_migrada`, e todo lead recusado, aparece pelo origem id, e o script sai com código 1. Os leads ativos sem dono com contato anterior viram conversa do Kelwin em "Quem respondeu" (`com_contato_sem_dono` na contagem, com aviso pelo nome): ficam em Minhas conversas dele, que segue o passo a passo ou encerra como qualquer conversa.
+  2. **Só se o passo 1 terminou com falhas 0 e ignoradas 0:** `npm run importar:mensagens -- --arquivo <arquivo> --autor <Kelwin> --gravar`. Com pendência, pare e resolva antes.
   3. Confira, como admin no app (`dev:novo`): `/admin/fila` mostra os prontos por nicho (> 0); o painel mostra a equipe; um lead migrado com dono aparece em Minhas conversas do dono certo.
   4. Daqui em diante, nada de pgTAP remoto.
 
