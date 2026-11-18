@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
-// O dia comeca na lista universal: e ela que mostra quanta coisa ainda
-// esta sem dono, que e o convite a contatar.
+// A entrada leva ao Início (a tela chega na Tarefa 9). Sem sessão, o proxy
+// manda para o login antes de chegar aqui.
 export default function Raiz() {
-  redirect("/lista");
+  redirect("/inicio");
 }

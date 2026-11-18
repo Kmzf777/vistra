@@ -1,0 +1,11 @@
+.tela { display: flex; flex-direction: column; gap: 24px; max-width: 720px; margin: 0 auto; padding: 20px 16px 96px; }
+.titulo { font-size: 22px; font-weight: 700; letter-spacing: -.01em; }
+.sub { font-size: 13px; text-transform: uppercase; letter-spacing: .14em; color: var(--tinta-fantasma); margin-bottom: 10px; }
+.vazio { color: var(--tinta-fraca); font-size: 14px; }
+.lista { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.cartao { display: flex; flex-direction: column; gap: 12px; padding: 14px; border-radius: var(--raio-p); background: var(--painel); border: 1px solid var(--linha); }
+.nome { font-size: 16px; font-weight: 650; }
+.tempo { font-size: 12.5px; font-weight: 400; color: var(--tinta-fraca); margin-left: 6px; }
+.dados { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px 14px; }
+.dados dt { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--tinta-fantasma); }
+.dados dd { font-size: 14px; overflow-wrap: anywhere; }

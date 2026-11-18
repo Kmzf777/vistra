@@ -9,3 +9,10 @@
 @media (max-width: 860px) {
   .casco { grid-template-columns: 64px 1fr; }
 }
+
+/* Celular: o menu vira barra fixa embaixo e o conteúdo ocupa a largura toda,
+   com folga no fim para a barra não cobrir o último botão. */
+@media (max-width: 640px) {
+  .casco { grid-template-columns: 1fr; }
+  .conteudo { padding-bottom: 72px; }
+}

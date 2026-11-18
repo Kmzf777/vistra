@@ -17,16 +17,10 @@ import estilo from "./SessaoMenu.module.css";
 // ali (portal não deixa placeholder), então a grade do casco não muda.
 //
 // É componente de cliente porque o portal precisa do DOM. O nome vem da
-// tabela `perfis` com a anon key: quem autoriza a leitura é o RLS
+// tabela `perfis` com a chave publicável: quem autoriza a leitura é o RLS
 // (`perfis_leitura`), não o sigilo da chave.
 
-type Quem = { nome: string; email: string };
-
-/** "rafael@x.com.br" → "rafael". Último recurso quando o perfil está vazio. */
-function nomeDoEmail(email: string | null | undefined): string {
-  if (!email) return "você";
-  return email.split("@")[0] || "você";
-}
+type Quem = { nome: string; papel: "vendedor" | "admin" };
 
 export default function SessaoMenu() {
   const router = useRouter();
@@ -91,26 +85,15 @@ export default function SessaoMenu() {
         return;
       }
 
-      const usuario = data.user;
-      const reserva: Quem = {
-        nome:
-          (typeof usuario.user_metadata?.nome === "string" && usuario.user_metadata.nome.trim()) ||
-          nomeDoEmail(usuario.email),
-        email: usuario.email ?? "",
-      };
-
-      // O nome "de verdade" mora em `perfis`, criado pelo trigger do schema.
+      // Nome e papel moram em `perfis`, criado pelo trigger do banco.
       const { data: linha } = await supabase
         .from("perfis")
-        .select("nome, email")
-        .eq("id", usuario.id)
+        .select("nome, papel")
+        .eq("id", data.user.id)
         .maybeSingle();
 
       if (!vivoRef.current) return;
-      setQuem({
-        nome: linha?.nome?.trim() || reserva.nome,
-        email: linha?.email?.trim() || reserva.email,
-      });
+      setQuem(linha ? { nome: linha.nome.trim() || "você", papel: linha.papel === "admin" ? "admin" : "vendedor" } : null);
     } catch {
       // Rede fora. Mostrar "Entrar" é mentira menor do que mostrar um nome
       // que a gente não conseguiu confirmar.
@@ -179,7 +162,7 @@ export default function SessaoMenu() {
   if (!supabase) {
     // Honestidade: o CRM está rodando sem banco. Não finge que há sessão.
     conteudo = (
-      <p className={estilo.off} title="Faltam NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY">
+      <p className={estilo.off} title="Faltam NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY">
         sem supabase
       </p>
     );
@@ -199,7 +182,7 @@ export default function SessaoMenu() {
         </span>
         <span className={estilo.quem}>
           <strong title={quem.nome}>{quem.nome}</strong>
-          <em title={quem.email}>{quem.email}</em>
+          <em title={quem.papel}>{quem.papel}</em>
         </span>
         <button
           type="button"

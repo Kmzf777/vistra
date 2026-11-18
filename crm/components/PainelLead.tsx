@@ -1,25 +1,40 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { ETAPAS, type Etapa } from "@/lib/tipos";
+import { digitosWhatsApp } from "@/lib/telefone";
+import { rotuloEvento } from "@/lib/fluxo/eventos";
+import { PEDIU_PARAR } from "@/lib/fluxo/passos";
+import FormVenda from "./FormVenda";
 import {
-  eTerminal,
-  nomeEtapa,
+  acoesDaEtapa,
+  podePedirParar,
   rotuloTempo,
   temperatura,
+  type AcaoEtapa,
   type CartaoLead as Cartao,
+  type EtapaFunil,
 } from "./KanbanTipos";
+import form from "./Formularios.module.css";
 import estilo from "./PainelLead.module.css";
 
 type Props = {
   cartao: Cartao;
-  demonstracao: boolean;
-  /** Gravação do movimento em voo: as etapas congelam. */
-  salvando: boolean;
+  etapa: EtapaFunil | undefined;
+  nomeEtapa: (slug: string) => string;
+  /** Gravação desta etapa em voo: os botões congelam. */
+  ocupado: boolean;
+  vendendo: boolean;
+  erroVenda: string | null;
+  precoTabela: number;
+  pisoReferencia: number;
   aoFechar: () => void;
-  aoMover: (id: string, destino: Etapa, focoApos?: string) => void;
-  /** Devolve `false` quando o banco recusou — o texto fica no campo. */
-  aoAnotar: (id: string, texto: string) => Promise<boolean>;
+  aoExecutar: (acao: AcaoEtapa) => void;
+  /** "Pediu para não chamar mais": bloqueia o número para todos e leva o lead a Perdeu. */
+  aoPedirParar: () => void;
+  aoCancelarVenda: () => void;
+  aoRegistrarVenda: (valor: number, forma: string, fechadoEm: string) => void;
+  /** Devolve o erro, ou null quando salvou. */
+  aoSalvarContato: (nome: string, cargo: string, telefone: string) => Promise<string | null>;
 };
 
 const RELOGIO = new Intl.DateTimeFormat("pt-BR", {
@@ -28,6 +43,7 @@ const RELOGIO = new Intl.DateTimeFormat("pt-BR", {
   year: "2-digit",
   hour: "2-digit",
   minute: "2-digit",
+  timeZone: "America/Sao_Paulo",
 });
 
 function quando(iso: string | null): string {
@@ -36,65 +52,67 @@ function quando(iso: string | null): string {
   return Number.isFinite(t) ? RELOGIO.format(new Date(t)) : "—";
 }
 
-/** O `tipo` do evento é texto livre no banco. Traduzo o que conheço e mostro o resto cru. */
-const NOMES_DE_EVENTO: Record<string, string> = {
-  moveu: "mudou de coluna",
-  nota: "anotação",
-  ligacao: "ligação",
-  qualificou: "qualificou",
-  desqualificou: "desqualificou",
-  // Eventos antigos do tipo "objecao" continuam no banco; aparecem como nota.
-  objecao: "nota",
-  proposta: "proposta",
-  fechou: "fechou",
-  perdeu: "perdeu",
-  pegou: "pegou o lead",
+function dinheiro(n: number): string {
+  return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+const ROTULO_ACAO: Record<AcaoEtapa, string> = {
+  negociando: "Passar para Negociando",
+  fechou: "Fechou",
+  perdeu: "Perdeu",
 };
 
-function paraDiscagem(telefone: string): string {
-  return telefone.replace(/[^\d+]/g, "");
-}
+const FORMAS: Record<string, string> = { pix: "Pix", boleto: "Boleto", cartao: "Cartão", dinheiro: "Dinheiro", outro: "Outro" };
 
-function comProtocolo(url: string): string {
-  return /^https?:\/\//i.test(url) ? url : `https://${url}`;
-}
-
-// ==================================================================
-// O painel do lead.
-//
-// Não é um modal: o quadro continua usável atrás dele, porque mexer no
-// funil enquanto se lê o histórico de um lead é trabalho normal. Por isso
-// não há `aria-modal` nem trava de foco — só Esc para fechar e devolução
-// do foco ao cartão de origem (feita pelo quadro).
-// ==================================================================
+// O painel do lead. Não é um modal: o quadro continua usável atrás dele.
 export default function PainelLead({
   cartao,
-  demonstracao,
-  salvando,
+  etapa,
+  nomeEtapa,
+  ocupado,
+  vendendo,
+  erroVenda,
+  precoTabela,
+  pisoReferencia,
   aoFechar,
-  aoMover,
-  aoAnotar,
+  aoExecutar,
+  aoPedirParar,
+  aoCancelarVenda,
+  aoRegistrarVenda,
+  aoSalvarContato,
 }: Props) {
-  const [texto, setTexto] = useState("");
-  const [enviando, setEnviando] = useState(false);
   const caixa = useRef<HTMLDivElement>(null);
   const idTitulo = useId();
+  const [confirmaPerdeu, setConfirmaPerdeu] = useState(false);
+  const [confirmaParar, setConfirmaParar] = useState(false);
+  const [novoContato, setNovoContato] = useState(false);
+  const [nome, setNome] = useState("");
+  const [cargo, setCargo] = useState("");
+  const [fone, setFone] = useState("");
+  const [erroContato, setErroContato] = useState<string | null>(null);
+  const [salvando, setSalvando] = useState(false);
 
-  // O painel recebe o foco ao abrir para que o leitor de tela comece a ler
-  // daqui, e não de onde estava.
   useEffect(() => {
     caixa.current?.focus();
   }, []);
 
-  const temp = temperatura(cartao.etapa, cartao.paradoHoras);
+  const terminal = etapa?.terminal ?? false;
+  const temp = temperatura(terminal, cartao.paradoHoras);
+  const acoes = acoesDaEtapa(cartao.etapa);
 
-  const enviar = async () => {
-    if (!texto.trim() || enviando) return;
-    setEnviando(true);
-    const deu = await aoAnotar(cartao.id, texto);
-    setEnviando(false);
-    if (deu) setTexto("");
-  };
+  async function salvar(e: React.FormEvent) {
+    e.preventDefault();
+    if (salvando) return;
+    setSalvando(true);
+    setErroContato(null);
+    const erro = await aoSalvarContato(nome, cargo, fone);
+    setSalvando(false);
+    if (erro) return setErroContato(erro);
+    setNome("");
+    setCargo("");
+    setFone("");
+    setNovoContato(false);
+  }
 
   return (
     <div
@@ -112,13 +130,13 @@ export default function PainelLead({
     >
       <header className={estilo.topo}>
         <div className={estilo.identidade}>
-          <p className={estilo.etapaAtual} data-terminal={eTerminal(cartao.etapa) ? "sim" : "nao"}>
+          <p className={estilo.etapaAtual} data-terminal={terminal ? "sim" : "nao"}>
             {nomeEtapa(cartao.etapa)}
           </p>
           <h2 className={estilo.nome} id={idTitulo}>
             {cartao.nome}
           </h2>
-          {cartao.categoria && <p className={estilo.categoria}>{cartao.categoria}</p>}
+          {cartao.nicho && <p className={estilo.categoria}>{cartao.nicho}</p>}
         </div>
         <button type="button" className={estilo.fechar} onClick={aoFechar} aria-label="Fechar o painel (Esc)">
           <span aria-hidden>✕</span>
@@ -126,39 +144,92 @@ export default function PainelLead({
       </header>
 
       <div className={estilo.rolo}>
-        {/* ---------------- mover ---------------- */}
-        <section className={estilo.bloco}>
-          <h3 className={estilo.rotulo}>Mover para</h3>
-          <div className={estilo.trilha} role="group" aria-label="Etapa do funil">
-            {ETAPAS.map((e) => {
-              const travado = e.id === cartao.etapa || salvando;
-              return (
-                // `aria-disabled` em vez de `disabled`: o navegador tira o foco
-                // de um botão que acabou de ser desabilitado, e aqui isso
-                // aconteceria JUSTO no botão que a pessoa clicou — ela
-                // perderia o lugar no painel a cada movimento. Assim o botão
-                // continua focável, anuncia que está indisponível, e o clique
-                // é barrado na mão.
-                <button
-                  key={e.id}
-                  type="button"
-                  className={estilo.etapaBotao}
-                  data-aqui={e.id === cartao.etapa ? "sim" : "nao"}
-                  aria-current={e.id === cartao.etapa ? "true" : undefined}
-                  aria-disabled={travado}
-                  onClick={() => {
-                    if (travado) return;
-                    aoMover(cartao.id, e.id);
-                  }}
-                >
-                  {e.nome}
-                </button>
-              );
-            })}
-          </div>
-        </section>
+        {vendendo ? (
+          <section className={estilo.bloco}>
+            <FormVenda
+              nome={cartao.nome}
+              precoTabela={precoTabela}
+              pisoReferencia={pisoReferencia}
+              pendente={ocupado}
+              erro={erroVenda}
+              aoRegistrar={aoRegistrarVenda}
+              aoCancelar={aoCancelarVenda}
+            />
+          </section>
+        ) : (
+          acoes.length > 0 && (
+            <section className={estilo.bloco}>
+              <h3 className={estilo.rotulo}>O que aconteceu</h3>
+              <div className={form.acoes}>
+                {acoes.map((a) =>
+                  a === "perdeu" ? (
+                    confirmaPerdeu ? (
+                      <span key={a} className={form.acoes}>
+                        <button
+                          type="button"
+                          className="btn"
+                          disabled={ocupado}
+                          onClick={() => {
+                            setConfirmaPerdeu(false);
+                            aoExecutar(a);
+                          }}
+                        >
+                          Sim, perdeu
+                        </button>
+                        <button type="button" className="btn" onClick={() => setConfirmaPerdeu(false)}>
+                          Cancelar
+                        </button>
+                      </span>
+                    ) : (
+                      <button key={a} type="button" className="btn" disabled={ocupado} onClick={() => setConfirmaPerdeu(true)}>
+                        {ROTULO_ACAO[a]}
+                      </button>
+                    )
+                  ) : (
+                    <button
+                      key={a}
+                      type="button"
+                      className={a === "fechou" ? "btn btn-forte" : "btn"}
+                      disabled={ocupado}
+                      onClick={() => aoExecutar(a)}
+                    >
+                      {ocupado ? "Aguarde…" : ROTULO_ACAO[a]}
+                    </button>
+                  ),
+                )}
+              </div>
+              {podePedirParar(cartao.etapa) &&
+                (confirmaParar ? (
+                  <div className={form.form}>
+                    <p className={form.erro}>{PEDIU_PARAR.confirma}</p>
+                    <div className={form.acoes}>
+                      <button
+                        type="button"
+                        className="btn"
+                        disabled={ocupado}
+                        onClick={() => {
+                          setConfirmaParar(false);
+                          aoPedirParar();
+                        }}
+                      >
+                        Sim, confirmar
+                      </button>
+                      <button type="button" className="btn" onClick={() => setConfirmaParar(false)}>
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className={form.acoes}>
+                    <button type="button" className="btn" disabled={ocupado} onClick={() => setConfirmaParar(true)}>
+                      {PEDIU_PARAR.rotulo}
+                    </button>
+                  </div>
+                ))}
+            </section>
+          )
+        )}
 
-        {/* ---------------- tempo ---------------- */}
         <section className={estilo.bloco}>
           <h3 className={estilo.rotulo}>Tempo</h3>
           <dl className={estilo.tabela}>
@@ -167,7 +238,7 @@ export default function PainelLead({
               <dd className={estilo.destaque}>{rotuloTempo(cartao.paradoHoras)}</dd>
             </div>
             <div>
-              <dt>Nesta coluna desde</dt>
+              <dt>Nesta etapa desde</dt>
               <dd>{quando(cartao.entrouEm)}</dd>
             </div>
             <div>
@@ -177,75 +248,132 @@ export default function PainelLead({
           </dl>
         </section>
 
-        {/* ---------------- quem decide ---------------- */}
+        {cartao.venda && (
+          <section className={estilo.bloco}>
+            <h3 className={estilo.rotulo}>Venda</h3>
+            <dl className={estilo.tabela}>
+              <div>
+                <dt>Valor</dt>
+                <dd>{dinheiro(cartao.venda.valor)}</dd>
+              </div>
+              <div>
+                <dt>Forma</dt>
+                <dd>{FORMAS[cartao.venda.forma_pagamento] ?? cartao.venda.forma_pagamento}</dd>
+              </div>
+              <div>
+                <dt>Sua comissão</dt>
+                <dd>{dinheiro(cartao.venda.comissao)}</dd>
+              </div>
+            </dl>
+          </section>
+        )}
+
+        {cartao.previa && (cartao.previa.site_url || cartao.previa.pdf_url) && (
+          <section className={estilo.bloco}>
+            <h3 className={estilo.rotulo}>Prévia</h3>
+            <dl className={estilo.tabela}>
+              {cartao.previa.site_url && (
+                <div>
+                  <dt>Site</dt>
+                  <dd>
+                    <a href={cartao.previa.site_url} target="_blank" rel="noopener noreferrer">
+                      Abrir o site da prévia
+                    </a>
+                  </dd>
+                </div>
+              )}
+              {cartao.previa.pdf_url && (
+                <div>
+                  <dt>PDF</dt>
+                  <dd>
+                    <a href={cartao.previa.pdf_url} target="_blank" rel="noopener noreferrer">
+                      Abrir o PDF da prévia
+                    </a>
+                  </dd>
+                </div>
+              )}
+            </dl>
+          </section>
+        )}
+
         <section className={estilo.bloco}>
-          <h3 className={estilo.rotulo}>
-            Quem decide {cartao.contatos.length > 1 && <span>· {cartao.contatos.length} contatos</span>}
-          </h3>
-          {cartao.contatos.length === 0 ? (
-            <p className={estilo.furo}>
-              Nenhum contato cadastrado. Um lead sem o número de quem decide não deveria
-              estar neste quadro — a qualificação ficou pela metade.
+          <h3 className={estilo.rotulo}>Contato</h3>
+          {cartao.numeroBloqueado && (
+            <p className={form.erro} role="alert">
+              Este número está bloqueado. Fale com o admin.
             </p>
-          ) : (
+          )}
+          {cartao.telefone && (
+            <p>
+              <a className={estilo.telefone} href={`https://wa.me/${digitosWhatsApp(cartao.telefone)}`} target="_blank" rel="noopener noreferrer">
+                Abrir o WhatsApp do negócio
+              </a>
+            </p>
+          )}
+          {cartao.contatos.length > 0 && (
             <ul className={estilo.contatos}>
               {cartao.contatos.map((c) => (
                 <li key={c.id}>
                   <p className={estilo.contatoNome}>
                     <strong>{c.nome || "nome não anotado"}</strong>
-                    {c.e_decisor && <span className={estilo.selo}>decide</span>}
                   </p>
                   {c.cargo && <p className={estilo.cargo}>{c.cargo}</p>}
-                  {c.telefone ? (
-                    <a className={estilo.telefone} href={`tel:${paraDiscagem(c.telefone)}`}>
-                      {c.telefone}
+                  {c.telefone_e164 && (
+                    <a
+                      className={estilo.telefone}
+                      href={`https://wa.me/${digitosWhatsApp(c.telefone_e164)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {c.telefone_e164}
                     </a>
-                  ) : (
-                    <p className={estilo.furo}>sem telefone</p>
                   )}
                 </li>
               ))}
             </ul>
           )}
+          {!novoContato ? (
+            <button type="button" className="btn" onClick={() => setNovoContato(true)}>
+              Anotar quem decide
+            </button>
+          ) : (
+            <form className={form.form} onSubmit={salvar}>
+              <label className={form.campo}>
+                Nome
+                <input value={nome} onChange={(e) => setNome(e.target.value)} autoComplete="off" />
+              </label>
+              <label className={form.campo}>
+                Cargo
+                <input value={cargo} onChange={(e) => setCargo(e.target.value)} autoComplete="off" />
+              </label>
+              <label className={form.campo}>
+                Telefone
+                <input inputMode="tel" value={fone} onChange={(e) => setFone(e.target.value)} placeholder="(34) 90000-0000" />
+              </label>
+              {erroContato && (
+                <p className={form.erro} role="alert">
+                  {erroContato}
+                </p>
+              )}
+              <div className={form.acoes}>
+                <button type="submit" className="btn btn-forte" disabled={salvando}>
+                  {salvando ? "Salvando…" : "Salvar contato"}
+                </button>
+                <button type="button" className="btn" onClick={() => setNovoContato(false)} disabled={salvando}>
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          )}
         </section>
 
-        {/* ---------------- o estabelecimento ---------------- */}
         <section className={estilo.bloco}>
-          <h3 className={estilo.rotulo}>O estabelecimento</h3>
+          <h3 className={estilo.rotulo}>O negócio</h3>
           <dl className={estilo.tabela}>
-            {cartao.telefone && (
-              <div>
-                <dt>Telefone da loja</dt>
-                <dd>
-                  <a className={estilo.telefone} href={`tel:${paraDiscagem(cartao.telefone)}`}>
-                    {cartao.telefone}
-                  </a>
-                </dd>
-              </div>
-            )}
-            {cartao.endereco && (
-              <div>
-                <dt>Endereço</dt>
-                <dd>{cartao.endereco}</dd>
-              </div>
-            )}
-            {cartao.nota !== null && (
-              <div>
-                <dt>Google Maps</dt>
-                <dd>
-                  {cartao.nota.toFixed(1)}
-                  {cartao.avaliacoes !== null && ` · ${cartao.avaliacoes} avaliações`}
-                </dd>
-              </div>
-            )}
             {cartao.site && (
               <div>
                 <dt>Site</dt>
-                <dd>
-                  <a href={comProtocolo(cartao.site)} target="_blank" rel="noreferrer noopener">
-                    {cartao.site}
-                  </a>
-                </dd>
+                <dd>{cartao.site}</dd>
               </div>
             )}
             {cartao.instagram && (
@@ -257,39 +385,6 @@ export default function PainelLead({
           </dl>
         </section>
 
-        {/* ---------------- anotar ---------------- */}
-        <section className={estilo.bloco}>
-          <h3 className={estilo.rotulo}>Anotar</h3>
-          <textarea
-            className={`campo ${estilo.anotacao}`}
-            value={texto}
-            onChange={(e) => setTexto(e.target.value)}
-            onKeyDown={(e) => {
-              // Ctrl/Cmd+Enter grava sem sair do campo: quem está ao telefone
-              // não solta o teclado para procurar o botão.
-              if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-                e.preventDefault();
-                void enviar();
-              }
-            }}
-            rows={3}
-            placeholder="O que ficou combinado? (Ctrl+Enter grava)"
-            aria-label={`Anotação sobre ${cartao.nome}`}
-          />
-          <div className={estilo.acoes}>
-            <button
-              type="button"
-              className="btn btn-forte"
-              onClick={() => void enviar()}
-              disabled={!texto.trim() || enviando}
-            >
-              {enviando ? "gravando…" : "Anotar"}
-            </button>
-            {demonstracao && <span className={estilo.demo}>demonstração: nada vai para o banco</span>}
-          </div>
-        </section>
-
-        {/* ---------------- histórico ---------------- */}
         <section className={estilo.bloco}>
           <h3 className={estilo.rotulo}>Histórico</h3>
           {cartao.eventos.length === 0 ? (
@@ -299,10 +394,9 @@ export default function PainelLead({
               {cartao.eventos.map((e) => (
                 <li key={e.id}>
                   <p className={estilo.linhaEvento}>
-                    <span className={estilo.tipo}>{NOMES_DE_EVENTO[e.tipo] ?? e.tipo}</span>
+                    <span className={estilo.tipo}>{rotuloEvento(e, nomeEtapa)}</span>
                     <time className={estilo.data}>{quando(e.criado_em)}</time>
                   </p>
-                  {e.nota && <p className={estilo.notaEvento}>{e.nota}</p>}
                 </li>
               ))}
             </ol>

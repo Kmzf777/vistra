@@ -1,7 +1,7 @@
 /* ==================================================================
    O quadro.
 
-   A densidade é o problema real de um kanban de cinco colunas num
+   A densidade é o problema real de um kanban de seis colunas num
    notebook. Duas decisões resolvem:
 
    1. As colunas NÃO têm a mesma largura. 'Fechou' e 'Perdeu' são arquivo,
@@ -100,7 +100,7 @@
 
 /* O painel só rouba largura do quadro quando há largura sobrando. Abaixo
    disso ele vira camada sobre a direita da tela — melhor cobrir uma coluna
-   por um instante do que apertar as cinco permanentemente. */
+   por um instante do que apertar as seis permanentemente. */
 .doca {
   position: fixed;
   inset: 0 0 0 auto;
@@ -110,11 +110,11 @@
   box-shadow: -24px 0 60px rgba(0, 0, 0, .55);
 }
 
-/* 1660px não é número mágico: é a largura a partir da qual sobra, depois do
+/* 1780px não é número mágico: é a largura a partir da qual sobra, depois do
    menu (236px), do respiro (40px) e do painel (360px), mais do que a largura
-   mínima das cinco colunas (938px). Docar o painel antes disso trocaria uma
+   mínima das seis colunas (1130px). Docar o painel antes disso trocaria uma
    camada temporária por rolagem horizontal permanente — pior negócio. */
-@media (min-width: 1660px) {
+@media (min-width: 1780px) {
   .area[data-painel="sim"] { grid-template-columns: minmax(0, 1fr) 360px; }
   .doca {
     position: relative;
@@ -129,7 +129,7 @@
 
 .quadro {
   display: grid;
-  grid-template-columns: repeat(3, minmax(198px, 1fr)) repeat(2, minmax(154px, .7fr));
+  grid-template-columns: repeat(4, minmax(198px, 1fr)) repeat(2, minmax(154px, .7fr));
   gap: 9px;
   min-height: 0;
   overflow-x: auto;
@@ -152,7 +152,7 @@
 @media (max-width: 760px) {
   /* Telefone: largura fixa e rolagem horizontal mesmo. Cinco colunas
      comprimidas em 360px não são um quadro, são uma lista ruim. */
-  .quadro { grid-template-columns: repeat(5, 76vw); }
+  .quadro { grid-template-columns: repeat(6, 76vw); }
 }
 
 /* ---------------------------------------------------------- coluna */

@@ -1,0 +1,29 @@
+.tela {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+}
+
+.caixa {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.titulo {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.texto {
+  margin: 0;
+  opacity: 0.8;
+}
+
+.botao {
+  min-height: 48px;
+  width: 100%;
+}

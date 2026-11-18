@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { temCredenciaisServidor } from "@/lib/supabase/servidor";
+import { temCredenciais } from "@/lib/supabase/servidor";
 import FormularioLogin from "./FormularioLogin";
 import estilo from "./login.module.css";
 
@@ -29,7 +29,8 @@ export default async function PaginaLogin({
   // aceitá-lo faria do login um redirecionador aberto.
   const destino = de && de.startsWith("/") && !de.startsWith("//") && !de.startsWith("/login") ? de : null;
 
-  const temChaves = temCredenciaisServidor();
+  const temChaves = temCredenciais();
+  const linkInvalido = params.erro === "link";
 
   return (
     <div className={estilo.tela}>
@@ -61,7 +62,7 @@ export default async function PaginaLogin({
             <dt className="rotulo">sessão</dt>
             <dd>cookie, renovada a cada requisição</dd>
             <dt className="rotulo">acesso</dt>
-            <dd>cadastro aberto — qualquer um cria conta</dd>
+            <dd>somente por convite</dd>
             <dt className="rotulo">dados</dt>
             <dd>cada lead protegido por RLS no banco</dd>
           </dl>
@@ -69,6 +70,16 @@ export default async function PaginaLogin({
       </section>
 
       <section className={estilo.console}>
+        {params.erro === "desativado" && (
+          <p role="alert" className={estilo.erro}>
+            Seu acesso foi desativado. Fale com o Kelwin.
+          </p>
+        )}
+        {linkInvalido && (
+          <p role="alert" className={estilo.erro}>
+            Esse link já foi usado ou expirou. Peça um novo ao Kelwin.
+          </p>
+        )}
         <FormularioLogin destino={destino} temChaves={temChaves} />
       </section>
     </div>

@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { criarCliente, temCredenciais } from "@/lib/supabase/cliente";
@@ -28,7 +26,7 @@ function traduzir(erro: ErroCru): { texto: string; detalhe?: string } {
   if (codigo === "email_not_confirmed" || /email not confirmed/i.test(cru))
     return {
       texto:
-        "Este e-mail ainda não foi confirmado. Abra o link que o Supabase enviou, ou peça para quem administra confirmar o usuário no painel.",
+        "Este e-mail ainda não foi confirmado. Peça um link novo a quem administra.",
     };
 
   if (codigo === "user_banned")
@@ -119,7 +117,7 @@ export default function FormularioLogin({
       // justamente esses cookies que o proxy e os Server Components vão ler na
       // próxima requisição.
       setSenha("");
-      router.replace(destino ?? "/leads");
+      router.replace(destino ?? "/inicio");
       // O HTML que está na tela foi renderizado sem sessão; sem o refresh o
       // cache do roteador poderia devolvê-lo de volta já logado.
       router.refresh();
@@ -149,8 +147,8 @@ export default function FormularioLogin({
           <strong>Este CRM ainda não tem Supabase.</strong>
           <p>
             Faltam <code>NEXT_PUBLIC_SUPABASE_URL</code> e{" "}
-            <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code>. Elas precisam estar em{" "}
-            <code>Vistra/crm/.env.local</code> (o modelo é o <code>.env.example</code>). As
+            <code>NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code>. Elas precisam estar em{" "}
+            <code>crm/.env.novo.local</code> (o modelo é o <code>.env.example</code>). As
             variáveis <code>NEXT_PUBLIC_*</code> são embutidas no build.
             Depois de criar o arquivo, reinicie o <code>next dev</code>.
           </p>
@@ -230,8 +228,7 @@ export default function FormularioLogin({
       </form>
 
       <p className={estilo.rodape}>
-        Não tem conta? <Link href="/cadastro">Criar conta</Link>. O perfil nasce sozinho no
-        banco assim que o usuário é criado.
+        Sem conta? O acesso é por convite: peça o link ao Kelwin.
       </p>
     </div>
   );

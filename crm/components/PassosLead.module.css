@@ -1,0 +1,52 @@
+.tela { display: flex; flex-direction: column; gap: 16px; max-width: 640px; margin: 0 auto; padding: 16px 16px 96px; }
+
+.cabeca h1 { font-size: 22px; line-height: 1.2; letter-spacing: -.01em; }
+.meta { font-size: 13px; color: var(--tinta-fraca); }
+.gancho { margin-top: 6px; font-size: 14px; color: var(--tinta); border-left: 2px solid var(--voce); padding-left: 10px; }
+
+.passos { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+.passo {
+  font-size: 12px; padding: 6px 10px; border-radius: 999px;
+  border: 1px solid var(--linha); color: var(--tinta-fantasma);
+}
+.feito { color: var(--tinta-fraca); border-color: var(--linha-viva); }
+.atual { background: var(--voce); border-color: var(--voce); color: var(--sobre-voce); font-weight: 700; }
+
+.cartao {
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 16px; border-radius: var(--raio); background: var(--painel); border: 1px solid var(--linha);
+}
+.cartao:empty { display: none; }
+.cartao h2 { font-size: 16px; }
+.texto { white-space: pre-wrap; font-size: 14px; color: var(--tinta-fraca); user-select: text; }
+.lista { display: flex; flex-direction: column; gap: 10px; }
+.dica { font-size: 13px; color: var(--sinal); }
+
+.acaoGrande, .link {
+  display: flex; align-items: center; justify-content: center; min-height: 48px; padding: 10px 16px;
+  border-radius: var(--raio-p); font-weight: 700; text-decoration: none; text-align: center;
+}
+.acaoGrande { background: var(--voce); color: var(--sobre-voce); }
+.link { border: 1px solid var(--linha-viva); color: var(--tinta); background: var(--alto); }
+.off { opacity: .4; pointer-events: none; }
+
+.botoes { display: flex; flex-direction: column; gap: 10px; }
+.botaoBloco { display: flex; flex-direction: column; gap: 8px; }
+.botao {
+  min-height: 48px; padding: 10px 16px; border-radius: var(--raio-p);
+  border: 1px solid var(--linha-viva); background: var(--alto); color: var(--tinta);
+  font: inherit; font-weight: 600; cursor: pointer;
+}
+.botao:disabled { opacity: .5; cursor: progress; }
+.destaque { background: var(--voce); border-color: var(--voce); color: var(--sobre-voce); font-weight: 700; }
+.perigo { background: var(--erro); border-color: var(--erro); color: var(--tinta); }
+.botaoFraco {
+  min-height: 44px; background: none; border: none; color: var(--tinta-fraca); font: inherit;
+  text-decoration: underline; cursor: pointer;
+}
+.largar { display: flex; flex-direction: column; gap: 8px; }
+
+.confirma { font-size: 14px; color: var(--sinal); }
+.aviso { font-size: 14px; color: var(--sinal); padding: 10px 12px; border: 1px solid var(--sinal); border-radius: var(--raio-p); }
+.recado { font-size: 14px; color: var(--ok); }
+.erro { font-size: 14px; color: var(--erro); }
